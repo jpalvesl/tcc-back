@@ -1,6 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.repository;
 
-import com.tcc.joaomyrlla.appcode2know.models.SubmissaoModel;
+import com.tcc.joaomyrlla.appcode2know.model.SubmissaoModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

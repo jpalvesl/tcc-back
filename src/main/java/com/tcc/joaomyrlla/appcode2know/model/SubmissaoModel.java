@@ -1,4 +1,4 @@
-package com.tcc.joaomyrlla.appcode2know.models;
+package com.tcc.joaomyrlla.appcode2know.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

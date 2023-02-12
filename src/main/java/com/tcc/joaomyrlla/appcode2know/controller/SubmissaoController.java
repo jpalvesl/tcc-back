@@ -1,6 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.controller;
 
-import com.tcc.joaomyrlla.appcode2know.models.SubmissaoModel;
+import com.tcc.joaomyrlla.appcode2know.model.SubmissaoModel;
 import com.tcc.joaomyrlla.appcode2know.repository.SubmissaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
