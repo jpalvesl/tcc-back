@@ -16,9 +16,9 @@ public class Submissao {
 
     private int caso;
     
-    private String entrada;
+    private String codigoResposta;
     
-    private String saida;
+    private String saida; // saida a ser comparada com o problema
     
     private String status;
 

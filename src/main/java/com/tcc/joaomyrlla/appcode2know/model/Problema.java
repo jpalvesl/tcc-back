@@ -2,6 +2,7 @@ package com.tcc.joaomyrlla.appcode2know.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.context.annotation.Lazy;
 
 @Table(name = "PROBLEMA")
 @Data
@@ -23,7 +24,8 @@ public class Problema {
     
     private String textoSaida;
 
-    @ManyToOne
-    @JoinColumn(name = "CRIADOR_ID")
-    private Usuario criador;
+//    @ManyToOne
+//    @JoinColumn(name = "CRIADOR_ID")
+//    @Lazy
+    private String criadorId;
 }
