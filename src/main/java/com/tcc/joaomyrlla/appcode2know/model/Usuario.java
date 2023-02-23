@@ -35,6 +35,7 @@ public class Usuario {
     @JoinTable(name = "USUARIO_INSTITUICAO",
             joinColumns = @JoinColumn(name = "USUARIO_ID"),
             inverseJoinColumns = @JoinColumn(name = "INSTITUICAO_ID"))
+    @Lazy
     private ArrayList<Instituicao> instituicoes;
 
     @ManyToMany
