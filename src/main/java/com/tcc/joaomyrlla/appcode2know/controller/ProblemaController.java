@@ -28,8 +28,8 @@ public class ProblemaController {
         return ResponseEntity.ok().body(problemaService.add(problema));
     }
 
-   @DeleteMapping("/{id}/usuario/{criadorId}")
-   public ResponseEntity<Object> delete(@PathVariable("id") Long id, @PathVariable("criadorId") Long criadorId) {
+   @DeleteMapping("/{id}/usuario/{criador_id}")
+   public ResponseEntity<Object> delete(@PathVariable("id") Long id, @PathVariable("criador_id") Long criadorId) {
        problemaService.delete(id,criadorId);
        return ResponseEntity.ok().build();
    }
