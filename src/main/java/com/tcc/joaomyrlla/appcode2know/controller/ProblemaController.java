@@ -1,7 +1,10 @@
 package com.tcc.joaomyrlla.appcode2know.controller;
 
 import com.tcc.joaomyrlla.appcode2know.service.IProblemaService;
+import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,18 +27,25 @@ public class ProblemaController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> add(@RequestBody Problema problema) { // mudar pra DTO depois
-        return ResponseEntity.ok().body(problemaService.add(problema));
+    public ResponseEntity<Object> add(@RequestBody ProblemaDTO problema) {
+        Problema novoProblema = new Problema();
+        BeanUtils.copyProperties(problema, novoProblema);
+
+        return ResponseEntity.ok().body(problemaService.add(novoProblema));
     }
 
-   @DeleteMapping("/{id}/usuario/{criador_id}")
-   public ResponseEntity<Object> delete(@PathVariable("id") Long id, @PathVariable("criador_id") Long criadorId) {
-       problemaService.delete(id,criadorId);
-       return ResponseEntity.ok().build();
+   @PatchMapping("/usuario/{usuario_id}")
+   ResponseEntity<Object> edit(@RequestBody ProblemaDTO problema,
+                               @PathVariable("usuario_id") Long usuarioId) {
+       
+        Problema problemaEditado = new Problema();
+        BeanUtils.copyProperties(problema, problemaEditado);
+
+        return ResponseEntity.ok().body(problemaService.edit(problemaEditado, usuarioId));
    }
 
-   @PatchMapping("/usuario/{usuario_id}")
-   ResponseEntity<Object> edit(@RequestBody Problema problema, @PathVariable("usuario_id") Long usuarioId) { // mudar para DTO problema depois
-       return ResponseEntity.ok().body(problemaService.edit(problema, usuarioId));
+   @DeleteMapping("/{id}/usuario/{criador_id}")
+   public void delete(@PathVariable("id") Long id, @PathVariable("criador_id") Long criadorId) {
+       problemaService.delete(id,criadorId);
    }
 }

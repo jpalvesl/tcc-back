@@ -1,7 +1,10 @@
 package com.tcc.joaomyrlla.appcode2know.controller;
 
+import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
 import com.tcc.joaomyrlla.appcode2know.service.IUsuarioService;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,14 +32,20 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> cadastrar(@RequestBody Usuario usuario) {
-        return ResponseEntity.ok().body(usuarioService.add(usuario));
+    public ResponseEntity<Object> cadastrar(@RequestBody UsuarioDTO usuario) {
+        Usuario novoUsuario = new Usuario();
+        BeanUtils.copyProperties(usuario, novoUsuario);
+
+        return ResponseEntity.ok().body(usuarioService.add(novoUsuario));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<Object> edit(@PathVariable("id") Long id,
-                                       @RequestBody Usuario usuario) {
-        return ResponseEntity.ok().body(usuarioService.edit(usuario));
+                                       @RequestBody UsuarioDTO usuario) {
+        Usuario novoUsuario = new Usuario();
+        BeanUtils.copyProperties(usuario, novoUsuario);
+                                        
+        return ResponseEntity.ok().body(usuarioService.edit(novoUsuario));
     }
 
     @DeleteMapping("/{id}")
