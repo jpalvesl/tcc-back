@@ -1,13 +1,13 @@
 package com.tcc.joaomyrlla.appcode2know.dto;
 import jakarta.validation.constraints.NotBlank;
-
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.util.Date;
 
-@Getter
-@Setter
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TurmaDTO {
 
   private Long id;

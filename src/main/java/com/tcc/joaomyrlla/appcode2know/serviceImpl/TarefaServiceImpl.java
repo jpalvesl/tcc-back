@@ -1,6 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
-import com.tcc.joaomyrlla.appcode2know.model.Tarefa;
+import com.tcc.joaomyrlla.appcode2know.dto.TarefaDTO;
 import com.tcc.joaomyrlla.appcode2know.service.ITarefaService;
 import org.springframework.stereotype.Service;
 
@@ -9,22 +9,22 @@ import java.util.List;
 @Service
 public class TarefaServiceImpl implements ITarefaService {
     @Override
-    public List<Tarefa> findByAluno(Long alunoId) {
+    public List<TarefaDTO> findByAluno(Long alunoId) {
         return null;
     }
 
     @Override
-    public List<Tarefa> findByTurma(Long turmaId) {
+    public List<TarefaDTO> findByTurma(Long turmaId) {
         return null;
     }
 
     @Override
-    public Tarefa add(Tarefa tarefa) {
+    public TarefaDTO add(TarefaDTO tarefa) {
         return null;
     }
 
     @Override
-    public Tarefa edit(Tarefa tarefa, Long professorId) {
+    public TarefaDTO edit(TarefaDTO tarefa, Long professorId) {
         return null;
     }
 

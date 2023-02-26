@@ -1,19 +1,19 @@
 package com.tcc.joaomyrlla.appcode2know.service;
 
-import com.tcc.joaomyrlla.appcode2know.model.Usuario;
+import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
 
 import java.util.List;
 
 public interface IUsuarioService {
-    public List<Usuario> findByInstituicao();
+    public List<UsuarioDTO> findByInstituicao();
 
-    public Usuario findById(Long id);
+    public UsuarioDTO findById(Long id);
 
-    public List<Usuario> findByTurma(Long turmaId);
+    public List<UsuarioDTO> findByTurma(Long turmaId);
 
-    public Usuario add(Usuario usuario);
+    public UsuarioDTO add(UsuarioDTO usuario);
 
-    public Usuario edit(Usuario usuario);
+    public UsuarioDTO edit(UsuarioDTO usuario);
 
     public void delete(Long id);
 }

@@ -16,26 +16,24 @@ public class InstituicaoController {
     IInstituicaoService instituicaoService;
 
     @GetMapping
-    public ResponseEntity<Object> findAll() {
+    public ResponseEntity<List<InstituicaoDTO>> findAll() {
         return ResponseEntity.ok().body(instituicaoService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<InstituicaoDTO> findById(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(instituicaoService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Object> add(@RequestBody InstituicaoDTO instituicao) {
+    public ResponseEntity<InstituicaoDTO> add(@RequestBody InstituicaoDTO instituicao) {
 
-        Instituicao novaInstituicao = new Instituicao();
-        BeanUtils.copyProperties(instituicao, novaInstituicao);
 
-        return ResponseEntity.ok().body(instituicaoService.add(novaInstituicao));
+        return ResponseEntity.ok().body(instituicaoService.add(instituicao));
     }
 
     @PatchMapping("/usuario/{usuario_id}")
-    public ResponseEntity<Object> edit(@PathVariable("usuario_id") Long usuarioId,
+    public ResponseEntity<InstituicaoDTO> edit(@PathVariable("usuario_id") Long usuarioId,
                                        @RequestBody InstituicaoDTO instituicao) {
 
         Instituicao instituicaoEditada = new Instituicao();

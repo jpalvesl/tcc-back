@@ -1,15 +1,15 @@
 package com.tcc.joaomyrlla.appcode2know.service;
 
-import com.tcc.joaomyrlla.appcode2know.model.CasoDeTeste;
+import com.tcc.joaomyrlla.appcode2know.dto.CasoDeTesteDTO;
 
 import java.util.List;
 
 public interface ICasoDeTesteService {
-    List<CasoDeTeste> findBySubmissao(Long submissaoId);
+    List<CasoDeTesteDTO> findBySubmissao(Long submissaoId);
 
-    CasoDeTeste add(CasoDeTeste casoDeTeste);
+    CasoDeTesteDTO add(CasoDeTesteDTO casoDeTeste);
 
-    CasoDeTeste edit(CasoDeTeste casoDeTeste);
+    CasoDeTesteDTO edit(CasoDeTesteDTO casoDeTeste);
 
     void delete(Long id);
 }

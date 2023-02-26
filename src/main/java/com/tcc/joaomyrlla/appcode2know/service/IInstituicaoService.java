@@ -1,17 +1,17 @@
 package com.tcc.joaomyrlla.appcode2know.service;
 
-import com.tcc.joaomyrlla.appcode2know.model.Instituicao;
+import com.tcc.joaomyrlla.appcode2know.dto.InstituicaoDTO;
 
 import java.util.List;
 
 public interface IInstituicaoService {
-    public List<Instituicao> findAll();
+    public List<InstituicaoDTO> findAll();
 
-    public Instituicao findById(Long id);
+    public InstituicaoDTO findById(Long id);
 
-    public Instituicao add(Instituicao instituicao);
+    public InstituicaoDTO add(InstituicaoDTO instituicao);
 
     public void delete(Long id, Long usuarioId);
 
-    public Instituicao edit(Instituicao instituicao, Long usuarioId);
+    public InstituicaoDTO edit(InstituicaoDTO instituicao, Long usuarioId);
 }

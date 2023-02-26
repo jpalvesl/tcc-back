@@ -17,22 +17,22 @@ public class UsuarioController {
 
 
     @GetMapping
-    public ResponseEntity<Object> findByInstituicao() {
+    public ResponseEntity<UsuarioDTO> findByInstituicao() {
         return ResponseEntity.ok().body(usuarioService.findByInstituicao());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> findByUsuario(@PathVariable("id") Long id) {
+    public ResponseEntity<UsuarioDTO> findByUsuario(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(usuarioService.findById(id));
     }
 
     @GetMapping("/turma/{turma_id}")
-    public ResponseEntity<Object> findByTurma(@PathVariable("turma_id") Long turmaId) {
+    public ResponseEntity<UsuarioDTO> findByTurma(@PathVariable("turma_id") Long turmaId) {
         return ResponseEntity.ok().body(usuarioService.findByTurma(turmaId));
     }
 
     @PostMapping
-    public ResponseEntity<Object> cadastrar(@RequestBody UsuarioDTO usuario) {
+    public ResponseEntity<UsuarioDTO> cadastrar(@RequestBody UsuarioDTO usuario) {
         Usuario novoUsuario = new Usuario();
         BeanUtils.copyProperties(usuario, novoUsuario);
 
@@ -40,7 +40,7 @@ public class UsuarioController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> edit(@PathVariable("id") Long id,
+    public ResponseEntity<UsuarioDTO> edit(@PathVariable("id") Long id,
                                        @RequestBody UsuarioDTO usuario) {
         Usuario novoUsuario = new Usuario();
         BeanUtils.copyProperties(usuario, novoUsuario);

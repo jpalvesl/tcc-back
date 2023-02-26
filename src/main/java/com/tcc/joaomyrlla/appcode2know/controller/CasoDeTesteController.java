@@ -16,12 +16,12 @@ public class CasoDeTesteController {
     ICasoDeTesteService casoDeTesteService;
 
     @GetMapping("/submissao/{submissao_id}")
-    public ResponseEntity<Object> findBySubmissao(@PathVariable("submissao_id") Long submissaoId) {
+    public ResponseEntity<CasoDeTesteDTO> findBySubmissao(@PathVariable("submissao_id") Long submissaoId) {
         return ResponseEntity.ok().body(casoDeTesteService.findBySubmissao(submissaoId));
     }
 
     @PostMapping
-    public ResponseEntity<Object> add(@RequestBody CasoDeTesteDTO casoDeTeste) {
+    public ResponseEntity<CasoDeTesteDTO> add(@RequestBody CasoDeTesteDTO casoDeTeste) {
         CasoDeTeste novoCasoDeTeste = new CasoDeTeste();
         BeanUtils.copyProperties(casoDeTeste, novoCasoDeTeste);
 
@@ -29,7 +29,7 @@ public class CasoDeTesteController {
     }
 
     @PatchMapping("/usuario/{usuario_id}")
-    public ResponseEntity<Object> edit(@PathVariable("usuario_id") Long usuarioId,
+    public ResponseEntity<CasoDeTesteDTO> edit(@PathVariable("usuario_id") Long usuarioId,
                                        @RequestBody CasoDeTesteDTO casoDeTeste) {
         
         CasoDeTeste casoDeTesteEditado = new CasoDeTeste();

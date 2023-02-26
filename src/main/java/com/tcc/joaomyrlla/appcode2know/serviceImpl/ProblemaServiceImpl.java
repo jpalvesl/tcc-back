@@ -1,5 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
+import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
 import com.tcc.joaomyrlla.appcode2know.service.IProblemaService;
@@ -17,18 +18,18 @@ public class ProblemaServiceImpl implements IProblemaService {
         this.problemaRepository = problemaRepository;
     }
 
-    public List<Problema> findAll() {
+    public List<ProblemaDTO> findAll() {
         return problemaRepository.findAll();
     }
 
-    public Problema findById(Long id) {
+    public ProblemaDTO findById(Long id) {
         Optional<Problema> result = problemaRepository.findById(id);
 
         if (result.isEmpty()) return null;
         return result.get();
     }
 
-    public Problema add(Problema problema) {
+    public ProblemaDTO add(ProblemaDTO problema) {
         return problemaRepository.save(problema);
     }
 
@@ -45,7 +46,7 @@ public class ProblemaServiceImpl implements IProblemaService {
     }
 
     @Override
-    public Problema edit(Problema problema, Long usuarioId) {
+    public ProblemaDTO edit(ProblemaDTO problema, Long usuarioId) {
 //         TODO: Verificar lista de usuarios em busca do usuario com id informado
 //
 //         TODO: Verificar se o usuario buscado tem o atribuito eh_professor como true

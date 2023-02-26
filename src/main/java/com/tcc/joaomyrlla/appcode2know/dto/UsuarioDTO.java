@@ -1,11 +1,13 @@
 package com.tcc.joaomyrlla.appcode2know.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UsuarioDTO {
   private Long id;
 
@@ -28,5 +30,5 @@ public class UsuarioDTO {
   @NotBlank(message = "O atributo usuario é obrigatório")
   private String usuario;
   
-  private String instituicaoAtualId;
+  private Long instituicaoAtualId;
 }

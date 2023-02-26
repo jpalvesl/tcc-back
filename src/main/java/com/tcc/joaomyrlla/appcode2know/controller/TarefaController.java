@@ -1,7 +1,7 @@
 package com.tcc.joaomyrlla.appcode2know.controller;
 
 import com.tcc.joaomyrlla.appcode2know.model.Tarefa;
-import com.tcc.joaomyrlla.appcode2know.dto.TarefaDTO;
+import com.tcc.joaomyrlla.appcode2know.dto.tar;
 import com.tcc.joaomyrlla.appcode2know.service.ITarefaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

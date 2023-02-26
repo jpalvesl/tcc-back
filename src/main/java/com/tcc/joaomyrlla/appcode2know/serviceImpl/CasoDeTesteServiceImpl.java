@@ -1,6 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
-import com.tcc.joaomyrlla.appcode2know.model.CasoDeTeste;
+import com.tcc.joaomyrlla.appcode2know.dto.CasoDeTesteDTO;
 import com.tcc.joaomyrlla.appcode2know.service.ICasoDeTesteService;
 import org.springframework.stereotype.Service;
 
@@ -9,17 +9,17 @@ import java.util.List;
 @Service
 public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
     @Override
-    public List<CasoDeTeste> findBySubmissao(Long submissaoId) {
+    public List<CasoDeTesteDTO> findBySubmissao(Long submissaoId) {
         return null;
     }
 
     @Override
-    public CasoDeTeste add(CasoDeTeste casoDeTeste) {
+    public CasoDeTesteDTO add(CasoDeTesteDTO casoDeTeste) {
         return null;
     }
 
     @Override
-    public CasoDeTeste edit(CasoDeTeste casoDeTeste) {
+    public CasoDeTesteDTO edit(CasoDeTesteDTO casoDeTeste) {
         return null;
     }
 

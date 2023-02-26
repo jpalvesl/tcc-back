@@ -17,17 +17,17 @@ public class ProblemaController {
     IProblemaService problemaService;
 
     @GetMapping
-    public ResponseEntity<Object> findAll() {
+    public ResponseEntity<ProblemaDTO> findAll() {
         return ResponseEntity.ok().body(problemaService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<ProblemaDTO> findById(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(problemaService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Object> add(@RequestBody ProblemaDTO problema) {
+    public ResponseEntity<ProblemaDTO> add(@RequestBody ProblemaDTO problema) {
         Problema novoProblema = new Problema();
         BeanUtils.copyProperties(problema, novoProblema);
 
@@ -35,7 +35,7 @@ public class ProblemaController {
     }
 
    @PatchMapping("/usuario/{usuario_id}")
-   ResponseEntity<Object> edit(@RequestBody ProblemaDTO problema,
+   ResponseEntity<ProblemaDTO> edit(@RequestBody ProblemaDTO problema,
                                @PathVariable("usuario_id") Long usuarioId) {
        
         Problema problemaEditado = new Problema();

@@ -1,11 +1,12 @@
 package com.tcc.joaomyrlla.appcode2know.dto;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class InstituicaoDTO {
 
   private Long id;

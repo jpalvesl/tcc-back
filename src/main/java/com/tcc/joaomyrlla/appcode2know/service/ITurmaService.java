@@ -1,18 +1,18 @@
 package com.tcc.joaomyrlla.appcode2know.service;
 
 
-import com.tcc.joaomyrlla.appcode2know.model.Turma;
+import com.tcc.joaomyrlla.appcode2know.dto.TurmaDTO;
 
 import java.util.List;
 
 public interface ITurmaService {
-    List<Turma> findByInstituicao(Long instituicaoId);
+    List<TurmaDTO> findByInstituicao(Long instituicaoId);
 
-    List<Turma> findByUsuario(Long usuarioId);
+    List<TurmaDTO> findByUsuario(Long usuarioId);
 
-    Turma add(Turma turma);
+    TurmaDTO add(TurmaDTO turma);
 
-    Turma edit(Turma turma, Long professorId);
+    TurmaDTO edit(TurmaDTO turma, Long professorId);
 
     void delete(Long turmaId);
 }
