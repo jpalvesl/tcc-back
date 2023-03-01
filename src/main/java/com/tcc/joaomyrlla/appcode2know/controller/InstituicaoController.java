@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.beans.BeanUtils;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("instituicao")
 public class InstituicaoController {
@@ -36,10 +38,7 @@ public class InstituicaoController {
     public ResponseEntity<InstituicaoDTO> edit(@PathVariable("usuario_id") Long usuarioId,
                                        @RequestBody InstituicaoDTO instituicao) {
 
-        Instituicao instituicaoEditada = new Instituicao();
-        BeanUtils.copyProperties(instituicao, instituicaoEditada);
-
-        return ResponseEntity.ok().body(instituicaoService.edit(instituicaoEditada, usuarioId));
+        return ResponseEntity.ok().body(instituicaoService.edit(instituicao, usuarioId));
     }
 
     @DeleteMapping("/{id}/usuario/{usuario_id}")

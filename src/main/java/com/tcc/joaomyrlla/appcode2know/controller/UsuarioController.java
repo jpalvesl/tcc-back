@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("usuario")
 public class UsuarioController {
@@ -17,7 +19,7 @@ public class UsuarioController {
 
 
     @GetMapping
-    public ResponseEntity<UsuarioDTO> findByInstituicao() {
+    public ResponseEntity<List<UsuarioDTO>> findByInstituicao() {
         return ResponseEntity.ok().body(usuarioService.findByInstituicao());
     }
 
@@ -27,25 +29,19 @@ public class UsuarioController {
     }
 
     @GetMapping("/turma/{turma_id}")
-    public ResponseEntity<UsuarioDTO> findByTurma(@PathVariable("turma_id") Long turmaId) {
+    public ResponseEntity<List<UsuarioDTO>> findByTurma(@PathVariable("turma_id") Long turmaId) {
         return ResponseEntity.ok().body(usuarioService.findByTurma(turmaId));
     }
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> cadastrar(@RequestBody UsuarioDTO usuario) {
-        Usuario novoUsuario = new Usuario();
-        BeanUtils.copyProperties(usuario, novoUsuario);
-
-        return ResponseEntity.ok().body(usuarioService.add(novoUsuario));
+        return ResponseEntity.ok().body(usuarioService.add(usuario));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<UsuarioDTO> edit(@PathVariable("id") Long id,
                                        @RequestBody UsuarioDTO usuario) {
-        Usuario novoUsuario = new Usuario();
-        BeanUtils.copyProperties(usuario, novoUsuario);
-                                        
-        return ResponseEntity.ok().body(usuarioService.edit(novoUsuario));
+        return ResponseEntity.ok().body(usuarioService.edit(usuario));
     }
 
     @DeleteMapping("/{id}")

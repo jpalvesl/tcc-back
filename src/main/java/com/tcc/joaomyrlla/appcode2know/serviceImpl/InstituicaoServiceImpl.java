@@ -19,11 +19,12 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
 
     @Override
     public List<InstituicaoDTO> findAll() {
-        var result = instituicaoRespository.findAll();
+        List<Instituicao> result = instituicaoRespository.findAll();
+
         List<InstituicaoDTO> instituicaoDTOs = new ArrayList<>();
         result.forEach(instituicao -> {
             InstituicaoDTO instituicaoDTO = new InstituicaoDTO();
-            BeanUtils.copyProperties((instituicao), instituicaoDTOs);
+            BeanUtils.copyProperties(instituicao, instituicaoDTO);
 
             instituicaoDTOs.add(instituicaoDTO);
         });
@@ -38,22 +39,20 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
 
         InstituicaoDTO instituicaoDTO = new InstituicaoDTO();
 
-        BeanUtils.copyProperties(instituicao, instituicaoDTO);
+        BeanUtils.copyProperties(instituicao.get(), instituicaoDTO);
         return instituicaoDTO;
     }
 
     @Override
     public InstituicaoDTO add(InstituicaoDTO instituicao) {
-
         Instituicao novaInstituicao = new Instituicao();
+        BeanUtils.copyProperties(instituicao, novaInstituicao);
         
-        Instituicao instituicaoSalva = instituicaoRespository.save(novaInstituicao);
+        instituicaoRespository.save(novaInstituicao);
 
-        InstituicaoDTO instituicaoDTO = new InstituicaoDTO();
+        instituicao.setId(novaInstituicao.getId());
 
-
-        BeanUtils.copyProperties(instituicaoSalva, instituicaoDTO);
-        return instituicaoDTO;
+        return instituicao;
     }
 
     @Override
@@ -75,6 +74,11 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
         if (!instituicaoRespository.existsById(instituicao.getId())) {
             throw new RuntimeException("Instituicao com o ID informado não existe");
         }
+
+        Instituicao instituicaoEditada = new Instituicao();
+        BeanUtils.copyProperties(instituicao, instituicaoEditada);
+
+        instituicaoRespository.save(instituicaoEditada);
 
         return instituicao;
     }

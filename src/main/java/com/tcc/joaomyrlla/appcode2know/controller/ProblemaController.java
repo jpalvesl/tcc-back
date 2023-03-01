@@ -2,12 +2,12 @@ package com.tcc.joaomyrlla.appcode2know.controller;
 
 import com.tcc.joaomyrlla.appcode2know.service.IProblemaService;
 import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
-import com.tcc.joaomyrlla.appcode2know.model.Problema;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -17,7 +17,7 @@ public class ProblemaController {
     IProblemaService problemaService;
 
     @GetMapping
-    public ResponseEntity<ProblemaDTO> findAll() {
+    public ResponseEntity<List<ProblemaDTO>> findAll() {
         return ResponseEntity.ok().body(problemaService.findAll());
     }
 
@@ -28,20 +28,13 @@ public class ProblemaController {
 
     @PostMapping
     public ResponseEntity<ProblemaDTO> add(@RequestBody ProblemaDTO problema) {
-        Problema novoProblema = new Problema();
-        BeanUtils.copyProperties(problema, novoProblema);
-
-        return ResponseEntity.ok().body(problemaService.add(novoProblema));
+        return ResponseEntity.ok().body(problemaService.add(problema));
     }
 
    @PatchMapping("/usuario/{usuario_id}")
    ResponseEntity<ProblemaDTO> edit(@RequestBody ProblemaDTO problema,
                                @PathVariable("usuario_id") Long usuarioId) {
-       
-        Problema problemaEditado = new Problema();
-        BeanUtils.copyProperties(problema, problemaEditado);
-
-        return ResponseEntity.ok().body(problemaService.edit(problemaEditado, usuarioId));
+        return ResponseEntity.ok().body(problemaService.edit(problema, usuarioId));
    }
 
    @DeleteMapping("/{id}/usuario/{criador_id}")

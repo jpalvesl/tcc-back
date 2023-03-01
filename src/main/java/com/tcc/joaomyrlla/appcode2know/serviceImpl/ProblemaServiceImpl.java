@@ -4,8 +4,10 @@ import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
 import com.tcc.joaomyrlla.appcode2know.service.IProblemaService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,18 +21,37 @@ public class ProblemaServiceImpl implements IProblemaService {
     }
 
     public List<ProblemaDTO> findAll() {
-        return problemaRepository.findAll();
+        List<Problema> result = problemaRepository.findAll();
+        List<ProblemaDTO> problemaDTOs = new ArrayList<>();
+
+        result.forEach(problema -> {
+            ProblemaDTO problemaDTO = new ProblemaDTO();
+            BeanUtils.copyProperties(problema, problemaDTO);
+
+            problemaDTOs.add(problemaDTO);
+        });
+
+        return problemaDTOs;
     }
 
     public ProblemaDTO findById(Long id) {
         Optional<Problema> result = problemaRepository.findById(id);
 
+        ProblemaDTO problema = new ProblemaDTO();
+
         if (result.isEmpty()) return null;
-        return result.get();
+        BeanUtils.copyProperties(result.get(), problema);
+
+        return problema;
     }
 
     public ProblemaDTO add(ProblemaDTO problema) {
-        return problemaRepository.save(problema);
+        Problema novoProblema = new Problema() ;
+        BeanUtils.copyProperties(problema, novoProblema);
+
+        problemaRepository.save(novoProblema);
+
+        return problema;
     }
 
     @Override
@@ -54,6 +75,11 @@ public class ProblemaServiceImpl implements IProblemaService {
 //         TODO: Caso sim editar
 //
 //         TODO: Caso nao entregar uma excecao
-        return problemaRepository.save(problema);
+        Problema novoProblema = new Problema() ;
+        BeanUtils.copyProperties(problema, novoProblema);
+
+        problemaRepository.save(novoProblema);
+
+        return problema;
     }
 }
