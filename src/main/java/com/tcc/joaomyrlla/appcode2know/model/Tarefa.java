@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "TAREFA")
 @Data
@@ -38,5 +39,5 @@ public class Tarefa {
             joinColumns = @JoinColumn(name = "TAREFA_ID"),
             inverseJoinColumns = @JoinColumn(name = "PROBLEMA_ID"))
     @Lazy
-    private ArrayList<Problema> problemas;
+    private List<Problema> problemas;
 }

@@ -27,21 +27,25 @@ public class Usuario {
 
     private boolean ehProfessor;
 
-    @ManyToOne
-    @JoinColumn(name = "INSTITUICAO_ATUAL_ID")
-    private Instituicao instituicaoAtual;
+   @ManyToOne
+   @JoinColumn(name = "INSTITUICAO_ATUAL_ID")
+   private Instituicao instituicaoAtual;
 
     @ManyToMany
     @JoinTable(name = "USUARIO_INSTITUICAO",
             joinColumns = @JoinColumn(name = "USUARIO_ID"),
             inverseJoinColumns = @JoinColumn(name = "INSTITUICAO_ID"))
     @Lazy
-    private ArrayList<Instituicao> instituicoes;
+    private List<Instituicao> instituicoes;
 
     @ManyToMany
     @JoinTable(name = "PROFESSOR_TURMA",
             joinColumns = @JoinColumn(name = "PROFESSOR_ID"),
             inverseJoinColumns = @JoinColumn(name = "TURMA_ID"))
     @Lazy
-    private ArrayList<Turma> turmas;
+    private List<Turma> turmasProfessor;
+
+    @ManyToMany(mappedBy = "alunos")
+    @Lazy
+    private List<Turma> turmasAluno;
 }

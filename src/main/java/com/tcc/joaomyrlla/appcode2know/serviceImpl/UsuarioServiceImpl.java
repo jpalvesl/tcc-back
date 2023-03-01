@@ -1,7 +1,9 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
+import com.tcc.joaomyrlla.appcode2know.model.Turma;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
+import com.tcc.joaomyrlla.appcode2know.repository.TurmaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.IUsuarioService;
 
@@ -17,6 +19,9 @@ import java.util.Optional;
 public class UsuarioServiceImpl implements IUsuarioService {
     @Autowired
     UsuarioRepository usuarioRepository;
+
+    @Autowired
+    TurmaRepository turmaRepository;
 
     @Override
     public List<UsuarioDTO> findByInstituicao() {
@@ -49,7 +54,22 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     public List<UsuarioDTO> findByTurma(Long turmaId) {
         // TODO: implementar turma antes de implementar essa parte
-        return null;
+        List<Turma> result = turmaRepository.findAll()
+                .stream()
+                .filter(turma -> turma.getId().equals(turmaId))
+                .toList();
+
+        List<UsuarioDTO> usuariosDTOs = new ArrayList<>();
+
+        result.forEach(usuario -> {
+            UsuarioDTO usuarioDTO = new UsuarioDTO();
+            BeanUtils.copyProperties(usuario, usuarioDTO);
+
+
+            usuariosDTOs.add(usuarioDTO);
+        });
+
+        return usuariosDTOs;
     }
 
     @Override
