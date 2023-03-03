@@ -1,10 +1,8 @@
 package com.tcc.joaomyrlla.appcode2know.controller;
 
 import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
-import com.tcc.joaomyrlla.appcode2know.model.Usuario;
 import com.tcc.joaomyrlla.appcode2know.service.IUsuarioService;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +16,9 @@ public class UsuarioController {
     IUsuarioService usuarioService;
 
 
-    @GetMapping
-    public ResponseEntity<List<UsuarioDTO>> findByInstituicao() {
-        return ResponseEntity.ok().body(usuarioService.findByInstituicao());
+    @GetMapping("/instituicao/{instituicao_id}")
+    public ResponseEntity<List<UsuarioDTO>> findByInstituicao(@PathVariable("instituicao_id") Long instituicaoId) {
+        return ResponseEntity.ok().body(usuarioService.findByInstituicao(instituicaoId));
     }
 
     @GetMapping("/{id}")

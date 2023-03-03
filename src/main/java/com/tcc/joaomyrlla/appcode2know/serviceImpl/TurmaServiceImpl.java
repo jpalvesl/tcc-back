@@ -25,22 +25,17 @@ public class TurmaServiceImpl implements ITurmaService {
 
     @Override
     public List<TurmaDTO> findByInstituicao(Long instituicaoId) {
-        List<Turma> result = turmaRepository.findAll()
+        return turmaRepository.findAll()
                 .stream()
                 .filter(turma -> turma.getInstituicao().getId().equals(instituicaoId))
+                .map(turma -> {
+                    TurmaDTO turmaDTO = new TurmaDTO();
+                    BeanUtils.copyProperties(turma, turmaDTO);
+                    turmaDTO.setInstituicaoId(turma.getInstituicao().getId());
+
+                    return turmaDTO;
+                })
                 .toList();
-
-
-        ArrayList<TurmaDTO> turmaDTOS = new ArrayList<>();
-        for (Turma turma : result) {
-            TurmaDTO turmaDTO = new TurmaDTO();
-            BeanUtils.copyProperties(turma, turmaDTO);
-            turmaDTO.setInstituicaoId(turma.getInstituicao().getId());
-
-            turmaDTOS.add(turmaDTO);
-        }
-
-        return turmaDTOS;
     }
 
     @Override
@@ -51,18 +46,15 @@ public class TurmaServiceImpl implements ITurmaService {
             throw new RuntimeException("Usuário não existente");
         }
 
-        List<Turma> turmas = result.get().getTurmasAluno();
+        return result.get().getTurmasAluno()
+                .stream()
+                .map(turma -> {
+                    TurmaDTO turmaDTO = new TurmaDTO();
+                    BeanUtils.copyProperties(turma, turmaDTO);
 
-        List<TurmaDTO> turmaDTOS = new ArrayList<>();
-
-        for (Turma turma : turmas) {
-            TurmaDTO turmaDTO = new TurmaDTO();
-            BeanUtils.copyProperties(turma, turmaDTO);
-
-            turmaDTOS.add(turmaDTO);
-        }
-
-        return turmaDTOS;
+                    return turmaDTO;
+                })
+                .toList();
     }
 
     @Override

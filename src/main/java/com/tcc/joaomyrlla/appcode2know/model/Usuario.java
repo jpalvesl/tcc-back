@@ -32,13 +32,6 @@ public class Usuario {
    private Instituicao instituicaoAtual;
 
     @ManyToMany
-    @JoinTable(name = "USUARIO_INSTITUICAO",
-            joinColumns = @JoinColumn(name = "USUARIO_ID"),
-            inverseJoinColumns = @JoinColumn(name = "INSTITUICAO_ID"))
-    @Lazy
-    private List<Instituicao> instituicoes;
-
-    @ManyToMany
     @JoinTable(name = "PROFESSOR_TURMA",
             joinColumns = @JoinColumn(name = "PROFESSOR_ID"),
             inverseJoinColumns = @JoinColumn(name = "TURMA_ID"))

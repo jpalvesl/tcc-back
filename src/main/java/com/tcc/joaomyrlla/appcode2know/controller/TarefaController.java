@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("tarefa")
 public class TarefaController {
     @Autowired
     ITarefaService tarefaService;
@@ -34,8 +35,9 @@ public class TarefaController {
         return ResponseEntity.ok().body(tarefaService.edit(tarefa, usuarioId));
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Long id) {
-        tarefaService.delete(id);
+    @DeleteMapping("/{id}/usuario/{usuario_id}")
+    public void delete(@PathVariable("id") Long id,
+                       @PathVariable("usuario_id") Long usuarioId) {
+        tarefaService.delete(id, usuarioId);
     }
 }

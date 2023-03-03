@@ -53,6 +53,6 @@ public class Turma {
     @Lazy
     private List<Usuario> alunos;
 
-//    @OneToMany
-//    private List<Tarefa> tarefas;
+    @OneToMany
+    private List<Tarefa> tarefas;
 }
