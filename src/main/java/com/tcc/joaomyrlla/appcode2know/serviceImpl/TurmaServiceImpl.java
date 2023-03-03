@@ -1,9 +1,7 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.TurmaDTO;
-import com.tcc.joaomyrlla.appcode2know.model.Instituicao;
-import com.tcc.joaomyrlla.appcode2know.model.Turma;
-import com.tcc.joaomyrlla.appcode2know.model.Usuario;
+import com.tcc.joaomyrlla.appcode2know.model.*;
 import com.tcc.joaomyrlla.appcode2know.repository.TurmaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.ITurmaService;
@@ -92,5 +90,28 @@ public class TurmaServiceImpl implements ITurmaService {
     @Override
     public void delete(Long turmaId) {
         turmaRepository.deleteById(turmaId);
+    }
+
+    @Override
+    public void addAlunoEmTurma (Long turmaId, Long alunoId, Long criadorId){
+        Optional<Usuario> usuarioAluno = usuarioRepository.findById(alunoId);
+        Optional<Usuario> usuarioCriador = usuarioRepository.findById(criadorId);
+        if (usuarioAluno.isEmpty()) {
+            throw new RuntimeException("O usuário não existe");
+        }
+
+        if (usuarioCriador.isEmpty()) {
+            throw new RuntimeException("O usuário criador não existe");
+        }
+
+        Optional<Turma> turmaOptional = turmaRepository.findById(turmaId);
+        if(turmaOptional.isEmpty()){
+            throw new RuntimeException("Turma com o ID informado não existe");
+        }
+
+        //TODO: Verificar se o id passado pertence a um dos professores da turma
+
+        turmaOptional.get().getAlunos().add(usuarioAluno.get());
+        turmaRepository.save(turmaOptional.get());
     }
 }

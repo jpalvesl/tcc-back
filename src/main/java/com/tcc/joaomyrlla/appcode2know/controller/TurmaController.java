@@ -38,8 +38,15 @@ public class TurmaController {
 
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/usuario/{usuario_id}")
     public void delete(@PathVariable("id") Long id) {
         turmaService.delete(id);
+    }
+
+    @PostMapping("/{id}/aluno/{aluno_id}/criador/{criador_id}")
+    public void addAlunoEmTurma(@PathVariable("id") Long id,
+                                @PathVariable("aluno_id") Long alunoId,
+                                @PathVariable("criador_id") Long criadorId) {
+        turmaService.addAlunoEmTurma(id, alunoId, criadorId);
     }
 }

@@ -1,9 +1,11 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.TarefaDTO;
+import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import com.tcc.joaomyrlla.appcode2know.model.Tarefa;
 import com.tcc.joaomyrlla.appcode2know.model.Turma;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
+import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.TarefaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.TurmaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
@@ -29,6 +31,9 @@ public class TarefaServiceImpl implements ITarefaService {
 
     @Autowired
     TurmaRepository turmaRepository;
+
+    @Autowired
+    ProblemaRepository problemaRepository;
 
     @Override
     public List<TarefaDTO> findByAluno(Long alunoId) {
@@ -158,14 +163,18 @@ public class TarefaServiceImpl implements ITarefaService {
     public void delete(Long id, Long professorId) {
 
         Optional<Usuario> usuario = usuarioRepository.findById(professorId);
-        Optional<Tarefa> tarefa = tarefaRepository.findById(id);
-        Optional<Turma> turmaOptional = turmaRepository.findById(tarefa.get().getTurma().getId());
-
         if (usuario.isEmpty()) {
             throw new RuntimeException("O usuário não existe");
         }
 
+        Optional<Tarefa> tarefa = tarefaRepository.findById(id);
         if(tarefa.isEmpty()){
+            throw new RuntimeException("Tarefa com o ID informado não existe");
+        }
+
+
+        Optional<Turma> turmaOptional = turmaRepository.findById(tarefa.get().getTurma().getId());
+        if(turmaOptional.isEmpty()){
             throw new RuntimeException("Tarefa com o ID informado não existe");
         }
 
@@ -173,11 +182,35 @@ public class TarefaServiceImpl implements ITarefaService {
             throw new RuntimeException("O usuário não tem permissão para deletar a tarefa");
         }
 
-
-
         Turma turma = turmaOptional.get();
         turma.getTarefas().remove(tarefa.get());
         tarefaRepository.deleteById(id);
 
+    }
+
+    @Override
+    public void addProblemaEmTarefa(Long problemaId, long tarefaId, long usuarioId){
+
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuarioId);
+        if (usuarioOptional.isEmpty()) {
+            throw new RuntimeException("O usuário não existe");
+        }
+
+        Optional<Tarefa> tarefaOptional = tarefaRepository.findById(tarefaId);
+        if(tarefaOptional.isEmpty()){
+            throw new RuntimeException("Tarefa com o ID informado não existe");
+        }
+
+        Optional<Problema> problemaOptional = problemaRepository.findById(problemaId);
+        if(problemaOptional.isEmpty()){
+            throw new RuntimeException("Problema com o ID informado não existe");
+        }
+
+        if(!(usuarioOptional.get().isEhProfessor()) || !(tarefaOptional.get().getCriador().getId().equals(usuarioId))){
+            throw new RuntimeException("O usuário não tem permissão para deletar a tarefa");
+        }
+
+        tarefaOptional.get().getProblemas().add(problemaOptional.get());
+        tarefaRepository.save(tarefaOptional.get());
     }
 }

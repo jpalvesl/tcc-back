@@ -31,14 +31,14 @@ public class ProblemaController {
         return ResponseEntity.ok().body(problemaService.add(problema));
     }
 
-   @PatchMapping("/usuario/{usuario_id}")
-   ResponseEntity<ProblemaDTO> edit(@RequestBody ProblemaDTO problema,
-                               @PathVariable("usuario_id") Long usuarioId) {
+    @PatchMapping("/usuario/{usuario_id}")
+    ResponseEntity<ProblemaDTO> edit(@RequestBody ProblemaDTO problema,
+                                     @PathVariable("usuario_id") Long usuarioId) {
         return ResponseEntity.ok().body(problemaService.edit(problema, usuarioId));
-   }
+    }
 
-   @DeleteMapping("/{id}/usuario/{criador_id}")
-   public void delete(@PathVariable("id") Long id, @PathVariable("criador_id") Long criadorId) {
-       problemaService.delete(id,criadorId);
-   }
+    @DeleteMapping("/{id}/usuario/{criador_id}")
+    public void delete(@PathVariable("id") Long id, @PathVariable("criador_id") Long criadorId) {
+        problemaService.delete(id, criadorId);
+    }
 }

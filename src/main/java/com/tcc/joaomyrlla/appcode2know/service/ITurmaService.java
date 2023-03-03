@@ -15,4 +15,6 @@ public interface ITurmaService {
     TurmaDTO edit(TurmaDTO turma, Long professorId);
 
     void delete(Long turmaId);
+
+    void addAlunoEmTurma (Long turmaId, Long alunoId, Long criadorId);
 }

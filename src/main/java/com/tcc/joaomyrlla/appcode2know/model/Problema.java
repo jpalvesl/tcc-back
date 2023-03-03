@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.context.annotation.Lazy;
 
+import java.util.List;
+
 @Table(name = "PROBLEMA")
 @Data
 @Entity
@@ -28,4 +30,8 @@ public class Problema {
     @JoinColumn(name = "CRIADOR_ID")
     @Lazy
     private Usuario criador;
+
+    @ManyToMany(mappedBy = "problemas")
+    @Lazy
+    private List<Tarefa> tarefas;
 }
