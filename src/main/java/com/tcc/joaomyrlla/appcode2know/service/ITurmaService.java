@@ -17,4 +17,6 @@ public interface ITurmaService {
     void delete(Long turmaId);
 
     void addAlunoEmTurma (Long turmaId, Long alunoId, Long criadorId);
+
+    void removerAlunoDaTurma (Long turmaId, Long alunoId, Long professorId);
 }

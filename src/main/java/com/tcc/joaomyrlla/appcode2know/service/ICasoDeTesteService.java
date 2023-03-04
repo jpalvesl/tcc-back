@@ -7,7 +7,7 @@ import java.util.List;
 public interface ICasoDeTesteService {
     List<CasoDeTesteDTO> findBySubmissao(Long submissaoId);
 
-    CasoDeTesteDTO add(CasoDeTesteDTO casoDeTeste);
+    CasoDeTesteDTO add(CasoDeTesteDTO casoDeTeste, Long problemaId, Long criadorId);
 
     CasoDeTesteDTO edit(CasoDeTesteDTO casoDeTeste);
 

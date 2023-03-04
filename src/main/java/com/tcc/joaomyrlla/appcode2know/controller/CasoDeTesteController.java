@@ -20,9 +20,11 @@ public class CasoDeTesteController {
         return ResponseEntity.ok().body(casoDeTesteService.findBySubmissao(submissaoId));
     }
 
-    @PostMapping
-    public ResponseEntity<CasoDeTesteDTO> add(@RequestBody CasoDeTesteDTO casoDeTeste) {
-        return ResponseEntity.ok().body(casoDeTesteService.add(casoDeTeste));
+    @PostMapping("/problema/{problema_id}/criador/{criador_id}")
+    public ResponseEntity<CasoDeTesteDTO> add(@PathVariable("problema_id") Long problemaId,
+                                              @PathVariable("criador_id") Long criadorId,
+                                              @RequestBody CasoDeTesteDTO casoDeTeste) {
+        return ResponseEntity.ok().body(casoDeTesteService.add(casoDeTeste, problemaId, criadorId));
     }
 
     @PatchMapping("/usuario/{usuario_id}")

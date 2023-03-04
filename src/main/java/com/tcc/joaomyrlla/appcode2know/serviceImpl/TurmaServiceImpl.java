@@ -114,4 +114,30 @@ public class TurmaServiceImpl implements ITurmaService {
         turmaOptional.get().getAlunos().add(usuarioAluno.get());
         turmaRepository.save(turmaOptional.get());
     }
+
+
+    @Override
+    public void removerAlunoDaTurma (Long turmaId, Long alunoId, Long professorId){
+
+        Optional<Usuario> usuarioAluno = usuarioRepository.findById(alunoId);
+        Optional<Usuario> usuarioCriador = usuarioRepository.findById(professorId);
+        if (usuarioAluno.isEmpty()) {
+            throw new RuntimeException("O usuário não existe");
+        }
+
+        if (usuarioCriador.isEmpty()) {
+            throw new RuntimeException("O usuário criador não existe");
+        }
+
+        Optional<Turma> turmaOptional = turmaRepository.findById(turmaId);
+        if(turmaOptional.isEmpty()){
+            throw new RuntimeException("Turma com o ID informado não existe");
+        }
+
+        //TODO: Verificar se o id passado pertence a um dos professores da turma
+
+        turmaOptional.get().getAlunos().remove(usuarioAluno.get());
+        turmaRepository.save(turmaOptional.get());
+
+    }
 }

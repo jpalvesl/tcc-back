@@ -34,4 +34,7 @@ public class Problema {
     @ManyToMany(mappedBy = "problemas")
     @Lazy
     private List<Tarefa> tarefas;
+
+    @OneToMany(mappedBy = "problema")
+    private List<CasoDeTeste> casosDeTeste;
 }

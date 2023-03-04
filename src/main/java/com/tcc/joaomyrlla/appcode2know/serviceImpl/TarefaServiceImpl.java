@@ -189,7 +189,7 @@ public class TarefaServiceImpl implements ITarefaService {
     }
 
     @Override
-    public void addProblemaEmTarefa(Long problemaId, long tarefaId, long usuarioId){
+    public void addProblemaEmTarefa(Long problemaId, Long tarefaId, Long usuarioId){
 
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuarioId);
         if (usuarioOptional.isEmpty()) {
@@ -212,5 +212,32 @@ public class TarefaServiceImpl implements ITarefaService {
 
         tarefaOptional.get().getProblemas().add(problemaOptional.get());
         tarefaRepository.save(tarefaOptional.get());
+    }
+
+    @Override
+    public void removerProblemaEmTarefa(Long problemaId, Long tarefaId, Long usuarioId){
+
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuarioId);
+        if (usuarioOptional.isEmpty()) {
+            throw new RuntimeException("O usuário não existe");
+        }
+
+        Optional<Tarefa> tarefaOptional = tarefaRepository.findById(tarefaId);
+        if(tarefaOptional.isEmpty()){
+            throw new RuntimeException("Tarefa com o ID informado não existe");
+        }
+
+        Optional<Problema> problemaOptional = problemaRepository.findById(problemaId);
+        if(problemaOptional.isEmpty()){
+            throw new RuntimeException("Problema com o ID informado não existe");
+        }
+
+        if(!(usuarioOptional.get().isEhProfessor()) || !(tarefaOptional.get().getCriador().getId().equals(usuarioId))){
+            throw new RuntimeException("O usuário não tem permissão para deletar a tarefa");
+        }
+
+        tarefaOptional.get().getProblemas().remove(problemaOptional.get());
+        tarefaRepository.save(tarefaOptional.get());
+
     }
 }

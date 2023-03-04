@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Table(name = "SUBMISSAO")
 @Data
@@ -33,10 +34,7 @@ public class Submissao {
     @JoinColumn(name = "PROBLEMA_ID")
     private Problema problema;
 
-    @ManyToMany
-    @JoinTable(name = "SUBMISSAO_CASOS_TESTE",
-            joinColumns = @JoinColumn(name = "SUBMISSAO_ID"),
-            inverseJoinColumns = @JoinColumn(name = "CASO_TESTE_ID"))
+    @OneToMany(mappedBy = "submissao")
     @Lazy
-    private List<CasoDeTeste> casosDeTeste;
+    private Set<SubmissaoCasoDeTeste> casosDeTeste;
 }
