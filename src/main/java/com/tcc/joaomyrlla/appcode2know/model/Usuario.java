@@ -15,21 +15,27 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(nullable = false)
     private String nome;
 
+    @Column(nullable = false)
     private String email;
 
+    @Column(nullable = false, length = 30)
     private String usuario;
 
+    @Column(nullable = false, length = 20)
     private String senha;
 
+    @Column(nullable = false)
     private boolean ehAdm;
 
+    @Column(nullable = false)
     private boolean ehProfessor;
 
-   @ManyToOne
-   @JoinColumn(name = "INSTITUICAO_ATUAL_ID")
-   private Instituicao instituicaoAtual;
+    @ManyToOne
+    @JoinColumn(name = "INSTITUICAO_ATUAL_ID")
+    private Instituicao instituicaoAtual = new Instituicao();
 
     @ManyToMany
     @JoinTable(name = "PROFESSOR_TURMA",

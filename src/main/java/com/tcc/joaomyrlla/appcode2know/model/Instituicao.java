@@ -14,8 +14,10 @@ public class Instituicao {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(nullable = false)
     private String nome;
 
+    @Column(nullable = false, length = 100)
     private String campus;
 
     @OneToMany(mappedBy = "instituicaoAtual")

@@ -15,11 +15,13 @@ public class CasoDeTeste {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     private String entrada;
-    
+
+    @Column(nullable = false)
     private String saida;
-    
+
+    @Column(nullable = false)
     private int caso;
 
     @ManyToOne

@@ -18,16 +18,18 @@ public class Turma {
     private Long id;
 
     @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
     private Date dtAbertura;
 
     @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
     private Date dtEncerramento;
 
-    private String titulo;
-
+    @Column(nullable = false)
     private String nomeTurma;
 
-    private String Semestre;
+    @Column(nullable = false)
+    private String semestre;
 
     @ManyToOne
     @JoinColumn(name = "INSTITUICAO_ID")

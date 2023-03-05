@@ -18,5 +18,6 @@ public class SubmissaoCasoDeTeste {
     @JoinColumn(name = "caso_teste_id")
     private CasoDeTeste casoDeTeste;
 
+    @Column(nullable = false)
     private String estado;
 }

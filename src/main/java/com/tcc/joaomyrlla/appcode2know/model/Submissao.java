@@ -16,14 +16,19 @@ public class Submissao {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(nullable = false)
     private int caso;
-    
+
+    @Column(nullable = false)
     private String codigoResposta;
     
+    @Column(nullable = false)
     private String saida; // saida a ser comparada com o problema
     
+    @Column(nullable = false)
     private String status;
 
+    @Column(nullable = false)
     private Long tempoExecucao;
 
     @ManyToOne
