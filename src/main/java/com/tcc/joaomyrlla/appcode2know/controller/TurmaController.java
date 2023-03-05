@@ -3,6 +3,7 @@ package com.tcc.joaomyrlla.appcode2know.controller;
 import com.tcc.joaomyrlla.appcode2know.dto.TurmaDTO;
 import com.tcc.joaomyrlla.appcode2know.service.ITurmaService;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +27,13 @@ public class TurmaController {
     }
 
     @PostMapping
-    public ResponseEntity<TurmaDTO> add(@RequestBody TurmaDTO turma) {
+    public ResponseEntity<TurmaDTO> add(@Valid @RequestBody TurmaDTO turma) {
         return ResponseEntity.ok().body(turmaService.add(turma));
     }
 
     @PatchMapping("/usuario/{usuario_id}")
     public ResponseEntity<TurmaDTO> edit(@PathVariable("usuario_id") Long usuarioId,
-                                       @RequestBody TurmaDTO turma) {
+                                         @Valid @RequestBody TurmaDTO turma) {
 
         return ResponseEntity.ok().body(turmaService.edit(turma, usuarioId));
 

@@ -3,6 +3,7 @@ package com.tcc.joaomyrlla.appcode2know.controller;
 import com.tcc.joaomyrlla.appcode2know.service.IProblemaService;
 import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,12 +28,12 @@ public class ProblemaController {
     }
 
     @PostMapping
-    public ResponseEntity<ProblemaDTO> add(@RequestBody ProblemaDTO problema) {
+    public ResponseEntity<ProblemaDTO> add(@Valid @RequestBody ProblemaDTO problema) {
         return ResponseEntity.ok().body(problemaService.add(problema));
     }
 
     @PatchMapping("/usuario/{usuario_id}")
-    ResponseEntity<ProblemaDTO> edit(@RequestBody ProblemaDTO problema,
+    ResponseEntity<ProblemaDTO> edit(@Valid @RequestBody ProblemaDTO problema,
                                      @PathVariable("usuario_id") Long usuarioId) {
         return ResponseEntity.ok().body(problemaService.edit(problema, usuarioId));
     }

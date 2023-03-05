@@ -4,6 +4,7 @@ import com.tcc.joaomyrlla.appcode2know.dto.SubmissaoDTO;
 import com.tcc.joaomyrlla.appcode2know.model.Submissao;
 import com.tcc.joaomyrlla.appcode2know.service.ISubmissaoService;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class SubmissaoController {
     }
 
     @PostMapping("/problema/{problema_id}/usuario/{usuario_id}")
-    public HashMap<String, Object> realizaSubmissao(@RequestBody SubmissaoDTO submissao, @PathVariable("problema_id") Long problemaId, @PathVariable("usuario_id") Long usuarioId) throws IOException, InterruptedException {
+    public HashMap<String, Object> realizaSubmissao(@Valid @RequestBody SubmissaoDTO submissao, @PathVariable("problema_id") Long problemaId, @PathVariable("usuario_id") Long usuarioId) throws IOException, InterruptedException {
 
         Submissao novaSubmissao = new Submissao();
         BeanUtils.copyProperties(submissao, novaSubmissao);

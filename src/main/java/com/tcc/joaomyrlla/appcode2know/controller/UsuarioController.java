@@ -3,6 +3,7 @@ package com.tcc.joaomyrlla.appcode2know.controller;
 import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
 import com.tcc.joaomyrlla.appcode2know.service.IUsuarioService;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,13 +33,13 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioDTO> cadastrar(@RequestBody UsuarioDTO usuario) {
+    public ResponseEntity<UsuarioDTO> cadastrar(@Valid @RequestBody UsuarioDTO usuario) {
         return ResponseEntity.ok().body(usuarioService.add(usuario));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<UsuarioDTO> edit(@PathVariable("id") Long id,
-                                       @RequestBody UsuarioDTO usuario) {
+                                           @Valid @RequestBody UsuarioDTO usuario) {
         return ResponseEntity.ok().body(usuarioService.edit(usuario));
     }
 

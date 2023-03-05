@@ -2,6 +2,7 @@ package com.tcc.joaomyrlla.appcode2know.controller;
 
 import com.tcc.joaomyrlla.appcode2know.dto.TarefaDTO;
 import com.tcc.joaomyrlla.appcode2know.service.ITarefaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +26,13 @@ public class TarefaController {
     }
 
     @PostMapping
-    public ResponseEntity<TarefaDTO> add(@RequestBody TarefaDTO tarefa) {
+    public ResponseEntity<TarefaDTO> add(@Valid @RequestBody TarefaDTO tarefa) {
         return ResponseEntity.ok().body(tarefaService.add(tarefa));
     }
 
     @PatchMapping("/usuario/{usuario_id}")
     public ResponseEntity<TarefaDTO> edit(@PathVariable("usuario_id") Long usuarioId,
-                                       @RequestBody TarefaDTO tarefa) {
+                                          @Valid @RequestBody TarefaDTO tarefa) {
         return ResponseEntity.ok().body(tarefaService.edit(tarefa, usuarioId));
     }
 
