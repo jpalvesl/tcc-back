@@ -27,7 +27,7 @@ public class TurmaController {
     }
 
     @PostMapping
-    public ResponseEntity<TurmaDTO> add(@Valid @RequestBody TurmaDTO turma) {
+    public ResponseEntity<TurmaDTO> add(@RequestBody TurmaDTO turma) {
         return ResponseEntity.ok().body(turmaService.add(turma));
     }
 
@@ -40,8 +40,8 @@ public class TurmaController {
     }
 
     @DeleteMapping("/{id}/usuario/{usuario_id}")
-    public void delete(@PathVariable("id") Long id) {
-        turmaService.delete(id);
+    public void delete(@PathVariable("id") Long id, Long professorId) {
+        turmaService.delete(id, professorId);
     }
 
     @PostMapping("/{id}/aluno/{aluno_id}/criador/{criador_id}")

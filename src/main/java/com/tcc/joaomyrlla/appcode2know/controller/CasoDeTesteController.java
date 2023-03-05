@@ -31,11 +31,11 @@ public class CasoDeTesteController {
     @PatchMapping("/usuario/{usuario_id}")
     public ResponseEntity<CasoDeTesteDTO> edit(@PathVariable("usuario_id") Long usuarioId,
                                                @Valid @RequestBody CasoDeTesteDTO casoDeTeste) {
-        return ResponseEntity.ok().body(casoDeTesteService.edit(casoDeTeste));
+        return ResponseEntity.ok().body(casoDeTesteService.edit(casoDeTeste, usuarioId));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Long id) {
-        casoDeTesteService.delete(id);
+    public void delete(@PathVariable("id") Long id, Long criadorId) {
+        casoDeTesteService.delete(id, criadorId);
     }
 }

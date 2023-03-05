@@ -11,10 +11,8 @@ import lombok.NoArgsConstructor;
 public class UsuarioDTO {
   private Long id;
 
-  @NotBlank(message = "O atributo ehAdm é obrigatório")
   private boolean ehAdm;
 
-  @NotBlank(message = "O atributo ehProfessor é obrigatório")
   private boolean ehProfessor;
 
   @NotBlank(message = "O atributo ehProfessor é obrigatório")

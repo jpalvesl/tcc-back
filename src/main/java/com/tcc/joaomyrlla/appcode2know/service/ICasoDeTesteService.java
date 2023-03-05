@@ -9,7 +9,7 @@ public interface ICasoDeTesteService {
 
     CasoDeTesteDTO add(CasoDeTesteDTO casoDeTeste, Long problemaId, Long criadorId);
 
-    CasoDeTesteDTO edit(CasoDeTesteDTO casoDeTeste);
+    CasoDeTesteDTO edit(CasoDeTesteDTO casoDeTeste, Long criadorId);
 
-    void delete(Long id);
+    void delete(Long id, Long criadorId);
 }

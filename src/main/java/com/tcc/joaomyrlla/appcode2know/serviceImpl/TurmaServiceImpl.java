@@ -2,6 +2,7 @@ package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.TurmaDTO;
 import com.tcc.joaomyrlla.appcode2know.model.*;
+import com.tcc.joaomyrlla.appcode2know.repository.InstituicaoRespository;
 import com.tcc.joaomyrlla.appcode2know.repository.TurmaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.ITurmaService;
@@ -9,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,9 @@ public class TurmaServiceImpl implements ITurmaService {
 
     @Autowired
     UsuarioRepository usuarioRepository;
+
+    @Autowired
+    InstituicaoRespository instituicaoRespository;
 
     @Override
     public List<TurmaDTO> findByInstituicao(Long instituicaoId) {
@@ -57,8 +62,19 @@ public class TurmaServiceImpl implements ITurmaService {
 
     @Override
     public TurmaDTO add(TurmaDTO turma) {
+
+        Optional<Instituicao> instituicaoOptional = instituicaoRespository.findById(turma.getInstituicaoId());
+
+        if(instituicaoOptional.isEmpty()){
+            throw new RuntimeException("A instituição não existe");
+        }
+
+        //TODO: Verificar se os professores passados na lista existem
+
         Turma novaTurma = new Turma();
         BeanUtils.copyProperties(turma, novaTurma);
+
+        turma.setTitulo(String.join(" - ",novaTurma.getNomeTurma(), novaTurma.getSemestre()));
 
 
         Instituicao instituicao = new Instituicao();
@@ -74,6 +90,17 @@ public class TurmaServiceImpl implements ITurmaService {
 
     @Override
     public TurmaDTO edit(TurmaDTO turma, Long professorId) {
+
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(professorId);
+        if (usuarioOptional.isEmpty()) {
+            throw new RuntimeException("O usuário de Id " + professorId + " não existe");
+        }
+        if (turmaRepository.existsById(turma.getId())) {
+            throw new RuntimeException(String.format("Turma com id %d não existe", turma.getId()));
+        }
+
+        //TODO: Verificar se o id passado pertence a um professor que está na lista de professores da turma
+
         Turma turmaEditada = new Turma();
         BeanUtils.copyProperties(turma, turmaEditada);
 
@@ -88,7 +115,22 @@ public class TurmaServiceImpl implements ITurmaService {
     }
 
     @Override
-    public void delete(Long turmaId) {
+    public void delete(Long turmaId, Long professorId) {
+
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(professorId);
+
+        if (usuarioOptional.isEmpty()) {
+            throw new RuntimeException("O usuário de Id " + professorId + " não existe");
+        }
+
+        Optional<Turma> turmaOptional = turmaRepository.findById(turmaId);
+
+        if(turmaOptional.isEmpty()){
+            throw new RuntimeException("A turma de Id " + turmaId + " não existe");
+        }
+
+        //TODO: Verificar se o professorId pertence a um professor e a lista de professores da turma
+
         turmaRepository.deleteById(turmaId);
     }
 

@@ -1,5 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
+import com.tcc.joaomyrlla.appcode2know.exceptions.InstituicaoNaoEncontradaException;
 import com.tcc.joaomyrlla.appcode2know.model.Instituicao;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
 import com.tcc.joaomyrlla.appcode2know.dto.InstituicaoDTO;
@@ -40,8 +41,7 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
 
     @Override
     public InstituicaoDTO findById(Long id) {
-        Optional<Instituicao> instituicao = instituicaoRespository.findById(id);
-        if (instituicao.isEmpty()) return null;
+        Optional<Instituicao> instituicao = Optional.ofNullable(instituicaoRespository.findById(id).orElseThrow(InstituicaoNaoEncontradaException::new));
 
         InstituicaoDTO instituicaoDTO = new InstituicaoDTO();
 
@@ -65,13 +65,13 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
     @Transactional
     public void delete(Long id, Long usuarioId) {
         
-        Optional<Usuario> usuario = usuarioRepository.findById(usuarioId);
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioId);
 
-        if (usuario.isEmpty()) {
+        if (optionalUsuario.isEmpty()) {
             throw new RuntimeException("O usuário não existe");
         }
 
-        if (!(usuario.get().isEhAdm())) {
+        if (!(optionalUsuario.get().isEhAdm())) {
             throw new RuntimeException("O usuário não tem permissão para deletar a instituição");
         }
 
@@ -80,18 +80,17 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
         }
 
         List<Usuario> result = usuarioRepository.findAll();
-        result.forEach(usuario1 -> {
-            if(usuario.get().getInstituicaoAtual().getId().equals(id)){
-                usuario.get().setInstituicaoAtual(null);
-                Usuario usuarioMod = new Usuario();
-                BeanUtils.copyProperties(usuario, usuarioMod);
-                usuarioRepository.save(usuarioMod);
-            }
-        });
 
+        result.stream()
+                .filter(usuario -> usuario.getInstituicaoAtual() != null && usuario.getInstituicaoAtual().getId().equals(id))
+                .forEach(usuario -> {
+                    usuario.setInstituicaoAtual(null);
+                    Usuario usuarioMod = new Usuario();
+                    BeanUtils.copyProperties(usuario, usuarioMod);
+                    usuarioRepository.save(usuarioMod);
+                });
 
         instituicaoRespository.deleteById(id);
-
     }
 
     @Override
