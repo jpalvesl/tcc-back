@@ -1,6 +1,7 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.TurmaDTO;
+import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
 import com.tcc.joaomyrlla.appcode2know.model.*;
 import com.tcc.joaomyrlla.appcode2know.repository.InstituicaoRespository;
 import com.tcc.joaomyrlla.appcode2know.repository.TurmaRepository;
@@ -8,10 +9,9 @@ import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.ITurmaService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
-import java.lang.instrument.Instrumentation;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,7 +61,7 @@ public class TurmaServiceImpl implements ITurmaService {
     }
 
     @Override
-    public TurmaDTO add(TurmaDTO turma) {
+    public TurmaDTO add(TurmaDTO turma, Long criadorId) {
 
         Optional<Instituicao> instituicaoOptional = instituicaoRespository.findById(turma.getInstituicaoId());
 
@@ -69,7 +69,15 @@ public class TurmaServiceImpl implements ITurmaService {
             throw new RuntimeException("A instituição não existe");
         }
 
-        //TODO: Verificar se os professores passados na lista existem
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(criadorId);
+        if(usuarioOptional.isEmpty()){
+            throw new RuntimeException("O usuário de Id " + criadorId + " não existe");
+        }
+
+        if(!(usuarioOptional.get().isEhProfessor())){
+            throw new RuntimeException("O usuário de Id " + criadorId + " não tem permissão para criar uma turma");
+        }
+
 
         Turma novaTurma = new Turma();
         BeanUtils.copyProperties(turma, novaTurma);
@@ -92,6 +100,8 @@ public class TurmaServiceImpl implements ITurmaService {
     public TurmaDTO edit(TurmaDTO turma, Long professorId) {
 
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(professorId);
+
+        Optional<Turma> turmaOptional = turmaRepository.findById(turma.getId());
         if (usuarioOptional.isEmpty()) {
             throw new RuntimeException("O usuário de Id " + professorId + " não existe");
         }
@@ -100,6 +110,12 @@ public class TurmaServiceImpl implements ITurmaService {
         }
 
         //TODO: Verificar se o id passado pertence a um professor que está na lista de professores da turma
+
+        turmaOptional.get().getProfessores().forEach(professor -> {
+            if(!professor.getId().equals(professorId)){
+                throw new RuntimeException("O usuário de Id " + professorId + " não tem permissão para editar uma turma");
+            }
+        });
 
         Turma turmaEditada = new Turma();
         BeanUtils.copyProperties(turma, turmaEditada);
@@ -130,6 +146,11 @@ public class TurmaServiceImpl implements ITurmaService {
         }
 
         //TODO: Verificar se o professorId pertence a um professor e a lista de professores da turma
+        turmaOptional.get().getProfessores().forEach(professor -> {
+            if(!professor.getId().equals(professorId)){
+                throw new RuntimeException("O usuário de Id " + professorId + " não tem permissão para deletar uma turma");
+            }
+        });
 
         turmaRepository.deleteById(turmaId);
     }
@@ -152,6 +173,11 @@ public class TurmaServiceImpl implements ITurmaService {
         }
 
         //TODO: Verificar se o id passado pertence a um dos professores da turma
+        turmaOptional.get().getProfessores().forEach(professor -> {
+            if(!professor.getId().equals(criadorId)){
+                throw new RuntimeException("O usuário de Id " + criadorId + " não tem permissão para adicionar alunos na turma");
+            }
+        });
 
         turmaOptional.get().getAlunos().add(usuarioAluno.get());
         turmaRepository.save(turmaOptional.get());
@@ -178,8 +204,79 @@ public class TurmaServiceImpl implements ITurmaService {
 
         //TODO: Verificar se o id passado pertence a um dos professores da turma
 
+        turmaOptional.get().getProfessores().forEach(professor -> {
+            if(!professor.getId().equals(professorId)){
+                throw new RuntimeException("O usuário de Id " + professorId + " não tem permissão para remover alunos da turma");
+            }
+        });
+
         turmaOptional.get().getAlunos().remove(usuarioAluno.get());
         turmaRepository.save(turmaOptional.get());
 
+    }
+
+    @Override
+    public void addProfessorEmTurma(Long turmaId, Long professorId, Long professorAdicionadoId) {
+        Optional<Turma> optionalTurma = turmaRepository.findById(turmaId);
+        Optional<Usuario> optionalProfessor = usuarioRepository.findById(professorId);
+        Optional<Usuario> optionalProfessorAdicionado = usuarioRepository.findById(professorAdicionadoId);
+
+        if (optionalTurma.isEmpty()) {
+            throw new RuntimeException("Turma não encontrada");
+        }
+
+        if (optionalProfessor.isEmpty()) {
+            throw new RuntimeException("Professor não encontrado");
+        }
+        if (optionalProfessorAdicionado.isEmpty()) {
+            throw new RuntimeException("Professor de Id" + professorAdicionadoId + " não existe");
+        }
+
+        if (!optionalProfessor.get().isEhProfessor()) {
+            throw new RuntimeException("O usuário de Id " + professorId + " não tem permissão para adicionar professores");
+        }
+
+        if (!optionalProfessorAdicionado.get().isEhProfessor()) {
+            throw new RuntimeException("O Id " + professorAdicionadoId + " não pertence a um professor");
+        }
+
+        Turma turma = optionalTurma.get();
+        Usuario professor = optionalProfessor.get();
+
+        turma.getProfessores().add(professor);
+
+        turmaRepository.save(turma);
+    }
+
+    @Override
+    public void removerProfessorDaTurma(Long turmaId, Long professorId, Long professorAdicionadoId) {
+        Optional<Turma> optionalTurma = turmaRepository.findById(turmaId);
+        Optional<Usuario> optionalProfessor = usuarioRepository.findById(professorId);
+        Optional<Usuario> optionalProfessorAdicionado = usuarioRepository.findById(professorAdicionadoId);
+
+        if (optionalTurma.isEmpty()) {
+            throw new RuntimeException("Turma não encontrada");
+        }
+
+        if (optionalProfessor.isEmpty()) {
+            throw new RuntimeException("Professor não encontrado");
+        }
+        if (optionalProfessorAdicionado.isEmpty()) {
+            throw new RuntimeException("Professor de Id" + professorAdicionadoId + " não existe");
+        }
+
+        if (!optionalProfessor.get().isEhProfessor()) {
+            throw new RuntimeException("O usuário de Id " + professorId + " não tem permissão para remover professores");
+        }
+
+        if (!optionalProfessorAdicionado.get().isEhProfessor()) {
+            throw new RuntimeException("O Id " + professorAdicionadoId + " não pertence a um professor");
+        }
+
+        Turma turma = optionalTurma.get();
+        Usuario professor = optionalProfessor.get();
+
+        turma.getProfessores().remove(professor);
+        turmaRepository.save(turma);
     }
 }

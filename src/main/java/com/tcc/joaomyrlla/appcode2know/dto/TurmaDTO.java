@@ -27,5 +27,6 @@ public class TurmaDTO {
   @NotBlank(message = "O atributo semestre é obrigatório")
   private String Semestre;
 
+  @NotNull
   private Long instituicaoId;
 }

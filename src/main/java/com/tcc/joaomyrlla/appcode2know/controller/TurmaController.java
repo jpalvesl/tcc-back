@@ -26,9 +26,10 @@ public class TurmaController {
         return ResponseEntity.ok().body(turmaService.findByUsuario(usuarioId));
     }
 
-    @PostMapping
-    public ResponseEntity<TurmaDTO> add(@RequestBody TurmaDTO turma) {
-        return ResponseEntity.ok().body(turmaService.add(turma));
+    @PostMapping("/criador/{criador_id}")
+    public ResponseEntity<TurmaDTO> add(@Valid @RequestBody TurmaDTO turma,
+                                        @PathVariable("criador_id") Long criadorId) {
+        return ResponseEntity.ok().body(turmaService.add(turma, criadorId));
     }
 
     @PatchMapping("/usuario/{usuario_id}")
@@ -40,7 +41,8 @@ public class TurmaController {
     }
 
     @DeleteMapping("/{id}/usuario/{usuario_id}")
-    public void delete(@PathVariable("id") Long id, Long professorId) {
+    public void delete(@PathVariable("id") Long id,
+                       @PathVariable("usuario_id") Long professorId) {
         turmaService.delete(id, professorId);
     }
 
@@ -49,5 +51,26 @@ public class TurmaController {
                                 @PathVariable("aluno_id") Long alunoId,
                                 @PathVariable("criador_id") Long criadorId) {
         turmaService.addAlunoEmTurma(id, alunoId, criadorId);
+    }
+
+    @DeleteMapping("/{id}/aluno/{aluno_id}/criador/{criador_id}")
+    public void removerAlunoDaTurma(@PathVariable("id") Long id,
+                                    @PathVariable("aluno_id") Long alunoId,
+                                    @PathVariable("criador_id") Long criadorId) {
+        turmaService.removerAlunoDaTurma(id, alunoId, criadorId);
+    }
+
+    @PostMapping("/{id}/professor/{professor_id}/professor_adicionado/{professor_adicionado_id}")
+    public void addProfessorEmTurma(@PathVariable("id") Long turmaId,
+                                    @PathVariable("professor_id") Long professorId,
+                                    @PathVariable("professor_adicionado_id") Long professorAdicionadoId) {
+        turmaService.addProfessorEmTurma(turmaId, professorId, professorAdicionadoId);
+    }
+
+    @DeleteMapping("/{id}/professor/{professor_id}/professor_adicionado/{professor_adicionado_id}")
+    public void removerProfessorDaTurma(@PathVariable("id") Long turmaId,
+                                        @PathVariable("professor_id") Long professorId,
+                                        @PathVariable("professor_adicionado_id") Long professorAdicionadoId) {
+        turmaService.removerProfessorDaTurma(turmaId, professorId, professorAdicionadoId);
     }
 }

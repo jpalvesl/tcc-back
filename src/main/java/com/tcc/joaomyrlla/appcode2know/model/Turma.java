@@ -35,10 +35,12 @@ public class Turma {
     @JoinColumn(name = "INSTITUICAO_ID")
     private Instituicao instituicao;
 
-//    @ManyToMany
-//    @Lazy
-//    @WhereJoinTable(clause =  "EH_PROFESSOR = true ")
-//    private ArrayList<Usuario> professores;
+    @ManyToMany
+    @JoinTable(name = "PROFESSOR_TURMA",
+            joinColumns = @JoinColumn(name = "TURMA_ID"),
+            inverseJoinColumns = @JoinColumn(name = "PROFESSOR_ID"))
+    @Lazy
+    private List<Usuario> professores;
 
     @ManyToMany
     @JoinTable(name = "MONITOR_TURMA",

@@ -1,6 +1,5 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
-import com.tcc.joaomyrlla.appcode2know.exceptions.InstituicaoNaoEncontradaException;
 import com.tcc.joaomyrlla.appcode2know.model.Instituicao;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
 import com.tcc.joaomyrlla.appcode2know.dto.InstituicaoDTO;
@@ -41,7 +40,7 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
 
     @Override
     public InstituicaoDTO findById(Long id) {
-        Optional<Instituicao> instituicao = Optional.ofNullable(instituicaoRespository.findById(id).orElseThrow(InstituicaoNaoEncontradaException::new));
+        Optional<Instituicao> instituicao = instituicaoRespository.findById(id);
 
         InstituicaoDTO instituicaoDTO = new InstituicaoDTO();
 
