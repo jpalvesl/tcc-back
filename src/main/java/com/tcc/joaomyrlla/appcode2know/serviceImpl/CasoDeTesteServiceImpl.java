@@ -63,10 +63,11 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
         }
 
         CasoDeTeste novoCasoDeTeste = new CasoDeTeste();
+        Problema problema = new Problema();
+        problema.setId(casoDeTeste.getProblemaId());
         BeanUtils.copyProperties(casoDeTeste, novoCasoDeTeste);
+        novoCasoDeTeste.setProblema(problema);
         casoDeTesteRepository.save(novoCasoDeTeste);
-        casoDeTeste.setId(novoCasoDeTeste.getId());
-
 
         return casoDeTeste;
     }
@@ -83,7 +84,7 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
             throw new RuntimeException("O problema de Id não existe");
         }
 
-        if (casoDeTesteRepository.existsById(casoDeTeste.getId())) {
+        if (!casoDeTesteRepository.existsById(casoDeTeste.getId())) {
             throw new RuntimeException(String.format("Caso de teste com id %d não existe", casoDeTeste.getId()));
         }
 
