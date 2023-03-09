@@ -31,11 +31,10 @@ public class SubmissaoController {
     }
 
     @PostMapping("/problema/{problema_id}/usuario/{usuario_id}")
-    public HashMap<String, Object> realizaSubmissao(@Valid @RequestBody SubmissaoDTO submissao, @PathVariable("problema_id") Long problemaId, @PathVariable("usuario_id") Long usuarioId) throws IOException, InterruptedException {
+    public Object realizaSubmissao(@Valid @RequestBody SubmissaoDTO submissao, @PathVariable("problema_id") Long problemaId, @PathVariable("usuario_id") Long usuarioId) throws IOException, InterruptedException {
+        submissao.setProblemaId(problemaId);
+        submissao.setUsuarioId(usuarioId);
 
-        Submissao novaSubmissao = new Submissao();
-        BeanUtils.copyProperties(submissao, novaSubmissao);
-
-        return submissaoService.realizaSubmissao(novaSubmissao);
+        return submissaoService.realizaSubmissao(submissao);
     }
 }

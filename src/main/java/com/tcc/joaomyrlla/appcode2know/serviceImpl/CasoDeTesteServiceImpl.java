@@ -32,6 +32,22 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
     }
 
     @Override
+    public List<CasoDeTesteDTO> findByProblema(Long problemaId) {
+        List<CasoDeTeste> casosDeTeste = casoDeTesteRepository.findAll();
+
+        return casosDeTeste.stream()
+                .filter(caso -> problemaId.equals(caso.getProblema().getId()))
+                .map(caso -> {
+                    CasoDeTesteDTO casoDeTesteDto = new CasoDeTesteDTO();
+                    BeanUtils.copyProperties(caso, casoDeTesteDto);
+                    casoDeTesteDto.setProblemaId(caso.getProblema().getId());
+
+                    return casoDeTesteDto;
+                })
+                .toList();
+    }
+
+    @Override
     public CasoDeTesteDTO add(CasoDeTesteDTO casoDeTeste, Long problemaId, Long criadorId) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(criadorId);
         if (usuarioOptional.isEmpty()) {

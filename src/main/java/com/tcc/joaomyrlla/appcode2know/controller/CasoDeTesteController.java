@@ -1,6 +1,7 @@
 package com.tcc.joaomyrlla.appcode2know.controller;
 
 import com.tcc.joaomyrlla.appcode2know.dto.CasoDeTesteDTO;
+import com.tcc.joaomyrlla.appcode2know.model.CasoDeTeste;
 import com.tcc.joaomyrlla.appcode2know.service.ICasoDeTesteService;
 
 import jakarta.validation.Valid;
@@ -19,6 +20,11 @@ public class CasoDeTesteController {
     @GetMapping("/submissao/{submissao_id}")
     public ResponseEntity<List<CasoDeTesteDTO>> findBySubmissao(@PathVariable("submissao_id") Long submissaoId) {
         return ResponseEntity.ok().body(casoDeTesteService.findBySubmissao(submissaoId));
+    }
+
+    @GetMapping("/problema/{problema_id}")
+    public ResponseEntity<List<CasoDeTesteDTO>> findByProblema(@PathVariable("problema_id") Long problemaId) {
+        return ResponseEntity.ok().body(casoDeTesteService.findByProblema(problemaId));
     }
 
     @PostMapping("/problema/{problema_id}/criador/{criador_id}")

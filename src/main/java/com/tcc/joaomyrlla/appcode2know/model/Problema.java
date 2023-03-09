@@ -16,8 +16,7 @@ public class Problema {
 
     @Column(nullable = false)
     private String nome;
-    
-    @Column()
+
     private int dificuldade;
     
     private String fonte;

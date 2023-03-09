@@ -8,9 +8,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SubmissaoDTO {
-    public String codigoResposta;
+    private String codigoResposta;
 
-    public String problemaId;
+    private Long problemaId;
 
-    public String UsuarioId;
+    private Long usuarioId;
+
+    private String saida;
+
+    private String status;
+
+    private double tempo;
 }
