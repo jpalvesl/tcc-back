@@ -24,6 +24,11 @@ public class SubmissaoController {
         return ResponseEntity.ok().body(submissaoService.findAll());
     }
 
+    @GetMapping("/usuario/{usuario_id}")
+    public ResponseEntity<List<SubmissaoDTO>> findByAluno(@PathVariable("usuario_id") Long usuarioId) {
+        return ResponseEntity.ok().body(submissaoService.findByAluno(usuarioId));
+    }
+
     @GetMapping("/problema/{problema_id}")
     public ResponseEntity<List<SubmissaoDTO>> findByProblemaId(@PathVariable("problema_id") Long problemaId) {
         return ResponseEntity.ok().body(submissaoService.findByProblemaId(problemaId));

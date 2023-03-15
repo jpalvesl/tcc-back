@@ -3,6 +3,7 @@ package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import com.tcc.joaomyrlla.appcode2know.dto.CasoDeTesteDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.RespostaDeCasoTesteDTO;
@@ -11,6 +12,7 @@ import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import com.tcc.joaomyrlla.appcode2know.model.RespostaCasoTeste;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
 import com.tcc.joaomyrlla.appcode2know.repository.RespostaCasoDeTesteRepository;
+import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.ICasoDeTesteService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +28,13 @@ import com.tcc.joaomyrlla.appcode2know.api.JuizOnlinePython;
 public class SubmissaoServiceImpl implements ISubmissaoService {
 
     @Autowired
-    ICasoDeTesteService casoDeTesteService;
+    private ICasoDeTesteService casoDeTesteService;
 
     @Autowired
-    RespostaCasoDeTesteRepository respostaCasoDeTesteRepository;
+    private RespostaCasoDeTesteRepository respostaCasoDeTesteRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     final
     SubmissaoRepository submissaoRepository;
@@ -54,6 +59,29 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
                     submissaoDto.setProblemaId(submissao.getProblema().getId());
                     submissaoDto.setUsuarioId(submissao.getUsuario().getId());
 
+
+                    return submissaoDto;
+                })
+                .toList();
+    }
+
+    public List<SubmissaoDTO> findByAluno(Long alunoId) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(alunoId);
+
+        if (usuarioOptional.isEmpty()) {
+            throw new RuntimeException(String.format("Usuário com id %d não foi encontrado", alunoId));
+        }
+
+        Usuario usuario = usuarioOptional.get();
+
+        return submissaoRepository.findAll()
+                .stream()
+                .filter(submissao -> submissao.getUsuario().getId().equals(alunoId))
+                .map(submissao -> {
+                    SubmissaoDTO submissaoDto = new SubmissaoDTO();
+                    BeanUtils.copyProperties(submissao, submissaoDto);
+                    submissaoDto.setUsuarioId(submissao.getUsuario().getId());
+                    submissaoDto.setProblemaId(submissao.getProblema().getId());
 
                     return submissaoDto;
                 })
