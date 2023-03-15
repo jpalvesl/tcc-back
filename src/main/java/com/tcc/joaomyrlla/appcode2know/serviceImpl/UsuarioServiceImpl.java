@@ -91,10 +91,13 @@ public class UsuarioServiceImpl implements IUsuarioService {
     public UsuarioDTO add(UsuarioDTO usuario) {
         Usuario novoUsusario = new Usuario();
         BeanUtils.copyProperties(usuario, novoUsusario);
+        novoUsusario.setInstituicaoAtual(null);
 
-        Instituicao instituicao = new Instituicao();
-        instituicao.setId(usuario.getInstituicaoAtualId());
-        novoUsusario.setInstituicaoAtual(instituicao);
+        if (usuario.getInstituicaoAtualId() != null) {
+            Instituicao instituicao = new Instituicao();
+            instituicao.setId(usuario.getInstituicaoAtualId());
+            novoUsusario.setInstituicaoAtual(instituicao);
+        }
 
         usuarioRepository.save(novoUsusario);
         usuario.setId(novoUsusario.getId());

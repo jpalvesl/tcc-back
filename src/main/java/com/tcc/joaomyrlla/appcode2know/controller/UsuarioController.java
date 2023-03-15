@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("usuario")
 public class UsuarioController {
@@ -34,7 +35,7 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> cadastrar(@Valid @RequestBody UsuarioDTO usuario) {
-        return ResponseEntity.ok().body(usuarioService.add(usuario));
+        return ResponseEntity.status(201).body(usuarioService.add(usuario));
     }
 
     @PatchMapping("/{id}")
