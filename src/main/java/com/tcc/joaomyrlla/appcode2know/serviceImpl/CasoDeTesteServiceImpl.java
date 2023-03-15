@@ -97,6 +97,8 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
 
         CasoDeTeste casoDeTesteEditado = new CasoDeTeste();
         BeanUtils.copyProperties(casoDeTeste,casoDeTesteEditado);
+        casoDeTesteEditado.setProblema(problema);
+
         casoDeTesteRepository.save(casoDeTesteEditado);
 
         return casoDeTeste;

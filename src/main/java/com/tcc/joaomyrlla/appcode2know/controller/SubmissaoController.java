@@ -1,17 +1,14 @@
 package com.tcc.joaomyrlla.appcode2know.controller;
 
 import com.tcc.joaomyrlla.appcode2know.dto.SubmissaoDTO;
-import com.tcc.joaomyrlla.appcode2know.model.Submissao;
 import com.tcc.joaomyrlla.appcode2know.service.ISubmissaoService;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 
 @RestController
@@ -22,12 +19,12 @@ public class SubmissaoController {
 
     @GetMapping
     public ResponseEntity<Object> findAll() {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(submissaoService.findAll());
     }
 
     @GetMapping("/problema/{problema_id}")
     public ResponseEntity<Object> findByProblemaId(@PathVariable("problema_id") Long problemaId) {
-        return ResponseEntity.ok(problemaId);
+        return ResponseEntity.ok().body(submissaoService.findByProblemaId(problemaId));
     }
 
     @PostMapping("/problema/{problema_id}/usuario/{usuario_id}")

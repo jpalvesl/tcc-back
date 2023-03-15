@@ -42,9 +42,11 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
 
     @Override
     public List<Submissao> findByProblemaId(Long problemaId) {
-        List<Submissao> listaSubmissoesPorProblema = submissaoRepository.findAll().stream().filter(s -> s.getProblema().getId() == problemaId).collect(Collectors.toList());
+        List<Submissao> listaSubmissoesPorProblema = submissaoRepository.findAll()
+                .stream()
+                .filter(submissao -> submissao.getProblema().getId().equals(problemaId))
+                .toList();
         return listaSubmissoesPorProblema;
-
     }
 
     @Override

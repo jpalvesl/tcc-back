@@ -36,6 +36,8 @@ public class TurmaServiceImpl implements ITurmaService {
                     BeanUtils.copyProperties(turma, turmaDTO);
                     turmaDTO.setInstituicaoId(turma.getInstituicao().getId());
 
+                    turmaDTO.setTitulo(String.join(" - ",turma.getNomeTurma(), turma.getSemestre()));
+
                     return turmaDTO;
                 })
                 .toList();
@@ -54,6 +56,8 @@ public class TurmaServiceImpl implements ITurmaService {
                 .map(turma -> {
                     TurmaDTO turmaDTO = new TurmaDTO();
                     BeanUtils.copyProperties(turma, turmaDTO);
+                    turmaDTO.setTitulo(String.join(" - ",turma.getNomeTurma(), turma.getSemestre()));
+                    turmaDTO.setInstituicaoId(turma.getInstituicao().getId());
 
                     return turmaDTO;
                 })
@@ -105,7 +109,7 @@ public class TurmaServiceImpl implements ITurmaService {
         if (usuarioOptional.isEmpty()) {
             throw new RuntimeException("O usuário de Id " + professorId + " não existe");
         }
-        if (turmaRepository.existsById(turma.getId())) {
+        if (!turmaRepository.existsById(turma.getId())) {
             throw new RuntimeException(String.format("Turma com id %d não existe", turma.getId()));
         }
 
@@ -119,6 +123,7 @@ public class TurmaServiceImpl implements ITurmaService {
 
         Turma turmaEditada = new Turma();
         BeanUtils.copyProperties(turma, turmaEditada);
+        turma.setTitulo(String.join(" - ",turmaEditada.getNomeTurma(), turmaEditada.getSemestre()));
 
 
         Instituicao instituicao = new Instituicao();

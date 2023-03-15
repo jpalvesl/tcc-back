@@ -2,11 +2,6 @@ package com.tcc.joaomyrlla.appcode2know.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.context.annotation.Lazy;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @Table(name = "SUBMISSAO")
 @Data
@@ -38,8 +33,4 @@ public class Submissao {
     @ManyToOne
     @JoinColumn(name = "PROBLEMA_ID")
     private Problema problema;
-
-    @OneToMany(mappedBy = "submissao")
-    @Lazy
-    private Set<SubmissaoCasoDeTeste> casosDeTeste;
 }

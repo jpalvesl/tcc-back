@@ -40,8 +40,9 @@ public class CasoDeTesteController {
         return ResponseEntity.ok().body(casoDeTesteService.edit(casoDeTeste, usuarioId));
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Long id, Long criadorId) {
+    @DeleteMapping("/{id}/criador_id/{criador_id}")
+    public void delete(@PathVariable("id") Long id,
+                       @PathVariable("criador_id") Long criadorId) {
         casoDeTesteService.delete(id, criadorId);
     }
 }
