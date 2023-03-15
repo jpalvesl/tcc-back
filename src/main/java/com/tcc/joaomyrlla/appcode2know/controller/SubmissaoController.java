@@ -1,5 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.controller;
 
+import com.tcc.joaomyrlla.appcode2know.dto.RespostaDeCasoTesteDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.SubmissaoDTO;
 import com.tcc.joaomyrlla.appcode2know.service.ISubmissaoService;
 
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 
 @RestController
@@ -18,17 +20,19 @@ public class SubmissaoController {
     ISubmissaoService submissaoService;
 
     @GetMapping
-    public ResponseEntity<Object> findAll() {
+    public ResponseEntity<List<SubmissaoDTO>> findAll() {
         return ResponseEntity.ok().body(submissaoService.findAll());
     }
 
     @GetMapping("/problema/{problema_id}")
-    public ResponseEntity<Object> findByProblemaId(@PathVariable("problema_id") Long problemaId) {
+    public ResponseEntity<List<SubmissaoDTO>> findByProblemaId(@PathVariable("problema_id") Long problemaId) {
         return ResponseEntity.ok().body(submissaoService.findByProblemaId(problemaId));
     }
 
     @PostMapping("/problema/{problema_id}/usuario/{usuario_id}")
-    public Object realizaSubmissao(@Valid @RequestBody SubmissaoDTO submissao, @PathVariable("problema_id") Long problemaId, @PathVariable("usuario_id") Long usuarioId) throws IOException, InterruptedException {
+    public List<RespostaDeCasoTesteDTO> realizaSubmissao(@Valid @RequestBody SubmissaoDTO submissao,
+                                                         @PathVariable("problema_id") Long problemaId,
+                                                         @PathVariable("usuario_id") Long usuarioId) throws IOException, InterruptedException {
         submissao.setProblemaId(problemaId);
         submissao.setUsuarioId(usuarioId);
 

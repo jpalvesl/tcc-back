@@ -2,6 +2,9 @@ package com.tcc.joaomyrlla.appcode2know.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.context.annotation.Lazy;
+
+import java.util.List;
 
 @Table(name = "SUBMISSAO")
 @Data
@@ -12,19 +15,9 @@ public class Submissao {
     private Long id;
 
     @Column(nullable = false)
-    private int caso;
-
-    @Column(nullable = false)
     private String codigoResposta;
     
-    @Column(nullable = false)
-    private String saida; // saida a ser comparada com o problema
-    
-    @Column(nullable = false)
-    private String status;
-
-    @Column(nullable = false)
-    private Long tempoExecucao;
+    private String status = "ok";
 
     @ManyToOne
     @JoinColumn(name = "USUARIO_ID")
@@ -33,4 +26,8 @@ public class Submissao {
     @ManyToOne
     @JoinColumn(name = "PROBLEMA_ID")
     private Problema problema;
+
+    @OneToMany(mappedBy = "submissao")
+    @Lazy
+    private List<RespostaCasoTeste> respostasCasoTeste;
 }
