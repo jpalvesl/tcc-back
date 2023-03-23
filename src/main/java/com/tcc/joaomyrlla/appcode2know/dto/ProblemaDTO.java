@@ -1,6 +1,7 @@
 package com.tcc.joaomyrlla.appcode2know.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ public class ProblemaDTO {
   @NotBlank(message = "O atributo descricao é obrigatório")
   private String descricao;
   
-  @NotBlank(message = "")
+  @NotNull(message = "")
   private int dificuldade;
   
   @NotBlank(message = "")
@@ -29,6 +30,6 @@ public class ProblemaDTO {
   @NotBlank(message = "")
   private String textoSaida;
   
-  @NotBlank(message = "")
+  @NotNull(message = "")
   private Long criadorId;
 }

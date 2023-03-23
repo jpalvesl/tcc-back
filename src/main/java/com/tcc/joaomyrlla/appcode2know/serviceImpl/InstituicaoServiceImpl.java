@@ -6,6 +6,7 @@ import com.tcc.joaomyrlla.appcode2know.dto.InstituicaoDTO;
 import com.tcc.joaomyrlla.appcode2know.repository.InstituicaoRespository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.IInstituicaoService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.BeanUtils;
@@ -40,7 +41,6 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
     @Override
     public InstituicaoDTO findById(Long id) {
         Optional<Instituicao> instituicao = instituicaoRespository.findById(id);
-        if (instituicao.isEmpty()) return null;
 
         InstituicaoDTO instituicaoDTO = new InstituicaoDTO();
 
@@ -61,16 +61,16 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id, Long usuarioId) {
-        // Todo: Fazer verificacao de usuario para verificar se ele possui privilegios de adm
         
-        Optional<Usuario> usuario = usuarioRepository.findById(usuarioId);
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioId);
 
-        if (usuario.isEmpty()) {
+        if (optionalUsuario.isEmpty()) {
             throw new RuntimeException("O usuário não existe");
         }
 
-        if (!(usuario.get().isEhAdm())) {
+        if (!(optionalUsuario.get().isEhAdm())) {
             throw new RuntimeException("O usuário não tem permissão para deletar a instituição");
         }
 
@@ -78,16 +78,23 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
             throw new RuntimeException("Instituicao com o ID informado não existe");
         }
 
-//      TODO: antes de deletar a instituicao, passar para null todos os registros de alunos que possuem aquela instituicao como atual
+        List<Usuario> result = usuarioRepository.findAll();
 
+        result.stream()
+                .filter(usuario -> usuario.getInstituicaoAtual() != null && usuario.getInstituicaoAtual().getId().equals(id))
+                .forEach(usuario -> {
+                    usuario.setInstituicaoAtual(null);
+                    Usuario usuarioMod = new Usuario();
+                    BeanUtils.copyProperties(usuario, usuarioMod);
+                    usuarioRepository.save(usuarioMod);
+                });
 
         instituicaoRespository.deleteById(id);
-
     }
 
     @Override
     public InstituicaoDTO edit(InstituicaoDTO instituicao, Long usuarioId) {
-        // Todo: Fazer verificacao de usuario para verificar se ele possui privilegios de adm
+
 
         Optional<Usuario> usuario = usuarioRepository.findById(usuarioId);
 
@@ -96,7 +103,7 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
         }
 
         if (!(usuario.get().isEhAdm())) {
-            throw new RuntimeException("O usuário não tem permissão para deletar a instituição");
+            throw new RuntimeException("O usuário não tem permissão para editar a instituição");
         }
 
 

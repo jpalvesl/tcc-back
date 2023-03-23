@@ -8,7 +8,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
-import java.util.Map;
 
 public class JuizOnlinePython {
   public static final String URL_POST = "http://localhost:5000/submissao_caso_teste";
@@ -17,12 +16,12 @@ public class JuizOnlinePython {
 
   Gson gson = new Gson();
 
-  public HashMap<String, Object> realizaSubmissao() throws IOException, InterruptedException {
+
+  public HashMap<String, Object> realizaSubmissao(HashMap<String, Object> req) throws IOException, InterruptedException {
+    String jsonRequest = gson.toJson(req, req.getClass());
+
     HttpRequest request = HttpRequest.newBuilder()
-            .POST(HttpRequest.BodyPublishers.ofString("{\n" +
-                    "\t\"codigo_resposta\": \"r = float(input())\\npi = 3.14159\\n\\narea = pi * r**2\\nprint('A={:.4f}'.format(area))\",\n" +
-                    "\t\"entradas\": \"2\\n\"\n" +
-                    "}"))
+            .POST(HttpRequest.BodyPublishers.ofString(jsonRequest))
             .uri(URI.create(URL_POST))
             .header("Content-Type", "application/json")
             .build();

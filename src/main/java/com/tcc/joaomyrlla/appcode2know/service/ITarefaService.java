@@ -13,5 +13,9 @@ public interface ITarefaService {
 
     TarefaDTO edit(TarefaDTO tarefa, Long professorId);
 
-    void delete(Long id);
+    void delete(Long id, Long professorId);
+
+    void addProblemaEmTarefa(Long problemaId, Long tarefaId, Long usuarioId);
+
+    void removerProblemaEmTarefa(Long problemaId, Long tarefaId, Long usuarioId);
 }

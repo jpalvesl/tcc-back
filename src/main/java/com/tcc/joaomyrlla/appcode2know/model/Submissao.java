@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.context.annotation.Lazy;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "SUBMISSAO")
@@ -15,15 +14,10 @@ public class Submissao {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private int caso;
-    
+    @Column(nullable = false)
     private String codigoResposta;
     
-    private String saida; // saida a ser comparada com o problema
-    
-    private String status;
-
-    private Long tempoExecucao;
+    private String status = "ok";
 
     @ManyToOne
     @JoinColumn(name = "USUARIO_ID")
@@ -33,10 +27,7 @@ public class Submissao {
     @JoinColumn(name = "PROBLEMA_ID")
     private Problema problema;
 
-    @ManyToMany
-    @JoinTable(name = "SUBMISSAO_CASOS_TESTE",
-            joinColumns = @JoinColumn(name = "SUBMISSAO_ID"),
-            inverseJoinColumns = @JoinColumn(name = "CASO_TESTE_ID"))
+    @OneToMany(mappedBy = "submissao")
     @Lazy
-    private List<CasoDeTeste> casosDeTeste;
+    private List<RespostaCasoTeste> respostasCasoTeste;
 }

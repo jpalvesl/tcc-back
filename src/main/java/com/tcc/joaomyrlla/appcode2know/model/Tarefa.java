@@ -17,13 +17,17 @@ public class Tarefa {
     private Long id;
 
     @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
     private Date dtAbertura;
 
     @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
     private Date dtEncerramento;
 
+    @Column(nullable = false)
     private String descricao;
 
+    @Column(nullable = false)
     private String titulo;
 
     @ManyToOne

@@ -1,16 +1,16 @@
 package com.tcc.joaomyrlla.appcode2know.controller;
 
 import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
-import com.tcc.joaomyrlla.appcode2know.model.Usuario;
 import com.tcc.joaomyrlla.appcode2know.service.IUsuarioService;
 
-import org.springframework.beans.BeanUtils;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("usuario")
 public class UsuarioController {
@@ -18,9 +18,9 @@ public class UsuarioController {
     IUsuarioService usuarioService;
 
 
-    @GetMapping
-    public ResponseEntity<List<UsuarioDTO>> findByInstituicao() {
-        return ResponseEntity.ok().body(usuarioService.findByInstituicao());
+    @GetMapping("/instituicao/{instituicao_id}")
+    public ResponseEntity<List<UsuarioDTO>> findByInstituicao(@PathVariable("instituicao_id") Long instituicaoId) {
+        return ResponseEntity.ok().body(usuarioService.findByInstituicao(instituicaoId));
     }
 
     @GetMapping("/{id}")
@@ -34,13 +34,13 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioDTO> cadastrar(@RequestBody UsuarioDTO usuario) {
-        return ResponseEntity.ok().body(usuarioService.add(usuario));
+    public ResponseEntity<UsuarioDTO> cadastrar(@Valid @RequestBody UsuarioDTO usuario) {
+        return ResponseEntity.status(201).body(usuarioService.add(usuario));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<UsuarioDTO> edit(@PathVariable("id") Long id,
-                                       @RequestBody UsuarioDTO usuario) {
+                                           @Valid @RequestBody UsuarioDTO usuario) {
         return ResponseEntity.ok().body(usuarioService.edit(usuario));
     }
 
