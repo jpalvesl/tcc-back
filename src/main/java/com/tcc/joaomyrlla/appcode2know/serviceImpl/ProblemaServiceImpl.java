@@ -1,6 +1,8 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
+import com.tcc.joaomyrlla.appcode2know.exceptions.ProblemaNotFoundException;
+import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
 import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
@@ -42,30 +44,24 @@ public class ProblemaServiceImpl implements IProblemaService {
     }
 
     public ProblemaDTO findById(Long id) {
-        Optional<Problema> result = problemaRepository.findById(id);
+        Problema problema = Optional.of(problemaRepository.findById(id).orElseThrow(ProblemaNotFoundException::new)).get();
 
-        ProblemaDTO problema = new ProblemaDTO();
+        ProblemaDTO problemaDTO = new ProblemaDTO();
 
-        if (result.isEmpty()) return null;
-        BeanUtils.copyProperties(result.get(), problema);
-        problema.setCriadorId(result.get().getCriador().getId());
+        BeanUtils.copyProperties(problema, problemaDTO);
+        problemaDTO.setCriadorId(problema.getCriador().getId());
 
-        return problema;
+        return problemaDTO;
     }
 
     public ProblemaDTO add(ProblemaDTO problema) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(problema.getCriadorId());
+        Usuario usuario = usuarioRepository.findById(problema.getCriadorId()).orElseThrow(UsuarioNotFoundException::new);
 
-        if (usuarioOptional.isEmpty()) {
-            throw new RuntimeException("O usuário de Id" + problema.getCriadorId() + " não existe");
-        }
-
-        Usuario usuario = usuarioOptional.get();
         if (!usuario.isEhProfessor()) {
             throw new RuntimeException("O usuário de Id" + problema.getCriadorId() + " não é professor");
         }
 
-        Problema novoProblema = new Problema() ;
+        Problema novoProblema = new Problema();
         BeanUtils.copyProperties(problema, novoProblema);
         novoProblema.setCriador(usuario);
 
@@ -77,55 +73,39 @@ public class ProblemaServiceImpl implements IProblemaService {
 
     @Override
     public void delete(Long id, Long usuarioId) {
-            Optional<Usuario> usuario = usuarioRepository.findById(usuarioId);
-            Optional<Problema> problema = problemaRepository.findById(id);
-            if (usuario.isEmpty()){
-                throw new RuntimeException("O usuário de Id" + usuarioId + " não existe");
-            }
-
-            if(problema.isEmpty()){
-                throw new RuntimeException("Problema com o ID informado não existe");
-            }
-
-            if (!(usuario.get().isEhProfessor()) || !(problema.get().getCriador().getId().equals(usuarioId))) {
-                    throw new RuntimeException("O usuário não tem permissão para deletar a tarefa");
-            }
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
+        Problema problema = problemaRepository.findById(id).orElseThrow(ProblemaNotFoundException::new);
 
 
+        if (!(usuario.isEhProfessor()) || !(problema.getCriador().getId().equals(usuarioId))) {
+            throw new RuntimeException("O usuário não tem permissão para deletar a tarefa");
+        }
 
-            if(!(problema.get().getTarefas().isEmpty())){
-                problema.get().getTarefas().forEach(tarefa -> {
-                    tarefa.getProblemas().remove(problema.get());
-                });
-            }
-            problemaRepository.deleteById(id);
 
+        if (!(problema.getTarefas().isEmpty())) {
+            problema.getTarefas().forEach(tarefa -> {
+                tarefa.getProblemas().remove(problema);
+            });
+        }
+        problemaRepository.deleteById(id);
     }
 
     @Override
-    public ProblemaDTO edit(ProblemaDTO problema, Long usuarioId) {
+    public ProblemaDTO edit(ProblemaDTO problemaDTO, Long usuarioId) {
 
-        Optional<Usuario> usuario = usuarioRepository.findById(usuarioId);
-        Optional<Problema> problemaOptional = problemaRepository.findById(problema.getId());
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
+        Problema problema = problemaRepository.findById(problemaDTO.getId()).orElseThrow(ProblemaNotFoundException::new);
 
-        if (usuario.isEmpty()){
-            throw new RuntimeException("O usuário de Id" + usuarioId + " não existe");
-        }
-
-        if(problemaOptional.isEmpty()){
-            throw new RuntimeException("Problema com o ID informado não existe");
-        }
-
-        if (!(usuario.get().isEhProfessor()) || !(problemaOptional.get().getCriador().getId().equals(usuarioId))) {
+        if (!(usuario.isEhProfessor()) || !(problema.getCriador().getId().equals(usuarioId))) {
             throw new RuntimeException("O usuário não tem permissão para deletar a tarefa");
         }
 
         Problema problemaEditado = new Problema();
-        BeanUtils.copyProperties(problema, problemaEditado);
-        problemaEditado.setCriador(usuario.get());
+        BeanUtils.copyProperties(problemaDTO, problemaEditado);
+        problemaEditado.setCriador(usuario);
 
         problemaRepository.save(problemaEditado);
 
-        return problema;
+        return problemaDTO;
     }
 }
