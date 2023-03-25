@@ -1,6 +1,7 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
 import com.tcc.joaomyrlla.appcode2know.exceptions.InstituicaoNotFoundException;
+import com.tcc.joaomyrlla.appcode2know.exceptions.InsufficientPrivilegeException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.model.Instituicao;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
@@ -68,7 +69,7 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
 
         if (!usuario.isEhAdm()) {
-            throw new RuntimeException("O usuário não tem permissão para deletar a instituição");
+            throw new InsufficientPrivilegeException("O usuário não tem permissão para deletar a instituição");
         }
 
         if (!instituicaoRespository.existsById(id)) {
@@ -95,7 +96,7 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
 
         if (!usuario.isEhAdm()) {
-            throw new RuntimeException("O usuário não tem permissão para editar a instituição");
+            throw new InsufficientPrivilegeException("O usuário não tem permissão para editar a instituição");
         }
 
         if (!instituicaoRespository.existsById(instituicao.getId())) {

@@ -1,6 +1,8 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
+import com.tcc.joaomyrlla.appcode2know.exceptions.InstituicaoNotFoundException;
+import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.model.Instituicao;
 import com.tcc.joaomyrlla.appcode2know.model.Turma;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
@@ -13,9 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UsuarioServiceImpl implements IUsuarioService {
@@ -30,13 +30,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public List<UsuarioDTO> findByInstituicao(Long instituicaoId) {
-        Optional<Instituicao> result = instituicaoRespository.findById(instituicaoId);
+        Instituicao instituicao = instituicaoRespository.findById(instituicaoId).orElseThrow(InstituicaoNotFoundException::new);
 
-        if (result.isEmpty()) {
-            throw new RuntimeException("Não existem instituição com o id " + instituicaoId);
-        }
-
-        List<Usuario> usuarios = result.get().getAlunos();
+        List<Usuario> usuarios = instituicao.getAlunos();
 
         return usuarios.stream()
                 .map(usuario -> {
@@ -51,15 +47,12 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public UsuarioDTO findById(Long id) {
-        Optional<Usuario> result = usuarioRepository.findById(id);
-
-        if (result.isEmpty()) return null;
-        Usuario usuario = result.get();
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow(UsuarioNotFoundException::new);
 
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         BeanUtils.copyProperties(usuario, usuarioDTO);
         usuarioDTO.setInstituicaoAtualId(usuario.getInstituicaoAtual().getId());
-        
+
         return usuarioDTO;
     }
 
@@ -77,14 +70,14 @@ public class UsuarioServiceImpl implements IUsuarioService {
         List<Usuario> alunos = result.get(0).getAlunos();
 
         return alunos.stream()
-                        .map(aluno -> {
-                            UsuarioDTO alunoDto = new UsuarioDTO();
-                            BeanUtils.copyProperties(aluno, alunoDto);
-                            alunoDto.setInstituicaoAtualId(aluno.getInstituicaoAtual().getId());
+                .map(aluno -> {
+                    UsuarioDTO alunoDto = new UsuarioDTO();
+                    BeanUtils.copyProperties(aluno, alunoDto);
+                    alunoDto.setInstituicaoAtualId(aluno.getInstituicaoAtual().getId());
 
-                            return alunoDto;
-                        })
-                        .toList();
+                    return alunoDto;
+                })
+                .toList();
     }
 
     @Override

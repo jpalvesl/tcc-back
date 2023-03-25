@@ -1,6 +1,7 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
+import com.tcc.joaomyrlla.appcode2know.exceptions.InsufficientPrivilegeException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.ProblemaNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
@@ -58,7 +59,7 @@ public class ProblemaServiceImpl implements IProblemaService {
         Usuario usuario = usuarioRepository.findById(problema.getCriadorId()).orElseThrow(UsuarioNotFoundException::new);
 
         if (!usuario.isEhProfessor()) {
-            throw new RuntimeException("O usuário de Id" + problema.getCriadorId() + " não é professor");
+            throw new InsufficientPrivilegeException("O usuário de Id" + problema.getCriadorId() + " não é professor");
         }
 
         Problema novoProblema = new Problema();
@@ -78,15 +79,11 @@ public class ProblemaServiceImpl implements IProblemaService {
 
 
         if (!(usuario.isEhProfessor()) || !(problema.getCriador().getId().equals(usuarioId))) {
-            throw new RuntimeException("O usuário não tem permissão para deletar a tarefa");
+            throw new InsufficientPrivilegeException("O usuário não tem permissão para deletar a tarefa");
         }
 
 
-        if (!(problema.getTarefas().isEmpty())) {
-            problema.getTarefas().forEach(tarefa -> {
-                tarefa.getProblemas().remove(problema);
-            });
-        }
+        problema.getTarefas().forEach(tarefa -> tarefa.getProblemas().remove(problema));
         problemaRepository.deleteById(id);
     }
 
@@ -97,7 +94,7 @@ public class ProblemaServiceImpl implements IProblemaService {
         Problema problema = problemaRepository.findById(problemaDTO.getId()).orElseThrow(ProblemaNotFoundException::new);
 
         if (!(usuario.isEhProfessor()) || !(problema.getCriador().getId().equals(usuarioId))) {
-            throw new RuntimeException("O usuário não tem permissão para deletar a tarefa");
+            throw new InsufficientPrivilegeException("O usuário não tem permissão para deletar a tarefa");
         }
 
         Problema problemaEditado = new Problema();

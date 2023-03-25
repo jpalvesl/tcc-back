@@ -3,11 +3,11 @@ package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import com.tcc.joaomyrlla.appcode2know.dto.CasoDeTesteDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.RespostaDeCasoTesteDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.SubmissaoDTO;
+import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import com.tcc.joaomyrlla.appcode2know.model.RespostaCasoTeste;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
@@ -66,13 +66,7 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
     }
 
     public List<SubmissaoDTO> findByAluno(Long alunoId) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(alunoId);
-
-        if (usuarioOptional.isEmpty()) {
-            throw new RuntimeException(String.format("Usuário com id %d não foi encontrado", alunoId));
-        }
-
-        Usuario usuario = usuarioOptional.get();
+        Usuario usuario = usuarioRepository.findById(alunoId).orElseThrow(UsuarioNotFoundException::new);
 
         return submissaoRepository.findAll()
                 .stream()

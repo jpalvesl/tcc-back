@@ -1,6 +1,7 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.TarefaDTO;
+import com.tcc.joaomyrlla.appcode2know.exceptions.*;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import com.tcc.joaomyrlla.appcode2know.model.Tarefa;
 import com.tcc.joaomyrlla.appcode2know.model.Turma;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TarefaServiceImpl implements ITarefaService {
@@ -37,14 +37,11 @@ public class TarefaServiceImpl implements ITarefaService {
 
     @Override
     public List<TarefaDTO> findByAluno(Long alunoId) {
-        Optional<Usuario> usuario = usuarioRepository.findById(alunoId);
+        Usuario usuario = usuarioRepository.findById(alunoId).orElseThrow(UsuarioNotFoundException::new);
 
         List<Tarefa> listaTarefas = new ArrayList<>();
 
-        List<Turma> listTurma = usuario.get().getTurmasAluno();
-        listTurma.forEach(turma -> {
-            listaTarefas.addAll(turma.getTarefas());
-        });
+        usuario.getTurmasAluno().forEach(turma -> listaTarefas.addAll(turma.getTarefas()));
 
         return listaTarefas.stream()
                 .map(tarefa -> {
@@ -59,20 +56,16 @@ public class TarefaServiceImpl implements ITarefaService {
                     return tarefaDto;
                 })
                 .toList();
-
     }
 
     @Override
     public List<TarefaDTO> findByTurma(Long turmaId) {
+        Turma turma = turmaRepository.findById(turmaId).orElseThrow(TurmaNotFoundException::new);
 
-        Optional<Turma> turma = turmaRepository.findById(turmaId);
-
-        List<Tarefa> listTarefas = turma.get().getTarefas();
-
-        return listTarefas.stream()
+        return turma.getTarefas().stream()
                 .map(tarefa -> {
                     TarefaDTO tarefaDto = new TarefaDTO();
-                    BeanUtils.copyProperties(tarefa,tarefaDto);
+                    BeanUtils.copyProperties(tarefa, tarefaDto);
 
                     tarefaDto.setDtAbertura((Date) tarefa.getDtAbertura());
                     tarefaDto.setDtEncerramento((Date) tarefa.getDtEncerramento());
@@ -87,24 +80,12 @@ public class TarefaServiceImpl implements ITarefaService {
     @Override
     @Transactional
     public TarefaDTO add(TarefaDTO tarefa) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(tarefa.getCriadorId());
-        Optional<Turma> turmaOptional = turmaRepository.findById(tarefa.getTurmaId());
+        Usuario usuario = usuarioRepository.findById(tarefa.getCriadorId()).orElseThrow(UsuarioNotFoundException::new);
+        Turma turma = turmaRepository.findById(tarefa.getTurmaId()).orElseThrow(TurmaNotFoundException::new);
 
-        if (usuarioOptional.isEmpty()) {
-            throw new RuntimeException("Usuario com o id " + tarefa.getCriadorId() + " não existe");
+        if (!usuario.isEhProfessor()) {
+            throw new InsufficientPrivilegeException("O usuário não tem permissão para adicionar tarefa");
         }
-
-        if (!usuarioOptional.get().isEhProfessor()){
-            throw new RuntimeException("O usuário não tem permissão para adicionar tarefa");
-        }
-
-        if (turmaOptional.isEmpty()) {
-            throw new RuntimeException("Turma com o id " + tarefa.getTurmaId() + " não existe");
-        }
-
-        Turma turma = turmaOptional.get();
-
-        Usuario usuario = usuarioOptional.get();
 
         Tarefa novaTarefa = new Tarefa();
         novaTarefa.setTurma(turma);
@@ -116,9 +97,6 @@ public class TarefaServiceImpl implements ITarefaService {
         tarefaRepository.save(novaTarefa);
         turmaRepository.save(turma);
 
-
-        
-
         tarefa.setId(novaTarefa.getId());
 
         return tarefa;
@@ -126,33 +104,18 @@ public class TarefaServiceImpl implements ITarefaService {
 
     @Override
     public TarefaDTO edit(TarefaDTO tarefa, Long professorId) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(professorId);
-        Optional<Turma> turmaOptional = turmaRepository.findById(tarefa.getTurmaId());
+        Usuario usuario = usuarioRepository.findById(professorId).orElseThrow(UsuarioNotFoundException::new);
+        Turma turma = turmaRepository.findById(tarefa.getTurmaId()).orElseThrow(TurmaNotFoundException::new);
 
-
-        if (usuarioOptional.isEmpty()) {
-            throw new RuntimeException("O usuário não existe");
-        }
-
-        if (!(usuarioOptional.get().isEhProfessor()) || !(tarefa.getCriadorId().equals(professorId))) {
+        if (!(usuario.isEhProfessor()) || !(tarefa.getCriadorId().equals(professorId))) {
             throw new RuntimeException("O usuário não tem permissão para editar a tarefa");
         }
 
-        if (turmaOptional.isEmpty()) {
-            throw new RuntimeException("Turma com o id " + tarefa.getTurmaId() + " não existe");
-        }
-
-
-
         Tarefa tarefaEditada = new Tarefa();
-        Turma turma = turmaOptional.get();
-        Usuario usuario = usuarioOptional.get();
         tarefaEditada.setTurma(turma);
         tarefaEditada.setCriador(usuario);
 
-        BeanUtils.copyProperties(tarefa,tarefaEditada);
-
-
+        BeanUtils.copyProperties(tarefa, tarefaEditada);
 
         tarefaRepository.save(tarefaEditada);
 
@@ -161,83 +124,46 @@ public class TarefaServiceImpl implements ITarefaService {
 
     @Override
     public void delete(Long id, Long professorId) {
+        Usuario usuario = usuarioRepository.findById(professorId).orElseThrow(UsuarioNotFoundException::new);
+        Tarefa tarefa = tarefaRepository.findById(id).orElseThrow(TarefaNotFoundException::new);
+        Turma turma = turmaRepository.findById(tarefa.getTurma().getId()).orElseThrow(TurmaNotFoundException::new);
 
-        Optional<Usuario> usuario = usuarioRepository.findById(professorId);
-        if (usuario.isEmpty()) {
-            throw new RuntimeException("O usuário não existe");
+
+        if (!(usuario.isEhProfessor()) || !(tarefa.getCriador().getId().equals(professorId))) {
+            throw new InsufficientPrivilegeException("O usuário não tem permissão para deletar a tarefa");
         }
 
-        Optional<Tarefa> tarefa = tarefaRepository.findById(id);
-        if(tarefa.isEmpty()){
-            throw new RuntimeException("Tarefa com o ID informado não existe");
-        }
-
-
-        Optional<Turma> turmaOptional = turmaRepository.findById(tarefa.get().getTurma().getId());
-        if(turmaOptional.isEmpty()){
-            throw new RuntimeException("Tarefa com o ID informado não existe");
-        }
-
-        if (!(usuario.get().isEhProfessor()) || !(tarefa.get().getCriador().getId().equals(professorId))) {
-            throw new RuntimeException("O usuário não tem permissão para deletar a tarefa");
-        }
-
-        Turma turma = turmaOptional.get();
-        turma.getTarefas().remove(tarefa.get());
+        turma.getTarefas().remove(tarefa);
         tarefaRepository.deleteById(id);
-
     }
 
     @Override
-    public void addProblemaEmTarefa(Long problemaId, Long tarefaId, Long usuarioId){
+    public void addProblemaEmTarefa(Long problemaId, Long tarefaId, Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
+        Tarefa tarefa = tarefaRepository.findById(tarefaId).orElseThrow(TarefaNotFoundException::new);
+        Problema problema = problemaRepository.findById(problemaId).orElseThrow(ProblemaNotFoundException::new);
 
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuarioId);
-        if (usuarioOptional.isEmpty()) {
-            throw new RuntimeException("O usuário não existe");
+        if (!(usuario.isEhProfessor()) || !(tarefa.getCriador().getId().equals(usuarioId))) {
+            throw new InsufficientPrivilegeException("O usuário não tem permissão para deletar a tarefa");
         }
 
-        Optional<Tarefa> tarefaOptional = tarefaRepository.findById(tarefaId);
-        if(tarefaOptional.isEmpty()){
-            throw new RuntimeException("Tarefa com o ID informado não existe");
-        }
-
-        Optional<Problema> problemaOptional = problemaRepository.findById(problemaId);
-        if(problemaOptional.isEmpty()){
-            throw new RuntimeException("Problema com o ID informado não existe");
-        }
-
-        if(!(usuarioOptional.get().isEhProfessor()) || !(tarefaOptional.get().getCriador().getId().equals(usuarioId))){
-            throw new RuntimeException("O usuário não tem permissão para deletar a tarefa");
-        }
-
-        tarefaOptional.get().getProblemas().add(problemaOptional.get());
-        tarefaRepository.save(tarefaOptional.get());
+        tarefa.getProblemas().add(problema);
+        tarefaRepository.save(tarefa);
     }
 
     @Override
-    public void removerProblemaEmTarefa(Long problemaId, Long tarefaId, Long usuarioId){
+    public void removerProblemaEmTarefa(Long problemaId, Long tarefaId, Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
+        Tarefa tarefa = tarefaRepository.findById(tarefaId).orElseThrow(TarefaNotFoundException::new);
+        Problema problema = problemaRepository.findById(problemaId).orElseThrow(ProblemaNotFoundException::new);
 
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuarioId);
-        if (usuarioOptional.isEmpty()) {
-            throw new RuntimeException("O usuário não existe");
+
+        if (!(usuario.isEhProfessor()) || !(tarefa.getCriador().getId().equals(usuarioId))) {
+            throw new InsufficientPrivilegeException("O usuário não tem permissão para deletar a tarefa");
         }
 
-        Optional<Tarefa> tarefaOptional = tarefaRepository.findById(tarefaId);
-        if(tarefaOptional.isEmpty()){
-            throw new RuntimeException("Tarefa com o ID informado não existe");
-        }
-
-        Optional<Problema> problemaOptional = problemaRepository.findById(problemaId);
-        if(problemaOptional.isEmpty()){
-            throw new RuntimeException("Problema com o ID informado não existe");
-        }
-
-        if(!(usuarioOptional.get().isEhProfessor()) || !(tarefaOptional.get().getCriador().getId().equals(usuarioId))){
-            throw new RuntimeException("O usuário não tem permissão para deletar a tarefa");
-        }
-
-        tarefaOptional.get().getProblemas().remove(problemaOptional.get());
-        tarefaRepository.save(tarefaOptional.get());
+        tarefa.getProblemas().remove(problema);
+        tarefaRepository.save(tarefa);
 
     }
 }

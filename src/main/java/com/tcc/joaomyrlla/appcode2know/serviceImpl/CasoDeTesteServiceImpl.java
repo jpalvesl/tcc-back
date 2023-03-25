@@ -1,6 +1,10 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.CasoDeTesteDTO;
+import com.tcc.joaomyrlla.appcode2know.exceptions.CasoDeTesteNotFoundException;
+import com.tcc.joaomyrlla.appcode2know.exceptions.InsufficientPrivilegeException;
+import com.tcc.joaomyrlla.appcode2know.exceptions.ProblemaNotFoundException;
+import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.model.CasoDeTeste;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
@@ -13,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
@@ -49,22 +52,14 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
 
     @Override
     public CasoDeTesteDTO add(CasoDeTesteDTO casoDeTeste, Long problemaId, Long criadorId) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(criadorId);
-        if (usuarioOptional.isEmpty()) {
-            throw new RuntimeException("O usuário de Id " + criadorId + " não existe");
-        }
-        Optional<Problema> problemaOptional = problemaRepository.findById(problemaId);
-        if (problemaOptional.isEmpty()) {
-            throw new RuntimeException("O problema de Id " + problemaId + " não existe");
-        }
+        Usuario usuario = usuarioRepository.findById(criadorId).orElseThrow(UsuarioNotFoundException::new);
+        Problema problema = problemaRepository.findById(problemaId).orElseThrow(ProblemaNotFoundException::new);
 
-        if(problemaOptional.get().getCriador().getId()!= criadorId || !(usuarioOptional.get().isEhProfessor())){
-            throw new RuntimeException("O usuário de Id " + criadorId + " não tem permissão para adicionar caso de teste");
+        if (!criadorId.equals(problema.getCriador().getId()) || !(usuario.isEhProfessor())) {
+            throw new InsufficientPrivilegeException("O usuário de Id " + criadorId + " não tem permissão para adicionar caso de teste");
         }
 
         CasoDeTeste novoCasoDeTeste = new CasoDeTeste();
-        Problema problema = new Problema();
-        problema.setId(casoDeTeste.getProblemaId());
         BeanUtils.copyProperties(casoDeTeste, novoCasoDeTeste);
         novoCasoDeTeste.setProblema(problema);
         casoDeTesteRepository.save(novoCasoDeTeste);
@@ -74,29 +69,19 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
 
     @Override
     public CasoDeTesteDTO edit(CasoDeTesteDTO casoDeTeste, Long criadorId) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(criadorId);
-        if (usuarioOptional.isEmpty()) {
-            throw new RuntimeException("O usuário de Id " + criadorId + " não existe");
-        }
-
-        Optional<Problema> problemaOptional = problemaRepository.findById(casoDeTeste.getProblemaId());
-        if (problemaOptional.isEmpty()) {
-            throw new RuntimeException("O problema de Id não existe");
-        }
+        Usuario usuario = usuarioRepository.findById(criadorId).orElseThrow(UsuarioNotFoundException::new);
+        Problema problema = problemaRepository.findById(casoDeTeste.getProblemaId()).orElseThrow(ProblemaNotFoundException::new);
 
         if (!casoDeTesteRepository.existsById(casoDeTeste.getId())) {
-            throw new RuntimeException(String.format("Caso de teste com id %d não existe", casoDeTeste.getId()));
+            throw new CasoDeTesteNotFoundException(String.format("Caso de teste com id %d não existe", casoDeTeste.getId()));
         }
 
-        Usuario usuario = usuarioOptional.get();
-        Problema problema = problemaOptional.get();
-
-        if(problema.getCriador().getId() != criadorId || !(usuario.isEhProfessor())){
-            throw new RuntimeException("O usuário de Id " + criadorId + " não tem permissão para editar caso de teste");
+        if (!criadorId.equals(problema.getCriador().getId()) || !(usuario.isEhProfessor())) {
+            throw new InsufficientPrivilegeException(String.format("O usuario de id %d não tem permissão para editar caso de teste", criadorId));
         }
 
         CasoDeTeste casoDeTesteEditado = new CasoDeTeste();
-        BeanUtils.copyProperties(casoDeTeste,casoDeTesteEditado);
+        BeanUtils.copyProperties(casoDeTeste, casoDeTesteEditado);
         casoDeTesteEditado.setProblema(problema);
 
         casoDeTesteRepository.save(casoDeTesteEditado);
@@ -106,31 +91,16 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
 
     @Override
     public void delete(Long id, Long criadorId) {
+        CasoDeTeste casoDeTeste = casoDeTesteRepository.findById(id).orElseThrow(CasoDeTesteNotFoundException::new);
+        Usuario usuario = usuarioRepository.findById(criadorId).orElseThrow(UsuarioNotFoundException::new);
+        Problema problema = problemaRepository.findById(casoDeTeste.getProblema().getId()).orElseThrow(ProblemaNotFoundException::new);
 
-        Optional<CasoDeTeste> casoDeTeste = casoDeTesteRepository.findById(id);
-
-        // verificar se o usuario que fez a exclusão existe
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(criadorId);
-        if (usuarioOptional.isEmpty()) {
-            throw new RuntimeException("O usuário de Id " + criadorId + " não existe");
+        if (!criadorId.equals(problema.getCriador().getId()) || !(usuario.isEhProfessor())) {
+            throw new InsufficientPrivilegeException("O usuário de Id " + criadorId + " não tem permissão para remover caso de teste");
         }
 
-        Optional<Problema> problemaOptional = problemaRepository.findById(casoDeTeste.get().getProblema().getId());
-
-        // verificar se eh um professor e o criador da questao
-
-        if (problemaOptional.isEmpty()) {
-            throw new RuntimeException("O problema de Id não existe");
-        }
-
-        if(problemaOptional.get().getCriador().getId()!= criadorId || !(usuarioOptional.get().isEhProfessor())){
-            throw new RuntimeException("O usuário de Id " + criadorId + " não tem permissão para remover caso de teste");
-        }
-
-        Problema problema = problemaOptional.get();
-        problema.getCasosDeTeste().remove(casoDeTeste.get());
+        problema.getCasosDeTeste().remove(casoDeTeste);
 
         casoDeTesteRepository.deleteById(id);
-
     }
 }
