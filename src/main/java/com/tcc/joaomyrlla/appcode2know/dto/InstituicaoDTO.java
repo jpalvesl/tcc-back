@@ -1,4 +1,8 @@
 package com.tcc.joaomyrlla.appcode2know.dto;
+import org.springframework.beans.BeanUtils;
+
+import com.tcc.joaomyrlla.appcode2know.model.Instituicao;
+
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,4 +21,10 @@ public class InstituicaoDTO {
   @NotBlank(message = "O atributo campus é obrigatório")
   private String campus;
 
+  public static InstituicaoDTO toInstituicaoDTO(Instituicao instituicao) {
+    InstituicaoDTO instituicaoDTO = new InstituicaoDTO();
+    BeanUtils.copyProperties(instituicao, instituicaoDTO);
+
+    return instituicaoDTO;
+  }
 }

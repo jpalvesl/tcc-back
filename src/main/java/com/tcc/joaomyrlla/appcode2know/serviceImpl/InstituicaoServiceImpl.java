@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.BeanUtils;
 
 import java.util.List;
-import java.util.ArrayList;
 
 @Service
 public class InstituicaoServiceImpl implements IInstituicaoService {
@@ -27,39 +26,26 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
 
     @Override
     public List<InstituicaoDTO> findAll() {
-        List<Instituicao> result = instituicaoRespository.findAll();
-
-        List<InstituicaoDTO> instituicaoDTOs = new ArrayList<>();
-        result.forEach(instituicao -> {
-            InstituicaoDTO instituicaoDTO = new InstituicaoDTO();
-            BeanUtils.copyProperties(instituicao, instituicaoDTO);
-
-            instituicaoDTOs.add(instituicaoDTO);
-        });
-
-        return instituicaoDTOs;
+        return instituicaoRespository.findAll().stream()
+        .map(instituicao -> InstituicaoDTO.toInstituicaoDTO(instituicao))
+        .toList();
     }
 
     @Override
     public InstituicaoDTO findById(Long id) {
         Instituicao instituicao = instituicaoRespository.findById(id).orElseThrow(InstituicaoNotFoundException::new);
 
-        InstituicaoDTO instituicaoDTO = new InstituicaoDTO();
-
-        BeanUtils.copyProperties(instituicao, instituicaoDTO);
-        return instituicaoDTO;
+        return InstituicaoDTO.toInstituicaoDTO(instituicao);
     }
 
     @Override
-    public InstituicaoDTO add(InstituicaoDTO instituicao) {
-        Instituicao novaInstituicao = new Instituicao();
-        BeanUtils.copyProperties(instituicao, novaInstituicao);
+    public InstituicaoDTO add(InstituicaoDTO instituicaoDTO) {
+        Instituicao instituicao = Instituicao.toInstituicao(instituicaoDTO);
         
-        instituicaoRespository.save(novaInstituicao);
+        instituicaoRespository.save(instituicao);
+        instituicaoDTO.setId(instituicao.getId());
 
-        instituicao.setId(novaInstituicao.getId());
-
-        return instituicao;
+        return instituicaoDTO;
     }
 
     @Override
@@ -76,22 +62,19 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
             throw new InstituicaoNotFoundException(String.format("A instituição com id %d não pode ser encontrada", id));
         }
 
-        List<Usuario> result = usuarioRepository.findAll();
-
-        result.stream()
+        usuarioRepository.findAll().stream()
                 .filter(user -> user.getInstituicaoAtual() != null && user.getInstituicaoAtual().getId().equals(id))
                 .forEach(user -> {
                     user.setInstituicaoAtual(null);
-                    Usuario usuarioSemInstituicao = new Usuario();
-                    BeanUtils.copyProperties(user, usuarioSemInstituicao);
-                    usuarioRepository.save(usuarioSemInstituicao);
+
+                    usuarioRepository.save(user);
                 });
 
         instituicaoRespository.deleteById(id);
     }
 
     @Override
-    public InstituicaoDTO edit(InstituicaoDTO instituicao, Long usuarioId) {
+    public InstituicaoDTO edit(InstituicaoDTO instituicaoDTO, Long usuarioId) {
 
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
 
@@ -99,15 +82,14 @@ public class InstituicaoServiceImpl implements IInstituicaoService {
             throw new InsufficientPrivilegeException("O usuário não tem permissão para editar a instituição");
         }
 
-        if (!instituicaoRespository.existsById(instituicao.getId())) {
-            throw new InstituicaoNotFoundException(String.format("Instituicao com o Id %d não foi encontrada", instituicao.getId()));
+        if (!instituicaoRespository.existsById(instituicaoDTO.getId())) {
+            throw new InstituicaoNotFoundException(String.format("Instituicao com o Id %d não foi encontrada", instituicaoDTO.getId()));
         }
 
-        Instituicao instituicaoEditada = new Instituicao();
-        BeanUtils.copyProperties(instituicao, instituicaoEditada);
+        Instituicao instituicaoEditada = Instituicao.toInstituicao(instituicaoDTO);
 
         instituicaoRespository.save(instituicaoEditada);
 
-        return instituicao;
+        return instituicaoDTO;
     }
 }
