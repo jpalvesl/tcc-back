@@ -11,9 +11,9 @@ public interface IUsuarioService {
 
     public List<UsuarioDTO> findByTurma(Long turmaId);
 
-    public UsuarioDTO add(UsuarioDTO usuario);
+    public UsuarioDTO add(UsuarioDTO usuarioDTO);
 
-    public UsuarioDTO edit(UsuarioDTO usuario);
+    public UsuarioDTO edit(UsuarioDTO usuarioDTO);
 
     public void delete(Long id);
 }

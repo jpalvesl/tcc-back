@@ -35,13 +35,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
         List<Usuario> usuarios = instituicao.getAlunos();
 
         return usuarios.stream()
-                .map(usuario -> {
-                    UsuarioDTO usuarioDTO = new UsuarioDTO();
-                    BeanUtils.copyProperties(usuario, usuarioDTO);
-                    usuarioDTO.setInstituicaoAtualId(usuario.getInstituicaoAtual().getId());
-
-                    return usuarioDTO;
-                })
+                .map(UsuarioDTO::toUsuarioDTO)
                 .toList();
     }
 
@@ -49,11 +43,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     public UsuarioDTO findById(Long id) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(UsuarioNotFoundException::new);
 
-        UsuarioDTO usuarioDTO = new UsuarioDTO();
-        BeanUtils.copyProperties(usuario, usuarioDTO);
-        usuarioDTO.setInstituicaoAtualId(usuario.getInstituicaoAtual().getId());
-
-        return usuarioDTO;
+        return UsuarioDTO.toUsuarioDTO(usuario);
     }
 
     @Override
@@ -70,45 +60,26 @@ public class UsuarioServiceImpl implements IUsuarioService {
         List<Usuario> alunos = result.get(0).getAlunos();
 
         return alunos.stream()
-                .map(aluno -> {
-                    UsuarioDTO alunoDto = new UsuarioDTO();
-                    BeanUtils.copyProperties(aluno, alunoDto);
-                    alunoDto.setInstituicaoAtualId(aluno.getInstituicaoAtual().getId());
-
-                    return alunoDto;
-                })
+                .map(UsuarioDTO::toUsuarioDTO)
                 .toList();
     }
 
     @Override
-    public UsuarioDTO add(UsuarioDTO usuario) {
-        Usuario novoUsusario = new Usuario();
-        BeanUtils.copyProperties(usuario, novoUsusario);
-        novoUsusario.setInstituicaoAtual(null);
+    public UsuarioDTO add(UsuarioDTO usuarioDTO) {
+        Usuario usuario = Usuario.toUsuario(usuarioDTO);
 
-        if (usuario.getInstituicaoAtualId() != null) {
-            Instituicao instituicao = new Instituicao();
-            instituicao.setId(usuario.getInstituicaoAtualId());
-            novoUsusario.setInstituicaoAtual(instituicao);
-        }
+        usuarioRepository.save(usuario);
+        usuarioDTO.setId(usuario.getId());
 
-        usuarioRepository.save(novoUsusario);
-        usuario.setId(novoUsusario.getId());
-
-        return usuario;
+        return usuarioDTO;
     }
 
     @Override
-    public UsuarioDTO edit(UsuarioDTO usuario) {
-        Usuario ususarioEditado = new Usuario();
-        BeanUtils.copyProperties(usuario, ususarioEditado);
+    public UsuarioDTO edit(UsuarioDTO usuarioDTO) {
+        Usuario usuario = Usuario.toUsuario(usuarioDTO);
 
-        Instituicao instituicao = new Instituicao();
-        instituicao.setId(usuario.getInstituicaoAtualId());
-        ususarioEditado.setInstituicaoAtual(instituicao);
-
-        usuarioRepository.save(ususarioEditado);
-        return usuario;
+        usuarioRepository.save(usuario);
+        return usuarioDTO;
     }
 
     @Override
