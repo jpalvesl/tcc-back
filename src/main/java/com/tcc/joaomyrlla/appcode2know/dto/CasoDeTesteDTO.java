@@ -1,6 +1,7 @@
 package com.tcc.joaomyrlla.appcode2know.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class CasoDeTesteDTO {
   private Long id;
 
-  @NotBlank(message = "O campo caso é obrigatório")
+  @NotNull(message = "O campo caso é obrigatório")
   private int caso;
 
   @NotBlank(message = "O campo entrada é obrigatório")
@@ -20,6 +21,6 @@ public class CasoDeTesteDTO {
   @NotBlank(message = "O campo saída é obrigatório")
   private String saida;
 
-  @NotBlank(message = "O campo problemaId é obrigatório")
+  @NotNull(message = "O campo problemaId é obrigatório")
   private Long problemaId;
 }

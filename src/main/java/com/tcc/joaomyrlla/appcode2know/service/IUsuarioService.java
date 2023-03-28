@@ -5,7 +5,7 @@ import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
 import java.util.List;
 
 public interface IUsuarioService {
-    public List<UsuarioDTO> findByInstituicao();
+    public List<UsuarioDTO> findByInstituicao(Long instituicaoId);
 
     public UsuarioDTO findById(Long id);
 

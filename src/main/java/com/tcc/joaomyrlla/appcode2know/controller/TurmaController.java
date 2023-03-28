@@ -3,6 +3,7 @@ package com.tcc.joaomyrlla.appcode2know.controller;
 import com.tcc.joaomyrlla.appcode2know.dto.TurmaDTO;
 import com.tcc.joaomyrlla.appcode2know.service.ITurmaService;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,21 +26,51 @@ public class TurmaController {
         return ResponseEntity.ok().body(turmaService.findByUsuario(usuarioId));
     }
 
-    @PostMapping
-    public ResponseEntity<TurmaDTO> add(@RequestBody TurmaDTO turma) {
-        return ResponseEntity.ok().body(turmaService.add(turma));
+    @PostMapping("/criador/{criador_id}")
+    public ResponseEntity<TurmaDTO> add(@Valid @RequestBody TurmaDTO turma,
+                                        @PathVariable("criador_id") Long criadorId) {
+        return ResponseEntity.ok().body(turmaService.add(turma, criadorId));
     }
 
     @PatchMapping("/usuario/{usuario_id}")
     public ResponseEntity<TurmaDTO> edit(@PathVariable("usuario_id") Long usuarioId,
-                                       @RequestBody TurmaDTO turma) {
+                                         @Valid @RequestBody TurmaDTO turma) {
 
         return ResponseEntity.ok().body(turmaService.edit(turma, usuarioId));
 
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Long id) {
-        turmaService.delete(id);
+    @DeleteMapping("/{id}/usuario/{usuario_id}")
+    public void delete(@PathVariable("id") Long id,
+                       @PathVariable("usuario_id") Long professorId) {
+        turmaService.delete(id, professorId);
+    }
+
+    @PostMapping("/{id}/aluno/{aluno_id}/criador/{criador_id}")
+    public void addAlunoEmTurma(@PathVariable("id") Long id,
+                                @PathVariable("aluno_id") Long alunoId,
+                                @PathVariable("criador_id") Long criadorId) {
+        turmaService.addAlunoEmTurma(id, alunoId, criadorId);
+    }
+
+    @DeleteMapping("/{id}/aluno/{aluno_id}/criador/{criador_id}")
+    public void removerAlunoDaTurma(@PathVariable("id") Long id,
+                                    @PathVariable("aluno_id") Long alunoId,
+                                    @PathVariable("criador_id") Long criadorId) {
+        turmaService.removerAlunoDaTurma(id, alunoId, criadorId);
+    }
+
+    @PostMapping("/{id}/professor/{professor_id}/professor_adicionado/{professor_adicionado_id}")
+    public void addProfessorEmTurma(@PathVariable("id") Long turmaId,
+                                    @PathVariable("professor_id") Long professorId,
+                                    @PathVariable("professor_adicionado_id") Long professorAdicionadoId) {
+        turmaService.addProfessorEmTurma(turmaId, professorId, professorAdicionadoId);
+    }
+
+    @DeleteMapping("/{id}/professor/{professor_id}/professor_adicionado/{professor_adicionado_id}")
+    public void removerProfessorDaTurma(@PathVariable("id") Long turmaId,
+                                        @PathVariable("professor_id") Long professorId,
+                                        @PathVariable("professor_adicionado_id") Long professorAdicionadoId) {
+        turmaService.removerProfessorDaTurma(turmaId, professorId, professorAdicionadoId);
     }
 }

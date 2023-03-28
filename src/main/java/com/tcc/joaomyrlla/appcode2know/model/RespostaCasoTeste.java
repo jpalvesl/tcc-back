@@ -2,16 +2,11 @@ package com.tcc.joaomyrlla.appcode2know.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.context.annotation.Lazy;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-@Table(name = "CASO_TESTE")
+@Table(name = "RESPOSTA_CASO_TESTE")
 @Data
 @Entity
-public class CasoDeTeste {
+public class RespostaCasoTeste {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -26,6 +21,6 @@ public class CasoDeTeste {
     private int caso;
 
     @ManyToOne
-    @JoinColumn(name = "PROBLEMA_ID")
-    private Problema problema;
+    @JoinColumn(name = "SUBMISSAO_ID")
+    private Submissao submissao;
 }

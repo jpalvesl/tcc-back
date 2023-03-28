@@ -1,8 +1,10 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
+import com.tcc.joaomyrlla.appcode2know.model.Instituicao;
 import com.tcc.joaomyrlla.appcode2know.model.Turma;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
+import com.tcc.joaomyrlla.appcode2know.repository.InstituicaoRespository;
 import com.tcc.joaomyrlla.appcode2know.repository.TurmaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.IUsuarioService;
@@ -21,82 +23,99 @@ public class UsuarioServiceImpl implements IUsuarioService {
     UsuarioRepository usuarioRepository;
 
     @Autowired
+    InstituicaoRespository instituicaoRespository;
+
+    @Autowired
     TurmaRepository turmaRepository;
 
     @Override
-    public List<UsuarioDTO> findByInstituicao() {
-        var result = usuarioRepository.findAll();
-        List<UsuarioDTO> usuariosDTOs = new ArrayList<>();
+    public List<UsuarioDTO> findByInstituicao(Long instituicaoId) {
+        Optional<Instituicao> result = instituicaoRespository.findById(instituicaoId);
 
-        result.forEach(usuario -> {
-            UsuarioDTO usuarioDTO = new UsuarioDTO();
-            BeanUtils.copyProperties(usuario, usuariosDTOs);
+        if (result.isEmpty()) {
+            throw new RuntimeException("Não existem instituição com o id " + instituicaoId);
+        }
 
+        List<Usuario> usuarios = result.get().getAlunos();
 
-            usuariosDTOs.add(usuarioDTO);
-        });
+        return usuarios.stream()
+                .map(usuario -> {
+                    UsuarioDTO usuarioDTO = new UsuarioDTO();
+                    BeanUtils.copyProperties(usuario, usuarioDTO);
+                    usuarioDTO.setInstituicaoAtualId(usuario.getInstituicaoAtual().getId());
 
-        return usuariosDTOs;
+                    return usuarioDTO;
+                })
+                .toList();
     }
 
     @Override
     public UsuarioDTO findById(Long id) {
-        Optional<Usuario> usuario = usuarioRepository.findById(id);
-        
-        if (usuario.isEmpty()) return null;
+        Optional<Usuario> result = usuarioRepository.findById(id);
+
+        if (result.isEmpty()) return null;
+        Usuario usuario = result.get();
 
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         BeanUtils.copyProperties(usuario, usuarioDTO);
+        usuarioDTO.setInstituicaoAtualId(usuario.getInstituicaoAtual().getId());
         
         return usuarioDTO;
     }
 
     @Override
     public List<UsuarioDTO> findByTurma(Long turmaId) {
-        // TODO: implementar turma antes de implementar essa parte
         List<Turma> result = turmaRepository.findAll()
                 .stream()
                 .filter(turma -> turma.getId().equals(turmaId))
                 .toList();
 
-        List<UsuarioDTO> usuariosDTOs = new ArrayList<>();
+        if (result.isEmpty()) {
+            throw new RuntimeException("Não existe turma com o id " + turmaId);
+        }
 
-        result.forEach(usuario -> {
-            UsuarioDTO usuarioDTO = new UsuarioDTO();
-            BeanUtils.copyProperties(usuario, usuarioDTO);
+        List<Usuario> alunos = result.get(0).getAlunos();
 
+        return alunos.stream()
+                        .map(aluno -> {
+                            UsuarioDTO alunoDto = new UsuarioDTO();
+                            BeanUtils.copyProperties(aluno, alunoDto);
+                            alunoDto.setInstituicaoAtualId(aluno.getInstituicaoAtual().getId());
 
-            usuariosDTOs.add(usuarioDTO);
-        });
-
-        return usuariosDTOs;
+                            return alunoDto;
+                        })
+                        .toList();
     }
 
     @Override
     public UsuarioDTO add(UsuarioDTO usuario) {
-        // TODO: Implementar DTO para ter a instituicao_id e com ele fazer a busca e setar o model para salvar corretamente
         Usuario novoUsusario = new Usuario();
         BeanUtils.copyProperties(usuario, novoUsusario);
+        novoUsusario.setInstituicaoAtual(null);
 
-        Usuario usuarioSalvo = usuarioRepository.save(novoUsusario);
+        if (usuario.getInstituicaoAtualId() != null) {
+            Instituicao instituicao = new Instituicao();
+            instituicao.setId(usuario.getInstituicaoAtualId());
+            novoUsusario.setInstituicaoAtual(instituicao);
+        }
 
-        UsuarioDTO dto = new UsuarioDTO();
-        BeanUtils.copyProperties(usuarioSalvo, dto);
+        usuarioRepository.save(novoUsusario);
+        usuario.setId(novoUsusario.getId());
 
-        return dto;
+        return usuario;
     }
 
     @Override
     public UsuarioDTO edit(UsuarioDTO usuario) {
-        Usuario novoUsusario = new Usuario();
-        BeanUtils.copyProperties(usuario, novoUsusario);
+        Usuario ususarioEditado = new Usuario();
+        BeanUtils.copyProperties(usuario, ususarioEditado);
 
-        Usuario usuarioSalvo = usuarioRepository.save(novoUsusario);
+        Instituicao instituicao = new Instituicao();
+        instituicao.setId(usuario.getInstituicaoAtualId());
+        ususarioEditado.setInstituicaoAtual(instituicao);
 
-        UsuarioDTO dto = new UsuarioDTO();
-        BeanUtils.copyProperties(usuarioSalvo, dto);
-
-        return dto;
+        usuarioRepository.save(ususarioEditado);
+        return usuario;
     }
 
     @Override

@@ -18,25 +18,29 @@ public class Turma {
     private Long id;
 
     @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
     private Date dtAbertura;
 
     @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
     private Date dtEncerramento;
 
-    private String titulo;
-
+    @Column(nullable = false)
     private String nomeTurma;
 
-    private String Semestre;
+    @Column(nullable = false)
+    private String semestre;
 
     @ManyToOne
     @JoinColumn(name = "INSTITUICAO_ID")
     private Instituicao instituicao;
 
-//    @ManyToMany
-//    @Lazy
-//    @WhereJoinTable(clause =  "EH_PROFESSOR = true ")
-//    private ArrayList<Usuario> professores;
+    @ManyToMany
+    @JoinTable(name = "PROFESSOR_TURMA",
+            joinColumns = @JoinColumn(name = "TURMA_ID"),
+            inverseJoinColumns = @JoinColumn(name = "PROFESSOR_ID"))
+    @Lazy
+    private List<Usuario> professores;
 
     @ManyToMany
     @JoinTable(name = "MONITOR_TURMA",
@@ -53,6 +57,6 @@ public class Turma {
     @Lazy
     private List<Usuario> alunos;
 
-//    @OneToMany
-//    private List<Tarefa> tarefas;
+    @OneToMany
+    private List<Tarefa> tarefas;
 }

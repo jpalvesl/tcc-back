@@ -3,6 +3,7 @@ package com.tcc.joaomyrlla.appcode2know.controller;
 import com.tcc.joaomyrlla.appcode2know.model.Instituicao;
 import com.tcc.joaomyrlla.appcode2know.dto.InstituicaoDTO;
 import com.tcc.joaomyrlla.appcode2know.service.IInstituicaoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class InstituicaoController {
     }
 
     @PostMapping
-    public ResponseEntity<InstituicaoDTO> add(@RequestBody InstituicaoDTO instituicao) {
+    public ResponseEntity<InstituicaoDTO> add(@Valid @RequestBody InstituicaoDTO instituicao) {
 
 
         return ResponseEntity.ok().body(instituicaoService.add(instituicao));
@@ -36,7 +37,7 @@ public class InstituicaoController {
 
     @PatchMapping("/usuario/{usuario_id}")
     public ResponseEntity<InstituicaoDTO> edit(@PathVariable("usuario_id") Long usuarioId,
-                                       @RequestBody InstituicaoDTO instituicao) {
+                                               @Valid @RequestBody InstituicaoDTO instituicao) {
 
         return ResponseEntity.ok().body(instituicaoService.edit(instituicao, usuarioId));
     }

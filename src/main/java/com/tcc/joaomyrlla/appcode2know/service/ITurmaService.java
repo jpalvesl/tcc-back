@@ -10,9 +10,17 @@ public interface ITurmaService {
 
     List<TurmaDTO> findByUsuario(Long usuarioId);
 
-    TurmaDTO add(TurmaDTO turma);
+    TurmaDTO add(TurmaDTO turma, Long criadorId);
 
     TurmaDTO edit(TurmaDTO turma, Long professorId);
 
-    void delete(Long turmaId);
+    void delete(Long turmaId, Long professorId);
+
+    void addAlunoEmTurma (Long turmaId, Long alunoId, Long criadorId);
+
+    void removerAlunoDaTurma (Long turmaId, Long alunoId, Long professorId);
+
+    void addProfessorEmTurma(Long turmaId, Long professorId, Long professorAdicionadoId);
+
+    void removerProfessorDaTurma(Long turmaId, Long professorId, Long professorAdicionadoId);
 }
