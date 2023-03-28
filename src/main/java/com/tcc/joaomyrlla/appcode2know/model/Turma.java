@@ -1,8 +1,10 @@
 package com.tcc.joaomyrlla.appcode2know.model;
 
+import com.tcc.joaomyrlla.appcode2know.dto.TurmaDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.WhereJoinTable;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
@@ -40,14 +42,14 @@ public class Turma {
             joinColumns = @JoinColumn(name = "TURMA_ID"),
             inverseJoinColumns = @JoinColumn(name = "PROFESSOR_ID"))
     @Lazy
-    private List<Usuario> professores;
+    private List<Usuario> professores = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "MONITOR_TURMA",
             joinColumns = @JoinColumn(name = "TURMA_ID"),
             inverseJoinColumns = @JoinColumn(name = "MONITOR_ID"))
     @Lazy
-    private List<Usuario> monitores;
+    private List<Usuario> monitores = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -55,8 +57,17 @@ public class Turma {
             joinColumns = @JoinColumn(name = "TURMA_ID"),
             inverseJoinColumns = @JoinColumn(name = "ALUNO_ID"))
     @Lazy
-    private List<Usuario> alunos;
+    private List<Usuario> alunos = new ArrayList<>();
 
     @OneToMany
-    private List<Tarefa> tarefas;
+    private List<Tarefa> tarefas = new ArrayList<>();
+
+    public static Turma toTurma(TurmaDTO turmaDTO) {
+        Turma turma = new Turma();
+        BeanUtils.copyProperties(turmaDTO, turma);
+
+
+
+        return turma;
+    }
 }

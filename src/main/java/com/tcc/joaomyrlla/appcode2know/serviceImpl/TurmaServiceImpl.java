@@ -34,15 +34,7 @@ public class TurmaServiceImpl implements ITurmaService {
         return turmaRepository.findAll()
                 .stream()
                 .filter(turma -> turma.getInstituicao().getId().equals(instituicaoId))
-                .map(turma -> {
-                    TurmaDTO turmaDTO = new TurmaDTO();
-                    BeanUtils.copyProperties(turma, turmaDTO);
-                    turmaDTO.setInstituicaoId(turma.getInstituicao().getId());
-
-                    turmaDTO.setTitulo(String.join(" - ", turma.getNomeTurma(), turma.getSemestre()));
-
-                    return turmaDTO;
-                })
+                .map(TurmaDTO::toTurma)
                 .toList();
     }
 
@@ -52,44 +44,30 @@ public class TurmaServiceImpl implements ITurmaService {
 
         return usuario.getTurmasAluno()
                 .stream()
-                .map(turma -> {
-                    TurmaDTO turmaDTO = new TurmaDTO();
-                    BeanUtils.copyProperties(turma, turmaDTO);
-                    turmaDTO.setTitulo(String.join(" - ", turma.getNomeTurma(), turma.getSemestre()));
-                    turmaDTO.setInstituicaoId(turma.getInstituicao().getId());
-
-                    return turmaDTO;
-                })
+                .map(TurmaDTO::toTurma)
                 .toList();
     }
 
     @Override
-    public TurmaDTO add(TurmaDTO turma, Long criadorId) {
-        Instituicao instituicao = instituicaoRespository.findById(turma.getInstituicaoId()).orElseThrow(InstituicaoNotFoundException::new);
+    public TurmaDTO add(TurmaDTO turmaDTO, Long criadorId) {
+        Instituicao instituicao = instituicaoRespository.findById(turmaDTO.getInstituicaoId()).orElseThrow(InstituicaoNotFoundException::new);
         Usuario usuario = usuarioRepository.findById(criadorId).orElseThrow(UsuarioNotFoundException::new);
 
         if (!(usuario.isEhProfessor())) {
             throw new InsufficientPrivilegeException(String.format("O usuario de Id %d não tem permissão para criar uma turma", criadorId));
         }
 
+        Turma turma = Turma.toTurma(turmaDTO);
+        turma.getProfessores().add(usuario);
+        instituicao.setId(turmaDTO.getInstituicaoId());
 
-        List<Usuario> professoresTurma = new ArrayList<>();
-        professoresTurma.add(usuario);
+        turmaDTO.setTitulo(String.join(" - ", turma.getNomeTurma(), turma.getSemestre()));
 
-        Turma novaTurma = new Turma();
-        BeanUtils.copyProperties(turma, novaTurma);
+        turmaRepository.save(turma);
 
-        turma.setTitulo(String.join(" - ", novaTurma.getNomeTurma(), novaTurma.getSemestre()));
+        turmaDTO.setId(turma.getId());
 
-        instituicao.setId(turma.getInstituicaoId());
-        novaTurma.setInstituicao(instituicao);
-        novaTurma.setProfessores(professoresTurma);
-
-        turmaRepository.save(novaTurma);
-
-        turma.setId(novaTurma.getId());
-
-        return turma;
+        return turmaDTO;
     }
 
     @Override
@@ -104,17 +82,11 @@ public class TurmaServiceImpl implements ITurmaService {
             throw new InsufficientPrivilegeException("O usuário de Id " + professorId + " não tem permissão para editar uma turma");
         }
 
-        Turma turmaEditada = new Turma();
-        BeanUtils.copyProperties(turma, turmaEditada);
-        turmaDTO.setTitulo(String.join(" - ", turmaEditada.getNomeTurma(), turmaEditada.getSemestre()));
+        turmaDTO.setTitulo(String.join(" - ", turma.getNomeTurma(), turma.getSemestre()));
 
+        turma.getInstituicao().setId(turmaDTO.getInstituicaoId());
 
-        Instituicao instituicao = new Instituicao();
-        instituicao.setId(turmaDTO.getInstituicaoId());
-        turmaEditada.setInstituicao(instituicao);
-        turmaEditada.getProfessores().add(usuario);
-
-        turmaRepository.save(turmaEditada);
+        turmaRepository.save(turma);
 
         return turmaDTO;
     }
