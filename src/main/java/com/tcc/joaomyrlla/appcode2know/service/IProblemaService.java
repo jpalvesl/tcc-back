@@ -5,13 +5,19 @@ import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
 import java.util.List;
 
 public interface IProblemaService {
-    public List<ProblemaDTO> findAll();
+    List<ProblemaDTO> findAll();
 
-    public ProblemaDTO findById(Long id);
+    ProblemaDTO findById(Long id);
 
-    public ProblemaDTO add(ProblemaDTO problemaDTO);
+    List<ProblemaDTO> findByTarefa(Long tarefaId);
 
-    public void delete(Long id, Long usuarioId);
+    ProblemaDTO add(ProblemaDTO problemaDTO);
 
-    public ProblemaDTO edit(ProblemaDTO problemaDTO, Long usuarioId);
+    void delete(Long id, Long usuarioId);
+
+    ProblemaDTO edit(ProblemaDTO problemaDTO, Long usuarioId);
+
+    void addTopicoEmProblema(Long topicoId, Long problemaId);
+
+    void removerTopicoEmProblema(Long topicoId, Long problemaId);
 }

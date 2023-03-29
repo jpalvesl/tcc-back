@@ -1,7 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.model;
 
 import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
-import com.tcc.joaomyrlla.appcode2know.model.multivalorado.Topico;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
@@ -46,8 +45,7 @@ public class Problema {
     @OneToMany(mappedBy = "problema")
     private List<CasoDeTeste> casosDeTeste = new ArrayList<>();
 
-    @OneToMany
-    @JoinColumn(name = "TOPICO_ID")
+    @ManyToMany(mappedBy = "problemas")
     private List<Topico> topicos = new ArrayList<>();
 
     public static Problema toProblema(ProblemaDTO problemaDTO) {
