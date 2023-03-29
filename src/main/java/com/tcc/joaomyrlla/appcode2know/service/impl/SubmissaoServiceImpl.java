@@ -49,19 +49,8 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
 
     @Override
     public List<SubmissaoDTO> findAll() {
-        List<Submissao> submissoes = submissaoRepository.findAll();
-
-
-        return submissoes.stream()
-                .map(submissao -> {
-                    SubmissaoDTO submissaoDto = new SubmissaoDTO();
-                    BeanUtils.copyProperties(submissao, submissaoDto);
-                    submissaoDto.setProblemaId(submissao.getProblema().getId());
-                    submissaoDto.setUsuarioId(submissao.getUsuario().getId());
-
-
-                    return submissaoDto;
-                })
+        return submissaoRepository.findAll().stream()
+                .map(SubmissaoDTO::toSubmissaoDTO)
                 .toList();
     }
 
@@ -71,63 +60,45 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
         return submissaoRepository.findAll()
                 .stream()
                 .filter(submissao -> submissao.getUsuario().getId().equals(alunoId))
-                .map(submissao -> {
-                    SubmissaoDTO submissaoDto = new SubmissaoDTO();
-                    BeanUtils.copyProperties(submissao, submissaoDto);
-                    submissaoDto.setUsuarioId(submissao.getUsuario().getId());
-                    submissaoDto.setProblemaId(submissao.getProblema().getId());
-
-                    return submissaoDto;
-                })
+                .map(SubmissaoDTO::toSubmissaoDTO)
                 .toList();
     }
 
     @Override
     public List<SubmissaoDTO> findByProblemaId(Long problemaId) {
-        List<SubmissaoDTO> listaSubmissoesPorProblema = submissaoRepository.findAll()
+        return submissaoRepository.findAll()
                 .stream()
                 .filter(submissao -> submissao.getProblema().getId().equals(problemaId))
-                .map(submissao -> {
-                    SubmissaoDTO submissaoDto = new SubmissaoDTO();
-                    BeanUtils.copyProperties(submissao, submissaoDto);
-                    submissaoDto.setProblemaId(submissao.getProblema().getId());
-                    submissaoDto.setUsuarioId(submissao.getUsuario().getId());
-
-
-                    return submissaoDto;
-                })
+                .map(SubmissaoDTO::toSubmissaoDTO)
                 .toList();
-        return listaSubmissoesPorProblema;
     }
 
     @Override
-    public List<RespostaDeCasoTesteDTO> realizaSubmissao(SubmissaoDTO submissao) {
-        // TODO: Buscar casos de teste relacionados ao problema
-        List<CasoDeTesteDTO> casosDeTeste = casoDeTesteService.findByProblema(submissao.getProblemaId());
+    public List<RespostaDeCasoTesteDTO> realizaSubmissao(SubmissaoDTO submissaoDTO) {
+        List<CasoDeTesteDTO> casosDeTeste = casoDeTesteService.findByProblema(submissaoDTO.getProblemaId());
 
-        Submissao novaSubmissao = new Submissao();
+        Submissao submissao = new Submissao();
         Problema problema = new Problema();
-        problema.setId(submissao.getProblemaId());
+        problema.setId(submissaoDTO.getProblemaId());
 
         Usuario usuario = new Usuario();
-        usuario.setId(submissao.getUsuarioId());
+        usuario.setId(submissaoDTO.getUsuarioId());
 
-        novaSubmissao.setCodigoResposta(submissao.getCodigoResposta());
-        novaSubmissao.setProblema(problema);
-        novaSubmissao.setUsuario(usuario);
+        submissao.setCodigoResposta(submissaoDTO.getCodigoResposta());
+        submissao.setProblema(problema);
+        submissao.setUsuario(usuario);
 
-        submissaoRepository.save(novaSubmissao);
+        submissaoRepository.save(submissao);
 
-        // TODO:  criar uma lista que guardara todas as respostas obtidas pela api em python
         List<RespostaDeCasoTesteDTO> retorno = casosDeTeste.stream()
                 .map(casoTeste -> {
                     HashMap<String, Object> request = new HashMap<>();
-                    request.put("codigoResposta", submissao.getCodigoResposta());
+                    request.put("codigoResposta", submissaoDTO.getCodigoResposta());
                     request.put("entradas", casoTeste.getEntrada());
 
                     HashMap<String, Object> responseOnlineJudge;
                     RespostaDeCasoTesteDTO respostaDeCasoTesteDto = new RespostaDeCasoTesteDTO();
-                    respostaDeCasoTesteDto.setSubmissaoId(novaSubmissao.getId());
+                    respostaDeCasoTesteDto.setSubmissaoId(submissao.getId());
                     respostaDeCasoTesteDto.setCaso(casoTeste.getCaso());
 
                     try {
@@ -147,12 +118,11 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
         retorno.forEach(resposta -> {
             RespostaCasoTeste respostaCasoTeste = new RespostaCasoTeste();
             BeanUtils.copyProperties(resposta, respostaCasoTeste);
-            respostaCasoTeste.setSubmissao(novaSubmissao);
+            respostaCasoTeste.setSubmissao(submissao);
 
             respostaCasoDeTesteRepository.save(respostaCasoTeste);
         });
 
         return retorno;
     }
-
 }
