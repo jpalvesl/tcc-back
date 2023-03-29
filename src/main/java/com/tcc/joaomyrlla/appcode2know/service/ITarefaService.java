@@ -9,9 +9,9 @@ public interface ITarefaService {
 
     List<TarefaDTO> findByTurma(Long turmaId);
 
-    TarefaDTO add(TarefaDTO tarefa);
+    TarefaDTO add(TarefaDTO tarefaDTO);
 
-    TarefaDTO edit(TarefaDTO tarefa, Long professorId);
+    TarefaDTO edit(TarefaDTO tarefaDTO, Long professorId);
 
     void delete(Long id, Long professorId);
 

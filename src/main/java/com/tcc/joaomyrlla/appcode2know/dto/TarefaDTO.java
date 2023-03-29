@@ -2,11 +2,13 @@ package com.tcc.joaomyrlla.appcode2know.dto;
 
 import java.sql.Date;
 
+import com.tcc.joaomyrlla.appcode2know.model.Tarefa;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 
 
 @Data
@@ -33,4 +35,16 @@ public class TarefaDTO {
 
     @NotNull
     private Long turmaId;
+
+    public static TarefaDTO toTarefaDTO(Tarefa tarefa) {
+        TarefaDTO tarefaDTO = new TarefaDTO();
+        BeanUtils.copyProperties(tarefa, tarefaDTO);
+
+        tarefaDTO.setDtAbertura((Date) tarefa.getDtAbertura());
+        tarefaDTO.setDtEncerramento((Date) tarefa.getDtEncerramento());
+        tarefaDTO.setTurmaId(tarefa.getTurma().getId());
+        tarefaDTO.setCriadorId(tarefa.getCriador().getId());
+
+        return tarefaDTO;
+    }
 }

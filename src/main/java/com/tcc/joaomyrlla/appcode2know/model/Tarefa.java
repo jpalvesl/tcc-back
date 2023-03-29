@@ -1,7 +1,9 @@
 package com.tcc.joaomyrlla.appcode2know.model;
 
+import com.tcc.joaomyrlla.appcode2know.dto.TarefaDTO;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
@@ -43,5 +45,12 @@ public class Tarefa {
             joinColumns = @JoinColumn(name = "TAREFA_ID"),
             inverseJoinColumns = @JoinColumn(name = "PROBLEMA_ID"))
     @Lazy
-    private List<Problema> problemas;
+    private List<Problema> problemas = new ArrayList<>();
+
+    public static Tarefa toTarefa(TarefaDTO tarefaDTO) {
+        Tarefa tarefa = new Tarefa();
+        BeanUtils.copyProperties(tarefaDTO, tarefa);
+
+        return tarefa;
+    }
 }
