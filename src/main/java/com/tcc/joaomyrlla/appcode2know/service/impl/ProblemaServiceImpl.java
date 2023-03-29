@@ -3,19 +3,20 @@ package com.tcc.joaomyrlla.appcode2know.service.impl;
 import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
 import com.tcc.joaomyrlla.appcode2know.exceptions.InsufficientPrivilegeException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.ProblemaNotFoundException;
+import com.tcc.joaomyrlla.appcode2know.exceptions.TarefaNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
+import com.tcc.joaomyrlla.appcode2know.model.Tarefa;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
 import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
+import com.tcc.joaomyrlla.appcode2know.repository.TarefaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.IProblemaService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProblemaServiceImpl implements IProblemaService {
@@ -24,6 +25,9 @@ public class ProblemaServiceImpl implements IProblemaService {
 
     @Autowired
     UsuarioRepository usuarioRepository;
+
+    @Autowired
+    TarefaRepository tarefaRepository;
 
     public ProblemaServiceImpl(ProblemaRepository problemaRepository) {
         this.problemaRepository = problemaRepository;
@@ -40,6 +44,16 @@ public class ProblemaServiceImpl implements IProblemaService {
 
         return ProblemaDTO.toProblemaDTO(problema);
     }
+
+    @Override
+    public List<ProblemaDTO> findByTarefa(Long tarefaId) {
+        Tarefa tarefa = tarefaRepository.findById(tarefaId).orElseThrow(TarefaNotFoundException::new);
+
+        return tarefa.getProblemas().stream()
+                .map(ProblemaDTO::toProblemaDTO)
+                .toList();
+    }
+
 
     public ProblemaDTO add(ProblemaDTO problemaDTO) {
         Usuario usuario = usuarioRepository.findById(problemaDTO.getCriadorId()).orElseThrow(UsuarioNotFoundException::new);

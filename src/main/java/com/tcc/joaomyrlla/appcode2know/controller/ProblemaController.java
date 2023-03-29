@@ -27,6 +27,11 @@ public class ProblemaController {
         return ResponseEntity.ok().body(problemaService.findById(id));
     }
 
+    @GetMapping("/tarefa/{tarefa_id}")
+    public ResponseEntity<List<ProblemaDTO>> findByTarefa(@PathVariable("tarefa_id") Long tarefaId) {
+        return ResponseEntity.ok().body(problemaService.findByTarefa(tarefaId));
+    }
+
     @PostMapping
     public ResponseEntity<ProblemaDTO> add(@Valid @RequestBody ProblemaDTO problema) {
         return ResponseEntity.ok().body(problemaService.add(problema));
