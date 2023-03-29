@@ -16,4 +16,8 @@ public interface IProblemaService {
     void delete(Long id, Long usuarioId);
 
     ProblemaDTO edit(ProblemaDTO problemaDTO, Long usuarioId);
+
+    void addTopicoEmProblema(Long topicoId, Long problemaId);
+
+    void removerTopicoEmProblema(Long topicoId, Long problemaId);
 }

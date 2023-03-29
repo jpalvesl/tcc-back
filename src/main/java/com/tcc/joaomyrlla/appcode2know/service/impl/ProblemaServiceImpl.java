@@ -1,15 +1,14 @@
 package com.tcc.joaomyrlla.appcode2know.service.impl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
-import com.tcc.joaomyrlla.appcode2know.exceptions.InsufficientPrivilegeException;
-import com.tcc.joaomyrlla.appcode2know.exceptions.ProblemaNotFoundException;
-import com.tcc.joaomyrlla.appcode2know.exceptions.TarefaNotFoundException;
-import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
+import com.tcc.joaomyrlla.appcode2know.exceptions.*;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import com.tcc.joaomyrlla.appcode2know.model.Tarefa;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
+import com.tcc.joaomyrlla.appcode2know.model.multivalorado.Topico;
 import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.TarefaRepository;
+import com.tcc.joaomyrlla.appcode2know.repository.TopicoRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.IProblemaService;
 import org.springframework.beans.BeanUtils;
@@ -28,6 +27,9 @@ public class ProblemaServiceImpl implements IProblemaService {
 
     @Autowired
     TarefaRepository tarefaRepository;
+
+    @Autowired
+    TopicoRepository topicoRepository;
 
     public ProblemaServiceImpl(ProblemaRepository problemaRepository) {
         this.problemaRepository = problemaRepository;
@@ -100,5 +102,23 @@ public class ProblemaServiceImpl implements IProblemaService {
         problemaRepository.save(problema);
 
         return problemaDTO;
+    }
+
+    @Override
+    public void addTopicoEmProblema(Long topicoId, Long problemaId) {
+        Topico topico = topicoRepository.findById(topicoId).orElseThrow(TopicoNotFoundException::new);
+        Problema problema = problemaRepository.findById(problemaId).orElseThrow(ProblemaNotFoundException::new);
+
+        topico.getProblemas().add(problema);
+        topicoRepository.save(topico);
+    }
+
+    @Override
+    public void removerTopicoEmProblema(Long topicoId, Long problemaId) {
+        Topico topico = topicoRepository.findById(topicoId).orElseThrow(TopicoNotFoundException::new);
+        Problema problema = problemaRepository.findById(problemaId).orElseThrow(ProblemaNotFoundException::new);
+
+        topico.getProblemas().remove(problema);
+        topicoRepository.save(topico);
     }
 }

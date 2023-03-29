@@ -47,4 +47,16 @@ public class ProblemaController {
     public void delete(@PathVariable("id") Long id, @PathVariable("criador_id") Long criadorId) {
         problemaService.delete(id, criadorId);
     }
+
+    @PostMapping("/{problema_id}/topico/{topico_id}")
+    public void addTopicoEmProblema(@PathVariable("problema_id") Long problemaId,
+                                    @PathVariable("topico_id") Long topicoId) {
+        problemaService.addTopicoEmProblema(topicoId, problemaId);
+    }
+
+    @DeleteMapping("/{problema_id}/topico/{topico_id}")
+    public void removerTopicoEmProblema(@PathVariable("problema_id") Long problemaId,
+                                        @PathVariable("topico_id") Long topicoId) {
+        problemaService.removerTopicoEmProblema(topicoId, problemaId);
+    }
 }
