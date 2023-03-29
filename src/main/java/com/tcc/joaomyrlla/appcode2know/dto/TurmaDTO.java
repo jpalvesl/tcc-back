@@ -1,9 +1,12 @@
 package com.tcc.joaomyrlla.appcode2know.dto;
+import com.tcc.joaomyrlla.appcode2know.model.Turma;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
+
 import java.util.Date;
 
 @Data
@@ -29,4 +32,17 @@ public class TurmaDTO {
 
   @NotNull
   private Long instituicaoId;
+
+  public static TurmaDTO toTurma(Turma turma) {
+    TurmaDTO turmaDTO = new TurmaDTO();
+    BeanUtils.copyProperties(turma, turmaDTO);
+
+    if (turma.getInstituicao() != null) {
+      turmaDTO.setInstituicaoId(turma.getInstituicao().getId());
+    }
+
+    turmaDTO.setTitulo(String.join(" - ", turma.getNomeTurma(), turma.getSemestre()));
+
+    return turmaDTO;
+  }
 }

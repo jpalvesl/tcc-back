@@ -10,9 +10,9 @@ public interface ICasoDeTesteService {
 
     List<CasoDeTesteDTO> findByProblema(Long problemaId);
 
-    CasoDeTesteDTO add(CasoDeTesteDTO casoDeTeste, Long problemaId, Long criadorId);
+    CasoDeTesteDTO add(CasoDeTesteDTO casoDeTesteDTO, Long problemaId, Long criadorId);
 
-    CasoDeTesteDTO edit(CasoDeTesteDTO casoDeTeste, Long criadorId);
+    CasoDeTesteDTO edit(CasoDeTesteDTO casoDeTesteDTO, Long criadorId);
 
     void delete(Long id, Long criadorId);
 }

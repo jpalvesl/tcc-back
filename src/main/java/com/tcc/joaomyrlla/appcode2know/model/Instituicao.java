@@ -2,7 +2,11 @@ package com.tcc.joaomyrlla.appcode2know.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
+
+import com.tcc.joaomyrlla.appcode2know.dto.InstituicaoDTO;
 
 import java.util.List;
 
@@ -23,4 +27,11 @@ public class Instituicao {
     @OneToMany(mappedBy = "instituicaoAtual")
     @Lazy
     private List<Usuario> alunos;
+
+    public static Instituicao toInstituicao(InstituicaoDTO instituicaoDTO) {
+        Instituicao instituicao = new Instituicao();
+        BeanUtils.copyProperties(instituicaoDTO, instituicao);
+
+        return instituicao;
+    }
 }

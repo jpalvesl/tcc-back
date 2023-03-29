@@ -1,10 +1,13 @@
 package com.tcc.joaomyrlla.appcode2know.model;
 
+import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
 import com.tcc.joaomyrlla.appcode2know.model.multivalorado.Topico;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "PROBLEMA")
@@ -38,12 +41,19 @@ public class Problema {
 
     @ManyToMany(mappedBy = "problemas")
     @Lazy
-    private List<Tarefa> tarefas;
+    private List<Tarefa> tarefas = new ArrayList<>();
 
     @OneToMany(mappedBy = "problema")
-    private List<CasoDeTeste> casosDeTeste;
+    private List<CasoDeTeste> casosDeTeste = new ArrayList<>();
 
     @OneToMany
     @JoinColumn(name = "TOPICO_ID")
-    private List<Topico> topicos;
+    private List<Topico> topicos = new ArrayList<>();
+
+    public static Problema toProblema(ProblemaDTO problemaDTO) {
+        Problema problema = new Problema();
+        BeanUtils.copyProperties(problemaDTO, problema);
+
+        return problema;
+    }
 }

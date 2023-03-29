@@ -9,9 +9,9 @@ public interface IInstituicaoService {
 
     public InstituicaoDTO findById(Long id);
 
-    public InstituicaoDTO add(InstituicaoDTO instituicao);
+    public InstituicaoDTO add(InstituicaoDTO instituicaoDTO);
 
     public void delete(Long id, Long usuarioId);
 
-    public InstituicaoDTO edit(InstituicaoDTO instituicao, Long usuarioId);
+    public InstituicaoDTO edit(InstituicaoDTO instituicaoDTO, Long usuarioId);
 }

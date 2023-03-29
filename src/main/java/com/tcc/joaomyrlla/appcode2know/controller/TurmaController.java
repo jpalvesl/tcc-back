@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("turma")
@@ -16,13 +18,18 @@ public class TurmaController {
     @Autowired
     ITurmaService turmaService;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<TurmaDTO> findById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok().body(turmaService.findById(id));
+    }
+
     @GetMapping("/instituicao/{instituicao_id}")
     public ResponseEntity<List<TurmaDTO>> findByInstituicao(@PathVariable("instituicao_id") Long instituicaoId) {
         return ResponseEntity.ok().body(turmaService.findByInstituicao(instituicaoId));
     }
 
     @GetMapping("/usuario/{usuario_id}")
-    public ResponseEntity<List<TurmaDTO>> findByUsuario(@PathVariable("usuario_id") Long usuarioId) {
+    public ResponseEntity<Map<String, List<TurmaDTO>>> findByUsuario(@PathVariable("usuario_id") Long usuarioId) {
         return ResponseEntity.ok().body(turmaService.findByUsuario(usuarioId));
     }
 

@@ -1,7 +1,9 @@
 package com.tcc.joaomyrlla.appcode2know.model;
 
+import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
@@ -39,9 +41,25 @@ public class Usuario {
 
     @ManyToMany(mappedBy = "professores")
     @Lazy
-    private List<Turma> turmasProfessor;
+    private List<Turma> turmasProfessor = new ArrayList<>();
 
     @ManyToMany(mappedBy = "alunos")
     @Lazy
-    private List<Turma> turmasAluno;
+    private List<Turma> turmasAluno = new ArrayList<>();
+
+    public static Usuario toUsuario(UsuarioDTO usuarioDTO) {
+        Usuario usuario = new Usuario();
+        BeanUtils.copyProperties(usuarioDTO, usuario);
+
+        usuario.getInstituicaoAtual().setId(usuarioDTO.getInstituicaoAtualId());
+
+        return usuario;
+    }
+
+    public static Usuario toUsuario(UsuarioDTO usuarioDTO, Usuario usuario) {
+        BeanUtils.copyProperties(usuarioDTO, usuario);
+        usuario.getInstituicaoAtual().setId(usuarioDTO.getInstituicaoAtualId());
+
+        return usuario;
+    }
 }

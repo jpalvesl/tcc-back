@@ -44,8 +44,15 @@ public class TarefaController {
 
     @PostMapping("/{id}/problema/{problema_id}/usuario/{usuario_id}")
     public void addProblemaEmTarefa(@PathVariable("id") Long id,
-                                    @PathVariable("problema_id") Long problema_id,
+                                    @PathVariable("problema_id") Long problemaId,
                                     @PathVariable("usuario_id") Long usuarioId) {
-        tarefaService.addProblemaEmTarefa(problema_id, id, usuarioId);
+        tarefaService.addProblemaEmTarefa(problemaId, id, usuarioId);
+    }
+
+    @DeleteMapping("/{id}/problema/{problema_id}/usuario/{usuario_id}")
+    public void removerProblemaEmTarefa(@PathVariable("id") Long id,
+                                        @PathVariable("problema_id") Long problemaId,
+                                        @PathVariable("usuario_id") Long usuarioId) {
+        tarefaService.removerProblemaEmTarefa(problemaId, id, usuarioId);
     }
 }
