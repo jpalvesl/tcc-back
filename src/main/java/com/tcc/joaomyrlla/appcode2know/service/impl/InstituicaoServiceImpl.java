@@ -1,4 +1,4 @@
-package com.tcc.joaomyrlla.appcode2know.serviceImpl;
+package com.tcc.joaomyrlla.appcode2know.service.impl;
 
 import com.tcc.joaomyrlla.appcode2know.exceptions.InstituicaoNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.InsufficientPrivilegeException;
