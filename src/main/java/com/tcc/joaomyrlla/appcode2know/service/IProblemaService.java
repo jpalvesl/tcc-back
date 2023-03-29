@@ -9,9 +9,9 @@ public interface IProblemaService {
 
     public ProblemaDTO findById(Long id);
 
-    public ProblemaDTO add(ProblemaDTO problema);
+    public ProblemaDTO add(ProblemaDTO problemaDTO);
 
     public void delete(Long id, Long usuarioId);
 
-    public ProblemaDTO edit(ProblemaDTO problema, Long usuarioId);
+    public ProblemaDTO edit(ProblemaDTO problemaDTO, Long usuarioId);
 }

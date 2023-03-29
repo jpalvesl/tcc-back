@@ -1,10 +1,12 @@
 package com.tcc.joaomyrlla.appcode2know.dto;
 
+import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 
 @Data
 @AllArgsConstructor
@@ -32,4 +34,12 @@ public class ProblemaDTO {
   
   @NotNull(message = "")
   private Long criadorId;
+
+  public static ProblemaDTO toProblemaDTO(Problema problema) {
+    ProblemaDTO problemaDTO = new ProblemaDTO();
+    BeanUtils.copyProperties(problema, problemaDTO);
+    problemaDTO.setCriadorId(problema.getCriador().getId());
+
+    return problemaDTO;
+  }
 }

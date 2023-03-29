@@ -30,46 +30,31 @@ public class ProblemaServiceImpl implements IProblemaService {
     }
 
     public List<ProblemaDTO> findAll() {
-        List<Problema> result = problemaRepository.findAll();
-        List<ProblemaDTO> problemaDTOs = new ArrayList<>();
-
-        result.forEach(problema -> {
-            ProblemaDTO problemaDTO = new ProblemaDTO();
-            BeanUtils.copyProperties(problema, problemaDTO);
-
-            problemaDTO.setCriadorId(problema.getCriador().getId());
-            problemaDTOs.add(problemaDTO);
-        });
-
-        return problemaDTOs;
+        return problemaRepository.findAll().stream()
+                .map(ProblemaDTO::toProblemaDTO)
+                .toList();
     }
 
     public ProblemaDTO findById(Long id) {
-        Problema problema = Optional.of(problemaRepository.findById(id).orElseThrow(ProblemaNotFoundException::new)).get();
+        Problema problema = problemaRepository.findById(id).orElseThrow(ProblemaNotFoundException::new);
 
-        ProblemaDTO problemaDTO = new ProblemaDTO();
-
-        BeanUtils.copyProperties(problema, problemaDTO);
-        problemaDTO.setCriadorId(problema.getCriador().getId());
-
-        return problemaDTO;
+        return ProblemaDTO.toProblemaDTO(problema);
     }
 
-    public ProblemaDTO add(ProblemaDTO problema) {
-        Usuario usuario = usuarioRepository.findById(problema.getCriadorId()).orElseThrow(UsuarioNotFoundException::new);
+    public ProblemaDTO add(ProblemaDTO problemaDTO) {
+        Usuario usuario = usuarioRepository.findById(problemaDTO.getCriadorId()).orElseThrow(UsuarioNotFoundException::new);
 
         if (!usuario.isEhProfessor()) {
-            throw new InsufficientPrivilegeException("O usuário de Id" + problema.getCriadorId() + " não é professor");
+            throw new InsufficientPrivilegeException(String.format("O usuario de Id %d não é professor", problemaDTO.getCriadorId()));
         }
 
-        Problema novoProblema = new Problema();
-        BeanUtils.copyProperties(problema, novoProblema);
-        novoProblema.setCriador(usuario);
+        Problema problema = Problema.toProblema(problemaDTO);
+        problema.setCriador(usuario);
 
-        problemaRepository.save(novoProblema);
-        problema.setId(novoProblema.getId());
+        problemaRepository.save(problema);
+        problemaDTO.setId(problema.getId());
 
-        return problema;
+        return problemaDTO;
     }
 
     @Override
@@ -97,11 +82,8 @@ public class ProblemaServiceImpl implements IProblemaService {
             throw new InsufficientPrivilegeException("O usuário não tem permissão para deletar a tarefa");
         }
 
-        Problema problemaEditado = new Problema();
-        BeanUtils.copyProperties(problemaDTO, problemaEditado);
-        problemaEditado.setCriador(usuario);
-
-        problemaRepository.save(problemaEditado);
+        BeanUtils.copyProperties(problemaDTO, problema);
+        problemaRepository.save(problema);
 
         return problemaDTO;
     }
