@@ -5,7 +5,7 @@ import com.tcc.joaomyrlla.appcode2know.exceptions.*;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import com.tcc.joaomyrlla.appcode2know.model.Tarefa;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
-import com.tcc.joaomyrlla.appcode2know.model.multivalorado.Topico;
+import com.tcc.joaomyrlla.appcode2know.model.Topico;
 import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.TarefaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.TopicoRepository;

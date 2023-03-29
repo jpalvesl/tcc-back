@@ -1,7 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.model;
 
 import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
-import com.tcc.joaomyrlla.appcode2know.model.multivalorado.Topico;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;

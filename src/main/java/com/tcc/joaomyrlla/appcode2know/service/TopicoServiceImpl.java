@@ -1,11 +1,10 @@
 package com.tcc.joaomyrlla.appcode2know.service;
 
-import com.tcc.joaomyrlla.appcode2know.dto.TarefaDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.TopicoDTO;
 import com.tcc.joaomyrlla.appcode2know.exceptions.ProblemaNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.TopicoNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
-import com.tcc.joaomyrlla.appcode2know.model.multivalorado.Topico;
+import com.tcc.joaomyrlla.appcode2know.model.Topico;
 import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.TopicoRepository;
 import org.springframework.beans.BeanUtils;

@@ -1,7 +1,6 @@
-package com.tcc.joaomyrlla.appcode2know.model.multivalorado;
+package com.tcc.joaomyrlla.appcode2know.model;
 
 import com.tcc.joaomyrlla.appcode2know.dto.TopicoDTO;
-import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
@@ -17,6 +16,7 @@ public class Topico {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(nullable = false)
     private String nome;
 
     @ManyToMany
