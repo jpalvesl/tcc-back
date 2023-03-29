@@ -1,7 +1,9 @@
 package com.tcc.joaomyrlla.appcode2know.model;
 
+import com.tcc.joaomyrlla.appcode2know.dto.CasoDeTesteDTO;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
@@ -28,4 +30,11 @@ public class CasoDeTeste {
     @ManyToOne
     @JoinColumn(name = "PROBLEMA_ID")
     private Problema problema;
+
+    public static CasoDeTeste toCasoDeTeste(CasoDeTesteDTO casoDeTesteDTO) {
+        CasoDeTeste casoDeTeste = new CasoDeTeste();
+        BeanUtils.copyProperties(casoDeTesteDTO, casoDeTeste);
+
+        return casoDeTeste;
+    }
 }

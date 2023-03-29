@@ -1,10 +1,12 @@
 package com.tcc.joaomyrlla.appcode2know.dto;
 
+import com.tcc.joaomyrlla.appcode2know.model.CasoDeTeste;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 
 @Data
 @AllArgsConstructor
@@ -23,4 +25,12 @@ public class CasoDeTesteDTO {
 
   @NotNull(message = "O campo problemaId é obrigatório")
   private Long problemaId;
+
+  public static CasoDeTesteDTO toCasoDeTesteDTO(CasoDeTeste casoDeTeste) {
+    CasoDeTesteDTO casoDeTesteDTO = new CasoDeTesteDTO();
+    BeanUtils.copyProperties(casoDeTeste, casoDeTesteDTO);
+    casoDeTesteDTO.setProblemaId(casoDeTeste.getProblema().getId());
+
+    return casoDeTesteDTO;
+  }
 }

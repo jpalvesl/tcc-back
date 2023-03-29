@@ -12,7 +12,6 @@ import com.tcc.joaomyrlla.appcode2know.repository.CasoDeTesteRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.ICasoDeTesteService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,22 +35,14 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
 
     @Override
     public List<CasoDeTesteDTO> findByProblema(Long problemaId) {
-        List<CasoDeTeste> casosDeTeste = casoDeTesteRepository.findAll();
-
-        return casosDeTeste.stream()
-                .filter(caso -> problemaId.equals(caso.getProblema().getId()))
-                .map(caso -> {
-                    CasoDeTesteDTO casoDeTesteDto = new CasoDeTesteDTO();
-                    BeanUtils.copyProperties(caso, casoDeTesteDto);
-                    casoDeTesteDto.setProblemaId(caso.getProblema().getId());
-
-                    return casoDeTesteDto;
-                })
+        return casoDeTesteRepository.findAll().stream()
+                .filter(casoDeTeste -> problemaId.equals(casoDeTeste.getProblema().getId()))
+                .map(CasoDeTesteDTO::toCasoDeTesteDTO)
                 .toList();
     }
 
     @Override
-    public CasoDeTesteDTO add(CasoDeTesteDTO casoDeTeste, Long problemaId, Long criadorId) {
+    public CasoDeTesteDTO add(CasoDeTesteDTO casoDeTesteDTO, Long problemaId, Long criadorId) {
         Usuario usuario = usuarioRepository.findById(criadorId).orElseThrow(UsuarioNotFoundException::new);
         Problema problema = problemaRepository.findById(problemaId).orElseThrow(ProblemaNotFoundException::new);
 
@@ -59,34 +50,37 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
             throw new InsufficientPrivilegeException("O usuário de Id " + criadorId + " não tem permissão para adicionar caso de teste");
         }
 
-        CasoDeTeste novoCasoDeTeste = new CasoDeTeste();
-        BeanUtils.copyProperties(casoDeTeste, novoCasoDeTeste);
-        novoCasoDeTeste.setProblema(problema);
-        casoDeTesteRepository.save(novoCasoDeTeste);
+        CasoDeTeste casoDeTeste = CasoDeTeste.toCasoDeTeste(casoDeTesteDTO);
+        casoDeTeste.setProblema(problema);
+        casoDeTesteRepository.save(casoDeTeste);
 
-        return casoDeTeste;
+        casoDeTesteDTO.setId(casoDeTeste.getId());
+
+
+        return casoDeTesteDTO;
     }
 
     @Override
-    public CasoDeTesteDTO edit(CasoDeTesteDTO casoDeTeste, Long criadorId) {
+    public CasoDeTesteDTO edit(CasoDeTesteDTO casoDeTesteDTO, Long criadorId) {
         Usuario usuario = usuarioRepository.findById(criadorId).orElseThrow(UsuarioNotFoundException::new);
-        Problema problema = problemaRepository.findById(casoDeTeste.getProblemaId()).orElseThrow(ProblemaNotFoundException::new);
+        Problema problema = problemaRepository.findById(casoDeTesteDTO.getProblemaId()).orElseThrow(ProblemaNotFoundException::new);
 
-        if (!casoDeTesteRepository.existsById(casoDeTeste.getId())) {
-            throw new CasoDeTesteNotFoundException(String.format("Caso de teste com id %d não existe", casoDeTeste.getId()));
+        if (!casoDeTesteRepository.existsById(casoDeTesteDTO.getId())) {
+            throw new CasoDeTesteNotFoundException(String.format("Caso de teste com id %d não existe", casoDeTesteDTO.getId()));
         }
 
         if (!criadorId.equals(problema.getCriador().getId()) || !(usuario.isEhProfessor())) {
             throw new InsufficientPrivilegeException(String.format("O usuario de id %d não tem permissão para editar caso de teste", criadorId));
         }
 
-        CasoDeTeste casoDeTesteEditado = new CasoDeTeste();
-        BeanUtils.copyProperties(casoDeTeste, casoDeTesteEditado);
-        casoDeTesteEditado.setProblema(problema);
+        CasoDeTeste casoDeTeste = CasoDeTeste.toCasoDeTeste(casoDeTesteDTO);
+        casoDeTeste.setProblema(problema);
 
-        casoDeTesteRepository.save(casoDeTesteEditado);
+        casoDeTesteRepository.save(casoDeTeste);
 
-        return casoDeTeste;
+        casoDeTesteDTO.setId(casoDeTeste.getId());
+
+        return casoDeTesteDTO;
     }
 
     @Override
