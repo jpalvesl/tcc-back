@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "SUBMISSAO")
 @Data
@@ -37,5 +38,5 @@ public class Submissao {
             joinColumns = @JoinColumn(name = "SUBMISSAO_ID"),
             inverseJoinColumns = @JoinColumn(name = "CASO_TESTE_ID"))
     @Lazy
-    private ArrayList<CasoDeTeste> casosDeTeste;
+    private List<CasoDeTeste> casosDeTeste;
 }

@@ -24,8 +24,8 @@ public class Problema {
     
     private String textoSaida;
 
-//    @ManyToOne
-//    @JoinColumn(name = "CRIADOR_ID")
-//    @Lazy
-    private String criadorId;
+    @ManyToOne
+    @JoinColumn(name = "CRIADOR_ID")
+    @Lazy
+    private Usuario criador;
 }

@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "TURMA")
 @Data
@@ -32,22 +33,26 @@ public class Turma {
     @JoinColumn(name = "INSTITUICAO_ID")
     private Instituicao instituicao;
 
-    @ManyToMany
-    @Lazy
+//    @ManyToMany
+//    @Lazy
 //    @WhereJoinTable(clause =  "EH_PROFESSOR = true ")
-    private ArrayList<Usuario> professores;
+//    private ArrayList<Usuario> professores;
 
     @ManyToMany
     @JoinTable(name = "MONITOR_TURMA",
             joinColumns = @JoinColumn(name = "TURMA_ID"),
             inverseJoinColumns = @JoinColumn(name = "MONITOR_ID"))
     @Lazy
-    private ArrayList<Usuario> monitores;
+    private List<Usuario> monitores;
 
     @ManyToMany
-    @JoinTable(name = "ALUNO_TURMA",
+    @JoinTable(
+            name = "ALUNO_TURMA",
             joinColumns = @JoinColumn(name = "TURMA_ID"),
             inverseJoinColumns = @JoinColumn(name = "ALUNO_ID"))
     @Lazy
-    private ArrayList<Usuario> alunos;
+    private List<Usuario> alunos;
+
+//    @OneToMany
+//    private List<Tarefa> tarefas;
 }
