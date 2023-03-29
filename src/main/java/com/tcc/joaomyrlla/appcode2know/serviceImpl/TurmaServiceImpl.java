@@ -1,7 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.serviceImpl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.TurmaDTO;
-import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
 import com.tcc.joaomyrlla.appcode2know.exceptions.InstituicaoNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.InsufficientPrivilegeException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.TurmaNotFoundException;
@@ -11,12 +10,12 @@ import com.tcc.joaomyrlla.appcode2know.repository.InstituicaoRespository;
 import com.tcc.joaomyrlla.appcode2know.repository.TurmaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.ITurmaService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TurmaServiceImpl implements ITurmaService {
@@ -29,20 +28,41 @@ public class TurmaServiceImpl implements ITurmaService {
     @Autowired
     InstituicaoRespository instituicaoRespository;
 
+
+    public TurmaDTO findById(Long id) {
+        Turma turma = turmaRepository.findById(id).orElseThrow(TurmaNotFoundException::new);
+        return TurmaDTO.toTurma(turma);
+    }
+
     @Override
     public List<TurmaDTO> findByInstituicao(Long instituicaoId) {
         return turmaRepository.findAll()
                 .stream()
-                .filter(turma -> turma.getInstituicao().getId().equals(instituicaoId))
+                .filter(turma -> turma.getInstituicao() != null && turma.getInstituicao().getId().equals(instituicaoId))
                 .map(TurmaDTO::toTurma)
                 .toList();
     }
 
     @Override
-    public List<TurmaDTO> findByUsuario(Long usuarioId) {
+    public Map<String, List<TurmaDTO>> findByUsuario(Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
 
+        Map<String, List<TurmaDTO>> turmas = new HashMap<>();
+        turmas.put("aluno", findByAluno(usuario));
+        turmas.put("professor", findByProfessor(usuario));
+
+        return turmas;
+    }
+
+    private List<TurmaDTO> findByAluno(Usuario usuario) {
         return usuario.getTurmasAluno()
+                .stream()
+                .map(TurmaDTO::toTurma)
+                .toList();
+    }
+
+    private List<TurmaDTO> findByProfessor(Usuario usuario) {
+        return usuario.getTurmasProfessor()
                 .stream()
                 .map(TurmaDTO::toTurma)
                 .toList();
@@ -58,8 +78,9 @@ public class TurmaServiceImpl implements ITurmaService {
         }
 
         Turma turma = Turma.toTurma(turmaDTO);
-        turma.getProfessores().add(usuario);
+        turma.setInstituicao(instituicao);
         instituicao.setId(turmaDTO.getInstituicaoId());
+        turma.getProfessores().add(usuario);
 
         turmaDTO.setTitulo(String.join(" - ", turma.getNomeTurma(), turma.getSemestre()));
 

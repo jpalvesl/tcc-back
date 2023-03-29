@@ -36,7 +36,10 @@ public class TurmaDTO {
   public static TurmaDTO toTurma(Turma turma) {
     TurmaDTO turmaDTO = new TurmaDTO();
     BeanUtils.copyProperties(turma, turmaDTO);
-    turmaDTO.setInstituicaoId(turma.getInstituicao().getId());
+
+    if (turma.getInstituicao() != null) {
+      turmaDTO.setInstituicaoId(turma.getInstituicao().getId());
+    }
 
     turmaDTO.setTitulo(String.join(" - ", turma.getNomeTurma(), turma.getSemestre()));
 

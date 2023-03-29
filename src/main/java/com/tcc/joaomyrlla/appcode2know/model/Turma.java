@@ -66,8 +66,6 @@ public class Turma {
         Turma turma = new Turma();
         BeanUtils.copyProperties(turmaDTO, turma);
 
-
-
         return turma;
     }
 }

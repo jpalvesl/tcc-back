@@ -12,11 +12,9 @@ import com.tcc.joaomyrlla.appcode2know.repository.TurmaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.ITarefaService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 

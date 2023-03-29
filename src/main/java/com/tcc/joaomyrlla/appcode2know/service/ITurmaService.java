@@ -4,11 +4,14 @@ package com.tcc.joaomyrlla.appcode2know.service;
 import com.tcc.joaomyrlla.appcode2know.dto.TurmaDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ITurmaService {
+    TurmaDTO findById(Long id);
+
     List<TurmaDTO> findByInstituicao(Long instituicaoId);
 
-    List<TurmaDTO> findByUsuario(Long usuarioId);
+    Map<String, List<TurmaDTO>> findByUsuario(Long usuarioId);
 
     TurmaDTO add(TurmaDTO turmaDTO, Long criadorId);
 
