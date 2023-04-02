@@ -4,7 +4,6 @@ import com.tcc.joaomyrlla.appcode2know.dto.TurmaDTO;
 import com.tcc.joaomyrlla.appcode2know.utils.DateUtils;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.WhereJoinTable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 
