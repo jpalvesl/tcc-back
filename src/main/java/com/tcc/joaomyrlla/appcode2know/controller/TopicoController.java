@@ -4,6 +4,7 @@ import com.tcc.joaomyrlla.appcode2know.dto.TopicoDTO;
 import com.tcc.joaomyrlla.appcode2know.service.ITopicoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class TopicoController {
 
     @PostMapping
     public ResponseEntity<TopicoDTO> add(@Valid @RequestBody TopicoDTO topicoDTO) {
-        return ResponseEntity.ok().body(topicoService.add(topicoDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(topicoService.add(topicoDTO));
     }
 
     @PatchMapping
@@ -35,6 +36,7 @@ public class TopicoController {
         return ResponseEntity.ok().body(topicoService.edit(topicoDTO));
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{topico_id}")
     public void delete(@PathVariable("topico_id") Long topicoId) {
         topicoService.delete(topicoId);

@@ -5,6 +5,7 @@ import com.tcc.joaomyrlla.appcode2know.dto.InstituicaoDTO;
 import com.tcc.joaomyrlla.appcode2know.service.IInstituicaoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,9 +31,7 @@ public class InstituicaoController {
 
     @PostMapping
     public ResponseEntity<InstituicaoDTO> add(@Valid @RequestBody InstituicaoDTO instituicao) {
-
-
-        return ResponseEntity.ok().body(instituicaoService.add(instituicao));
+        return ResponseEntity.status(HttpStatus.CREATED).body(instituicaoService.add(instituicao));
     }
 
     @PatchMapping("/usuario/{usuario_id}")
@@ -42,6 +41,7 @@ public class InstituicaoController {
         return ResponseEntity.ok().body(instituicaoService.edit(instituicao, usuarioId));
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}/usuario/{usuario_id}")
     public void delete(@PathVariable("id") Long id,
                        @PathVariable("usuario_id") Long usuarioId) {

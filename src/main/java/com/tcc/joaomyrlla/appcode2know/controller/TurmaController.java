@@ -5,10 +5,10 @@ import com.tcc.joaomyrlla.appcode2know.service.ITurmaService;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,17 +36,17 @@ public class TurmaController {
     @PostMapping("/criador/{criador_id}")
     public ResponseEntity<TurmaDTO> add(@Valid @RequestBody TurmaDTO turma,
                                         @PathVariable("criador_id") Long criadorId) {
-        return ResponseEntity.ok().body(turmaService.add(turma, criadorId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(turmaService.add(turma, criadorId));
     }
 
     @PatchMapping("/usuario/{usuario_id}")
     public ResponseEntity<TurmaDTO> edit(@PathVariable("usuario_id") Long usuarioId,
                                          @Valid @RequestBody TurmaDTO turma) {
-
         return ResponseEntity.ok().body(turmaService.edit(turma, usuarioId));
 
     }
 
+    @ResponseStatus
     @DeleteMapping("/{id}/usuario/{usuario_id}")
     public void delete(@PathVariable("id") Long id,
                        @PathVariable("usuario_id") Long professorId) {

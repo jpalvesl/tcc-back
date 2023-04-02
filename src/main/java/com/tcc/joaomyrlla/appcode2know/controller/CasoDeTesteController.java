@@ -6,6 +6,7 @@ import com.tcc.joaomyrlla.appcode2know.service.ICasoDeTesteService;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,7 @@ public class CasoDeTesteController {
     public ResponseEntity<CasoDeTesteDTO> add(@PathVariable("problema_id") Long problemaId,
                                               @PathVariable("criador_id") Long criadorId,
                                               @Valid @RequestBody CasoDeTesteDTO casoDeTeste) {
-        return ResponseEntity.ok().body(casoDeTesteService.add(casoDeTeste, problemaId, criadorId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(casoDeTesteService.add(casoDeTeste, problemaId, criadorId));
     }
 
     @PatchMapping("/usuario/{usuario_id}")
@@ -39,7 +40,7 @@ public class CasoDeTesteController {
                                                @Valid @RequestBody CasoDeTesteDTO casoDeTeste) {
         return ResponseEntity.ok().body(casoDeTesteService.edit(casoDeTeste, usuarioId));
     }
-
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}/criador_id/{criador_id}")
     public void delete(@PathVariable("id") Long id,
                        @PathVariable("criador_id") Long criadorId) {
