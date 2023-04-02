@@ -1,6 +1,7 @@
 package com.tcc.joaomyrlla.appcode2know.model;
 
 import com.tcc.joaomyrlla.appcode2know.dto.TarefaDTO;
+import com.tcc.joaomyrlla.appcode2know.utils.DateUtils;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
@@ -50,6 +51,8 @@ public class Tarefa {
     public static Tarefa toTarefa(TarefaDTO tarefaDTO) {
         Tarefa tarefa = new Tarefa();
         BeanUtils.copyProperties(tarefaDTO, tarefa);
+        tarefa.setDtAbertura(DateUtils.toDate("yyyy-MM-dd", tarefaDTO.getDtAbertura()));
+        tarefa.setDtEncerramento(DateUtils.toDate("yyyy-MM-dd", tarefaDTO.getDtAbertura()));
 
         return tarefa;
     }

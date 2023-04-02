@@ -1,6 +1,7 @@
 package com.tcc.joaomyrlla.appcode2know.model;
 
 import com.tcc.joaomyrlla.appcode2know.dto.TurmaDTO;
+import com.tcc.joaomyrlla.appcode2know.utils.DateUtils;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.WhereJoinTable;
@@ -65,6 +66,9 @@ public class Turma {
     public static Turma toTurma(TurmaDTO turmaDTO) {
         Turma turma = new Turma();
         BeanUtils.copyProperties(turmaDTO, turma);
+
+        turma.setDtAbertura(DateUtils.toDate("yyyy-MM-dd", turmaDTO.getDtAbertura()));
+        turma.setDtEncerramento(DateUtils.toDate("yyyy-MM-dd", turmaDTO.getDtAbertura()));
 
         return turma;
     }

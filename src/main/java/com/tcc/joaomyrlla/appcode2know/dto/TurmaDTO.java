@@ -1,5 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.dto;
 import com.tcc.joaomyrlla.appcode2know.model.Turma;
+import com.tcc.joaomyrlla.appcode2know.utils.DateUtils;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -17,10 +18,10 @@ public class TurmaDTO {
   private Long id;
 
   @NotNull(message = "O atributo data de abertura é obrigatório")
-  private Date dtAbertura;
+  private String dtAbertura;
 
   @NotNull(message = "O atributo data de encerramento é obrigatório")
-  private Date dtEncerramento;
+  private String dtEncerramento;
 
   private String titulo;
 
@@ -42,6 +43,8 @@ public class TurmaDTO {
     }
 
     turmaDTO.setTitulo(String.join(" - ", turma.getNomeTurma(), turma.getSemestre()));
+    turmaDTO.setDtAbertura(DateUtils.toPattern("yyyy-MM-dd", turma.getDtAbertura()));
+    turmaDTO.setDtEncerramento(DateUtils.toPattern("yyyy-MM-dd", turma.getDtEncerramento()));
 
     return turmaDTO;
   }
