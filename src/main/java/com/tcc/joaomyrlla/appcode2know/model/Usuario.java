@@ -29,6 +29,8 @@ public class Usuario {
     @Column(nullable = false, length = 20)
     private String senha;
 
+    private String urlImagem;
+
     @Column(nullable = false)
     private boolean ehAdm;
 
