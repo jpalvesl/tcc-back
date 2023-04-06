@@ -3,6 +3,7 @@ package com.tcc.joaomyrlla.appcode2know.dto;
 import java.sql.Date;
 
 import com.tcc.joaomyrlla.appcode2know.model.Tarefa;
+import com.tcc.joaomyrlla.appcode2know.utils.DateUtils;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,10 +20,10 @@ public class TarefaDTO {
     private Long id;
 
     @NotNull(message = "O atributo data de abertura é obrigatório")
-    private Date dtAbertura;
+    private String dtAbertura;
 
     @NotNull(message = "O atributo data de encerramento é obrigatório")
-    private Date dtEncerramento;
+    private String dtEncerramento;
 
     @NotBlank(message = "O atributo descrição é obrigatório")
     private String descricao;
@@ -40,8 +41,8 @@ public class TarefaDTO {
         TarefaDTO tarefaDTO = new TarefaDTO();
         BeanUtils.copyProperties(tarefa, tarefaDTO);
 
-        tarefaDTO.setDtAbertura((Date) tarefa.getDtAbertura());
-        tarefaDTO.setDtEncerramento((Date) tarefa.getDtEncerramento());
+        tarefaDTO.setDtAbertura(DateUtils.toPattern("yyyy-MM-dd", tarefa.getDtAbertura()));
+        tarefaDTO.setDtEncerramento(DateUtils.toPattern("yyyy-MM-dd", tarefa.getDtEncerramento()));
         tarefaDTO.setTurmaId(tarefa.getTurma().getId());
         tarefaDTO.setCriadorId(tarefa.getCriador().getId());
 
