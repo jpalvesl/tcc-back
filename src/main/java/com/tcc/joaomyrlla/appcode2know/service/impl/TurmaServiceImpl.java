@@ -81,6 +81,7 @@ public class TurmaServiceImpl implements ITurmaService {
         turma.setInstituicao(instituicao);
         instituicao.setId(turmaDTO.getInstituicaoId());
         turma.getProfessores().add(usuario);
+        turmaDTO.getProfessores().add(usuario.getNome());
 
         turmaDTO.setTitulo(String.join(" - ", turma.getNomeTurma(), turma.getSemestre()));
 

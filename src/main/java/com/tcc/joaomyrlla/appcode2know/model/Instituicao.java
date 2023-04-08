@@ -34,4 +34,8 @@ public class Instituicao {
 
         return instituicao;
     }
+
+    public String getTitulo() {
+        return String.join(" - ", this.getNome(), this.getCampus());
+    }
 }

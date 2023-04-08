@@ -27,6 +27,9 @@ public class Tarefa {
     @Column(nullable = false)
     private Date dtEncerramento;
 
+    @Column (nullable = false)
+    private boolean ehProva;
+
     @Column(nullable = false)
     private String descricao;
 

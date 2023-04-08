@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("tarefa")
@@ -21,7 +22,7 @@ public class TarefaController {
     }
 
     @GetMapping("/turma/{turma_id}")
-    public ResponseEntity<List<TarefaDTO>> findByTurma(@PathVariable("turma_id") Long turmaId) {
+    public ResponseEntity<Map<String, List<TarefaDTO>>> findByTurma(@PathVariable("turma_id") Long turmaId) {
         return ResponseEntity.ok().body(tarefaService.findByTurma(turmaId));
     }
 

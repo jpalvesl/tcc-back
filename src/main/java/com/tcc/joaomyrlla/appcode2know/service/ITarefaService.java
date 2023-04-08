@@ -3,11 +3,12 @@ package com.tcc.joaomyrlla.appcode2know.service;
 import com.tcc.joaomyrlla.appcode2know.dto.TarefaDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ITarefaService {
     List<TarefaDTO> findByAluno(Long alunoId);
 
-    List<TarefaDTO> findByTurma(Long turmaId);
+    Map<String, List<TarefaDTO>> findByTurma(Long turmaId);
 
     TarefaDTO add(TarefaDTO tarefaDTO);
 
