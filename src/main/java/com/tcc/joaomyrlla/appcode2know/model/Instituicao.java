@@ -10,7 +10,7 @@ import com.tcc.joaomyrlla.appcode2know.dto.InstituicaoDTO;
 
 import java.util.List;
 
-@Table(name = "INSTITUICAO")
+@Table(name = "INSTITUICAO", uniqueConstraints = { @UniqueConstraint(columnNames = { "nome", "campus" }) })
 @Data
 @Entity
 public class Instituicao {

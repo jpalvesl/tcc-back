@@ -5,6 +5,7 @@ import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,7 @@ public class ProblemaController {
 
     @PostMapping
     public ResponseEntity<ProblemaDTO> add(@Valid @RequestBody ProblemaDTO problema) {
-        return ResponseEntity.ok().body(problemaService.add(problema));
+        return ResponseEntity.status(HttpStatus.CREATED).body(problemaService.add(problema));
     }
 
     @PatchMapping("/usuario/{usuario_id}")
@@ -43,17 +44,20 @@ public class ProblemaController {
         return ResponseEntity.ok().body(problemaService.edit(problema, usuarioId));
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}/usuario/{criador_id}")
     public void delete(@PathVariable("id") Long id, @PathVariable("criador_id") Long criadorId) {
         problemaService.delete(id, criadorId);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/{problema_id}/topico/{topico_id}")
     public void addTopicoEmProblema(@PathVariable("problema_id") Long problemaId,
                                     @PathVariable("topico_id") Long topicoId) {
         problemaService.addTopicoEmProblema(topicoId, problemaId);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{problema_id}/topico/{topico_id}")
     public void removerTopicoEmProblema(@PathVariable("problema_id") Long problemaId,
                                         @PathVariable("topico_id") Long topicoId) {

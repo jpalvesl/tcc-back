@@ -5,6 +5,7 @@ import com.tcc.joaomyrlla.appcode2know.service.IUsuarioService;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,6 @@ import java.util.List;
 public class UsuarioController {
     @Autowired
     IUsuarioService usuarioService;
-
 
     @GetMapping("/instituicao/{instituicao_id}")
     public ResponseEntity<List<UsuarioDTO>> findByInstituicao(@PathVariable("instituicao_id") Long instituicaoId) {
@@ -34,7 +34,7 @@ public class UsuarioController {
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> cadastrar(@Valid @RequestBody UsuarioDTO usuario) {
-        return ResponseEntity.status(201).body(usuarioService.add(usuario));
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.add(usuario));
     }
 
     @PatchMapping("/{id}")
@@ -43,6 +43,7 @@ public class UsuarioController {
         return ResponseEntity.ok().body(usuarioService.edit(usuario));
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id) {
         usuarioService.delete(id);
