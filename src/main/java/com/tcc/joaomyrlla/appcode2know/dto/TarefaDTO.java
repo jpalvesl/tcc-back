@@ -25,6 +25,9 @@ public class TarefaDTO {
     @NotNull(message = "O atributo data de encerramento é obrigatório")
     private String dtEncerramento;
 
+    @NotNull(message = "O atributo ehProva é obrigatório")
+    private boolean ehProva;
+
     @NotBlank(message = "O atributo descrição é obrigatório")
     private String descricao;
 
@@ -37,6 +40,8 @@ public class TarefaDTO {
     @NotNull
     private Long turmaId;
 
+    private int qtdProblemas;
+
     public static TarefaDTO toTarefaDTO(Tarefa tarefa) {
         TarefaDTO tarefaDTO = new TarefaDTO();
         BeanUtils.copyProperties(tarefa, tarefaDTO);
@@ -45,6 +50,7 @@ public class TarefaDTO {
         tarefaDTO.setDtEncerramento(DateUtils.toPattern("yyyy-MM-dd", tarefa.getDtEncerramento()));
         tarefaDTO.setTurmaId(tarefa.getTurma().getId());
         tarefaDTO.setCriadorId(tarefa.getCriador().getId());
+        tarefaDTO.setQtdProblemas(tarefa.getProblemas().size());
 
         return tarefaDTO;
     }

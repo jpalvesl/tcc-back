@@ -35,10 +35,13 @@ public class ProblemaDTO {
   @NotNull(message = "")
   private Long criadorId;
 
+  private String autor;
+
   public static ProblemaDTO toProblemaDTO(Problema problema) {
     ProblemaDTO problemaDTO = new ProblemaDTO();
     BeanUtils.copyProperties(problema, problemaDTO);
     problemaDTO.setCriadorId(problema.getCriador().getId());
+    problemaDTO.setAutor(problema.getCriador().getNome());
 
     return problemaDTO;
   }

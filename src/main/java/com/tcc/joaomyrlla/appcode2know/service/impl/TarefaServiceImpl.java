@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TarefaServiceImpl implements ITarefaService {
@@ -47,12 +49,24 @@ public class TarefaServiceImpl implements ITarefaService {
     }
 
     @Override
-    public List<TarefaDTO> findByTurma(Long turmaId) {
+    public Map<String, List<TarefaDTO>> findByTurma(Long turmaId) {
         Turma turma = turmaRepository.findById(turmaId).orElseThrow(TurmaNotFoundException::new);
 
-        return turma.getTarefas().stream()
+        List<TarefaDTO> provas = turma.getTarefas().stream()
+                .filter(Tarefa::isEhProva)
                 .map(TarefaDTO::toTarefaDTO)
                 .toList();
+
+        List<TarefaDTO> roteiros = turma.getTarefas().stream()
+                .filter(tarefa -> !tarefa.isEhProva())
+                .map(TarefaDTO::toTarefaDTO)
+                .toList();
+
+        Map<String, List<TarefaDTO>> tarefas = new HashMap<>();
+        tarefas.put("provas", provas);
+        tarefas.put("roteiros", roteiros);
+
+        return tarefas;
     }
 
     @Override
