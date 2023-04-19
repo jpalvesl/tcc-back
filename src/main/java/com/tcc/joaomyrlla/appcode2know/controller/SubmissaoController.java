@@ -34,6 +34,12 @@ public class SubmissaoController {
         return ResponseEntity.ok().body(submissaoService.findByProblemaId(problemaId));
     }
 
+    @GetMapping("/usuario/{usuario_id}/problema/{problema_id}")
+    public ResponseEntity findByUsuarioAndProblema(@PathVariable("usuario_id") Long usuarioId,
+                                                   @PathVariable("problema_id") Long problemaId) {
+        return ResponseEntity.ok().body(submissaoService.findByUsusarioAndProblema(usuarioId, problemaId));
+    }
+
     @PostMapping("/problema/{problema_id}/usuario/{usuario_id}")
     public List<RespostaDeCasoTesteDTO> realizaSubmissao(@Valid @RequestBody SubmissaoDTO submissao,
                                                          @PathVariable("problema_id") Long problemaId,

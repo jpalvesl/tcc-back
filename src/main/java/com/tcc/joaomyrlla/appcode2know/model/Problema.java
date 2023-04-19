@@ -33,6 +33,15 @@ public class Problema {
     @Column(length = 1000)
     private String textoSaida;
 
+    @Column(nullable = false)
+    private boolean problemaDeProva;
+
+    @Column(nullable = false)
+    private double tempoLimite;
+
+    @Column(nullable = false)
+    private Integer limiteDeMemoria;
+
     @ManyToOne
     @JoinColumn(name = "CRIADOR_ID")
     @Lazy
@@ -45,12 +54,26 @@ public class Problema {
     @OneToMany(mappedBy = "problema")
     private List<CasoDeTeste> casosDeTeste = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "problemas")
+    @ManyToMany
+    @JoinTable(
+            name = "TOPICO_PROBLEMA",
+            joinColumns = @JoinColumn(name = "PROBLEMA_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TOPICO_ID"))
     private List<Topico> topicos = new ArrayList<>();
 
     public static Problema toProblema(ProblemaDTO problemaDTO) {
         Problema problema = new Problema();
         BeanUtils.copyProperties(problemaDTO, problema);
+
+        problemaDTO.getTopicos().forEach(mapTopico -> {
+            Topico topico = new Topico();
+            Integer topicoId = (Integer) mapTopico.get("id");
+            String topicoNome = (String) mapTopico.get("nome");
+
+            topico.setId(topicoId.longValue());
+            topico.setNome(topicoNome);
+            problema.getTopicos().add(topico);
+        });
 
         return problema;
     }

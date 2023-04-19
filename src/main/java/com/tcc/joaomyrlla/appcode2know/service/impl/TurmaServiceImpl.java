@@ -81,7 +81,11 @@ public class TurmaServiceImpl implements ITurmaService {
         turma.setInstituicao(instituicao);
         instituicao.setId(turmaDTO.getInstituicaoId());
         turma.getProfessores().add(usuario);
-        turmaDTO.getProfessores().add(usuario.getNome());
+
+        HashMap<String, Object> mapProfessor = new HashMap<>();
+        mapProfessor.put("id", usuario.getId());
+        mapProfessor.put("nome", usuario.getNome());
+        turmaDTO.getProfessores().add(mapProfessor);
 
         turmaDTO.setTitulo(String.join(" - ", turma.getNomeTurma(), turma.getSemestre()));
 
@@ -107,8 +111,12 @@ public class TurmaServiceImpl implements ITurmaService {
         turmaDTO.setTitulo(String.join(" - ", turma.getNomeTurma(), turma.getSemestre()));
 
         turma.getInstituicao().setId(turmaDTO.getInstituicaoId());
+        Turma turmaEditada = Turma.toTurma(turmaDTO);
 
-        turmaRepository.save(turma);
+        turmaEditada.setAlunos(turma.getAlunos());
+        turmaEditada.setTarefas(turma.getTarefas());
+        turmaEditada.setInstituicao(turma.getInstituicao());
+        turmaRepository.save(turmaEditada);
 
         return turmaDTO;
     }

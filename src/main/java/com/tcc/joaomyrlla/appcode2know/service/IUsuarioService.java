@@ -5,15 +5,19 @@ import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
 import java.util.List;
 
 public interface IUsuarioService {
-    public List<UsuarioDTO> findByInstituicao(Long instituicaoId);
+    List<UsuarioDTO> findByInstituicao(Long instituicaoId);
 
-    public UsuarioDTO findById(Long id);
+    List<UsuarioDTO> findAlunoByInstituicao(Long instituicaoId);
 
-    public List<UsuarioDTO> findByTurma(Long turmaId);
+    List<UsuarioDTO> findProfessorByInstituicao(Long instituicaoId);
 
-    public UsuarioDTO add(UsuarioDTO usuarioDTO);
+    UsuarioDTO findById(Long id);
 
-    public UsuarioDTO edit(UsuarioDTO usuarioDTO);
+    List<UsuarioDTO> findByTurma(Long turmaId);
+
+    UsuarioDTO add(UsuarioDTO usuarioDTO);
+
+    UsuarioDTO edit(UsuarioDTO usuarioDTO);
 
     public void delete(Long id);
 }

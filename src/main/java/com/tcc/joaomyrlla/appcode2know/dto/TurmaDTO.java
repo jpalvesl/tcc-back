@@ -11,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Data
@@ -39,9 +40,9 @@ public class TurmaDTO {
 
   private String instituicaoTitulo;
 
-  private List<String> professores = new ArrayList<>();
+  private List<HashMap<String, Object>> professores = new ArrayList<>();
 
-  private List<String> monitores = new ArrayList<>();;
+  private List<HashMap<String, Object>> monitores = new ArrayList<>();;
 
   public static TurmaDTO toTurma(Turma turma) {
     TurmaDTO turmaDTO = new TurmaDTO();
@@ -56,8 +57,21 @@ public class TurmaDTO {
     turmaDTO.setDtAbertura(DateUtils.toPattern("yyyy-MM-dd", turma.getDtAbertura()));
     turmaDTO.setDtEncerramento(DateUtils.toPattern("yyyy-MM-dd", turma.getDtEncerramento()));
 
-    turmaDTO.setMonitores(turma.getMonitores().stream().map(Usuario::getNome).toList());
-    turmaDTO.setProfessores(turma.getProfessores().stream().map(Usuario::getNome).toList());
+    turma.getProfessores().forEach(professor -> {
+      HashMap<String, Object> mapProfessor = new HashMap<>();
+      mapProfessor.put("id", professor.getId());
+      mapProfessor.put("nome", professor.getNome());
+
+      turmaDTO.getProfessores().add(mapProfessor);
+    });
+
+    turma.getMonitores().forEach(monitor -> {
+      HashMap<String, Object> mapMonitor = new HashMap<>();
+      mapMonitor.put("id", monitor.getId());
+      mapMonitor.put("nome", monitor.getNome());
+
+      turmaDTO.getMonitores().add(mapMonitor);
+    });
 
     return turmaDTO;
   }

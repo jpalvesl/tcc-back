@@ -19,11 +19,7 @@ public class Topico {
     @Column(nullable = false, unique = true)
     private String nome;
 
-    @ManyToMany
-    @JoinTable(
-            name = "TOPICO_PROBLEMA",
-            joinColumns = @JoinColumn(name = "TOPICO_ID"),
-            inverseJoinColumns = @JoinColumn(name = "PROBLEMA_ID"))
+    @ManyToMany(mappedBy = "topicos")
     private List<Problema> problemas =  new ArrayList<>();
 
     public static Topico toTopico(TopicoDTO topicoDTO) {
