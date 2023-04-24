@@ -36,16 +36,26 @@ public class TarefaServiceImpl implements ITarefaService {
     ProblemaRepository problemaRepository;
 
     @Override
-    public List<TarefaDTO> findByAluno(Long alunoId) {
+    public Map<String, List<TarefaDTO>> findByAluno(Long alunoId) {
         Usuario usuario = usuarioRepository.findById(alunoId).orElseThrow(UsuarioNotFoundException::new);
 
         List<Tarefa> listaTarefas = new ArrayList<>();
 
-        usuario.getTurmasAluno().forEach(turma -> listaTarefas.addAll(turma.getTarefas()));
+        List<TarefaDTO> provas = new ArrayList<>();
 
-        return listaTarefas.stream()
-                .map(TarefaDTO::toTarefaDTO)
-                .toList();
+        List<TarefaDTO> roteiros = new ArrayList<>();
+
+        usuario.getTurmasAluno().forEach(turma -> roteiros.addAll(turma.getTarefas().stream().filter(tarefa -> !tarefa.isEhProva()).map(TarefaDTO::toTarefaDTO).toList()));
+
+        usuario.getTurmasAluno().forEach(turma -> provas.addAll(turma.getTarefas().stream().filter(Tarefa::isEhProva).map(TarefaDTO::toTarefaDTO).toList()));
+
+
+
+        Map<String, List<TarefaDTO>> tarefas = new HashMap<>();
+        tarefas.put("provas", provas);
+        tarefas.put("roteiros", roteiros);
+
+        return tarefas;
     }
 
     @Override
@@ -136,7 +146,10 @@ public class TarefaServiceImpl implements ITarefaService {
             throw new InsufficientPrivilegeException("O usuário não tem permissão para deletar a tarefa");
         }
 
-        tarefa.getProblemas().add(problema);
+        if (!tarefa.getProblemas().contains(problema)){
+            tarefa.getProblemas().add(problema);
+        }
+
         tarefaRepository.save(tarefa);
     }
 
@@ -152,5 +165,12 @@ public class TarefaServiceImpl implements ITarefaService {
 
         tarefa.getProblemas().remove(problema);
         tarefaRepository.save(tarefa);
+    }
+
+    @Override
+    public TarefaDTO findById(Long id) {
+        Tarefa tarefa = tarefaRepository.findById(id).orElseThrow(InstituicaoNotFoundException::new);
+
+        return TarefaDTO.toTarefaDTO(tarefa);
     }
 }

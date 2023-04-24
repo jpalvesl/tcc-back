@@ -18,7 +18,7 @@ public class TarefaController {
     ITarefaService tarefaService;
 
     @GetMapping("/usuario/{usuario_id}")
-    public ResponseEntity<List<TarefaDTO>> findByAluno(@PathVariable("usuario_id") Long usuarioId) {
+    public ResponseEntity<Map<String, List<TarefaDTO>>> findByAluno(@PathVariable("usuario_id") Long usuarioId) {
         return ResponseEntity.ok().body(tarefaService.findByAluno(usuarioId));
     }
 
@@ -59,5 +59,10 @@ public class TarefaController {
                                         @PathVariable("problema_id") Long problemaId,
                                         @PathVariable("usuario_id") Long usuarioId) {
         tarefaService.removerProblemaEmTarefa(problemaId, id, usuarioId);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TarefaDTO> findById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok().body(tarefaService.findById(id));
     }
 }
