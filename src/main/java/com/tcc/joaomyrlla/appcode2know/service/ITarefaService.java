@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ITarefaService {
-    List<TarefaDTO> findByAluno(Long alunoId);
+    Map<String, List<TarefaDTO>> findByAluno(Long alunoId);
 
     Map<String, List<TarefaDTO>> findByTurma(Long turmaId);
 
@@ -19,4 +19,6 @@ public interface ITarefaService {
     void addProblemaEmTarefa(Long problemaId, Long tarefaId, Long usuarioId);
 
     void removerProblemaEmTarefa(Long problemaId, Long tarefaId, Long usuarioId);
+
+    TarefaDTO findById(Long id);
 }
