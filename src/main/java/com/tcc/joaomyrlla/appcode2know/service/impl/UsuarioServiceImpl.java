@@ -40,6 +40,30 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
+    public List<UsuarioDTO> findAlunoByInstituicao(Long instituicaoId) {
+        Instituicao instituicao = instituicaoRespository.findById(instituicaoId).orElseThrow(InstituicaoNotFoundException::new);
+
+        List<Usuario> usuarios = instituicao.getAlunos();
+
+        return usuarios.stream()
+                .filter(usuario -> !usuario.isEhProfessor())
+                .map(UsuarioDTO::toUsuarioDTO)
+                .toList();
+    }
+
+    @Override
+    public List<UsuarioDTO> findProfessorByInstituicao(Long instituicaoId) {
+        Instituicao instituicao = instituicaoRespository.findById(instituicaoId).orElseThrow(InstituicaoNotFoundException::new);
+
+        List<Usuario> usuarios = instituicao.getAlunos();
+
+        return usuarios.stream()
+                .filter(Usuario::isEhProfessor)
+                .map(UsuarioDTO::toUsuarioDTO)
+                .toList();
+    }
+
+    @Override
     public UsuarioDTO findById(Long id) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(UsuarioNotFoundException::new);
 

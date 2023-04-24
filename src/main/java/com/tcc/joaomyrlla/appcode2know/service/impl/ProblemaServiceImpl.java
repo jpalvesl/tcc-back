@@ -69,6 +69,7 @@ public class ProblemaServiceImpl implements IProblemaService {
 
         problemaRepository.save(problema);
         problemaDTO.setId(problema.getId());
+        problemaDTO.setAutor(usuario.getNome());
 
         return problemaDTO;
     }
@@ -99,6 +100,17 @@ public class ProblemaServiceImpl implements IProblemaService {
         }
 
         BeanUtils.copyProperties(problemaDTO, problema);
+        problema.getTopicos().clear();
+        problemaDTO.getTopicos().forEach(mapTopico -> {
+            Topico topico = new Topico();
+            Integer topicoId = (Integer) mapTopico.get("id");
+            String topicoNome = (String) mapTopico.get("nome");
+
+            topico.setId(topicoId.longValue());
+            topico.setNome(topicoNome);
+            problema.getTopicos().add(topico);
+        });
+
         problemaRepository.save(problema);
 
         return problemaDTO;

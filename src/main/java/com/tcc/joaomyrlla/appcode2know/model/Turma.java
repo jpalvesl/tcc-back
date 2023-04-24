@@ -69,6 +69,26 @@ public class Turma {
         turma.setDtAbertura(DateUtils.toDate("yyyy-MM-dd", turmaDTO.getDtAbertura()));
         turma.setDtEncerramento(DateUtils.toDate("yyyy-MM-dd", turmaDTO.getDtAbertura()));
 
+        turmaDTO.getMonitores().forEach(mapMonitor -> {
+            Usuario monitor = new Usuario();
+            Integer monitorId = (Integer) mapMonitor.get("id");
+            String monitorNome = (String) mapMonitor.get("nome");
+
+            monitor.setId(monitorId.longValue());
+            monitor.setNome(monitorNome);
+            turma.getMonitores().add(monitor);
+        });
+
+        turmaDTO.getProfessores().forEach(mapProfessor -> {
+            Usuario professor = new Usuario();
+            Integer professorId = (Integer) mapProfessor.get("id");
+            String professorNome = (String) mapProfessor.get("nome");
+
+            professor.setId(professorId.longValue());
+            professor.setNome(professorNome);
+            turma.getProfessores().add(professor);
+        });
+
         return turma;
     }
 }

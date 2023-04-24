@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.context.annotation.Lazy;
 
+import java.util.Date;
 import java.util.List;
 
 @Table(name = "SUBMISSAO")
@@ -18,6 +19,15 @@ public class Submissao {
     private String codigoResposta;
     
     private String status = "ok";
+
+    @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
+    private Date data = new Date();
+
+    private double tempoMedio = 0;
+
+//    @Column(nullable = false)
+    private String linguagem = "Python";;
 
     @ManyToOne
     @JoinColumn(name = "USUARIO_ID")

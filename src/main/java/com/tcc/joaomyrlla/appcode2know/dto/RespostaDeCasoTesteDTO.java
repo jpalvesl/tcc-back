@@ -27,4 +27,7 @@ public class RespostaDeCasoTesteDTO {
     private double tempo;
 
     private String status;
+
+    @NotBlank(message = "O campo linguagem é obrigatório")
+    private String linguagem;
 }

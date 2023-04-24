@@ -22,6 +22,16 @@ public class UsuarioController {
         return ResponseEntity.ok().body(usuarioService.findByInstituicao(instituicaoId));
     }
 
+    @GetMapping("/aluno/instituicao/{instituicao_id}")
+    public ResponseEntity<List<UsuarioDTO>> findAlunoByInstituicao(@PathVariable("instituicao_id") Long instituicaoId) {
+        return ResponseEntity.ok().body(usuarioService.findAlunoByInstituicao(instituicaoId));
+    }
+
+    @GetMapping("/professor/instituicao/{instituicao_id}")
+    public ResponseEntity<List<UsuarioDTO>> findProfessorByInstituicao(@PathVariable("instituicao_id") Long instituicaoId) {
+        return ResponseEntity.ok().body(usuarioService.findProfessorByInstituicao(instituicaoId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTO> findByUsuario(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(usuarioService.findById(id));

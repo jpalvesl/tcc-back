@@ -10,5 +10,6 @@ public interface ISubmissaoService {
   List<SubmissaoDTO> findAll();
   List<SubmissaoDTO> findByAluno(Long alunoId);
   List<SubmissaoDTO> findByProblemaId(Long id);
+  List<SubmissaoDTO> findByUsusarioAndProblema(Long usuarioId, Long problemaId);
   List<RespostaDeCasoTesteDTO> realizaSubmissao(SubmissaoDTO submissao) throws IOException, InterruptedException;
 }

@@ -20,6 +20,10 @@ public class RespostaCasoTeste {
     @Column(nullable = false)
     private int caso;
 
+    private String status;
+
+    private double tempo;
+
     @ManyToOne
     @JoinColumn(name = "SUBMISSAO_ID")
     private Submissao submissao;

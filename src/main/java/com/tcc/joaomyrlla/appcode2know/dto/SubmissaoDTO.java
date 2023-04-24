@@ -1,6 +1,7 @@
 package com.tcc.joaomyrlla.appcode2know.dto;
 
 import com.tcc.joaomyrlla.appcode2know.model.Submissao;
+import com.tcc.joaomyrlla.appcode2know.utils.DateUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,12 +21,19 @@ public class SubmissaoDTO {
 
     private String status;
 
+    private String data;
+
+    private double tempoMedio;
+
+    private String linguagem = "Python";
+
     public static SubmissaoDTO toSubmissaoDTO(Submissao submissao) {
         SubmissaoDTO submissaoDTO = new SubmissaoDTO();
         BeanUtils.copyProperties(submissao, submissaoDTO);
         submissaoDTO.setProblemaId(submissao.getProblema().getId());
         submissaoDTO.setUsuarioId(submissao.getUsuario().getId());
 
+        submissaoDTO.setData(DateUtils.toPattern("dd/MM/yyy", submissao.getData()));
         return submissaoDTO;
     }
 }

@@ -1,46 +1,48 @@
 package com.tcc.joaomyrlla.appcode2know.service.impl;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-
+import com.tcc.joaomyrlla.appcode2know.api.JuizOnlinePython;
 import com.tcc.joaomyrlla.appcode2know.dto.CasoDeTesteDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.RespostaDeCasoTesteDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.SubmissaoDTO;
+import com.tcc.joaomyrlla.appcode2know.exceptions.ProblemaNotFoundException;
+import com.tcc.joaomyrlla.appcode2know.exceptions.SubmissaoNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import com.tcc.joaomyrlla.appcode2know.model.RespostaCasoTeste;
+import com.tcc.joaomyrlla.appcode2know.model.Submissao;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
+import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.RespostaCasoDeTesteRepository;
+import com.tcc.joaomyrlla.appcode2know.repository.SubmissaoRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.ICasoDeTesteService;
+import com.tcc.joaomyrlla.appcode2know.service.ISubmissaoService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tcc.joaomyrlla.appcode2know.model.Submissao;
-import com.tcc.joaomyrlla.appcode2know.service.ISubmissaoService;
-import com.tcc.joaomyrlla.appcode2know.repository.SubmissaoRepository;
-import com.tcc.joaomyrlla.appcode2know.api.JuizOnlinePython;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 
 @Service
 public class SubmissaoServiceImpl implements ISubmissaoService {
 
     @Autowired
-    private ICasoDeTesteService casoDeTesteService;
-
-    @Autowired
-    private RespostaCasoDeTesteRepository respostaCasoDeTesteRepository;
-
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
     final
     SubmissaoRepository submissaoRepository;
-
-
+    @Autowired
+    ProblemaRepository problemaRepository;
     JuizOnlinePython juizOnlinePython = new JuizOnlinePython();
+    @Autowired
+    private ICasoDeTesteService casoDeTesteService;
+    @Autowired
+    private RespostaCasoDeTesteRepository respostaCasoDeTesteRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     public SubmissaoServiceImpl(SubmissaoRepository submissaoRepository) {
         this.submissaoRepository = submissaoRepository;
@@ -74,6 +76,20 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
     }
 
     @Override
+    public List<SubmissaoDTO> findByUsusarioAndProblema(Long usuarioId, Long problemaId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
+        Problema problema = problemaRepository.findById(problemaId).orElseThrow(ProblemaNotFoundException::new);
+
+        return submissaoRepository.findAll()
+                .stream()
+                .filter(submissao -> submissao.getProblema().getId().equals(problemaId))
+                .filter(submissao -> submissao.getUsuario().getId().equals(usuarioId))
+                .map(SubmissaoDTO::toSubmissaoDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional
     public List<RespostaDeCasoTesteDTO> realizaSubmissao(SubmissaoDTO submissaoDTO) {
         List<CasoDeTesteDTO> casosDeTeste = casoDeTesteService.findByProblema(submissaoDTO.getProblemaId());
 
@@ -123,6 +139,34 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
             respostaCasoDeTesteRepository.save(respostaCasoTeste);
         });
 
+        submissao.setTempoMedio(this.getTempoExecucaoMedio(submissao.getId()));
+        submissao.setStatus(this.getStatusMedio(submissao.getId()));
+        submissaoRepository.save(submissao);
+
         return retorno;
+    }
+
+    private double getTempoExecucaoMedio(Long submissaoId) {
+        Submissao submissao = submissaoRepository.findById(submissaoId).orElseThrow(SubmissaoNotFoundException::new);
+
+        List<RespostaCasoTeste> respostasCasosDeTeste = respostaCasoDeTesteRepository.findAll().stream()
+                .filter(caso -> caso.getSubmissao().getId().equals(submissaoId)).toList();
+
+        for (RespostaCasoTeste caso : respostasCasosDeTeste) {
+            if (!caso.getStatus().equals("ok")) return 0;
+        }
+
+        if (respostasCasosDeTeste.size() == 0) return 0;
+
+        double sum = 0;
+        for (RespostaCasoTeste caso : respostasCasosDeTeste) {
+            sum += caso.getTempo();
+        }
+
+        return sum/respostasCasosDeTeste.size();
+    }
+
+    private String getStatusMedio(Long submissaoId) {
+        return "ok";
     }
 }
