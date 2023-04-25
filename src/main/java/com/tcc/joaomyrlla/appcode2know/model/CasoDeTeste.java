@@ -29,12 +29,13 @@ public class CasoDeTeste {
 
     @ManyToOne
     @JoinColumn(name = "PROBLEMA_ID")
-    private Problema problema;
+    private Problema problema = new Problema();
 
     public static CasoDeTeste toCasoDeTeste(CasoDeTesteDTO casoDeTesteDTO) {
         CasoDeTeste casoDeTeste = new CasoDeTeste();
         BeanUtils.copyProperties(casoDeTesteDTO, casoDeTeste);
 
+        casoDeTeste.getProblema().setId(casoDeTesteDTO.getProblemaId());
         return casoDeTeste;
     }
 }

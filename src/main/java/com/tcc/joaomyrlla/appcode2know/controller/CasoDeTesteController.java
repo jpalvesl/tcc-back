@@ -40,6 +40,14 @@ public class CasoDeTesteController {
                                                @Valid @RequestBody CasoDeTesteDTO casoDeTeste) {
         return ResponseEntity.ok().body(casoDeTesteService.edit(casoDeTeste, usuarioId));
     }
+
+    @PatchMapping("/problema/{problemaId}/usuario/{usuario_id}")
+    public ResponseEntity<List<CasoDeTesteDTO>> editEmLote(@PathVariable("usuario_id") Long usuarioId,
+                                               @PathVariable("problemaId") Long problemaId,
+                                               @Valid @RequestBody List<CasoDeTesteDTO> casosDeTeste) {
+        return ResponseEntity.ok().body(casoDeTesteService.editEmLote(casosDeTeste, problemaId, usuarioId));
+    }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}/criador_id/{criador_id}")
     public void delete(@PathVariable("id") Long id,

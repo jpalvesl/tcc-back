@@ -14,5 +14,7 @@ public interface ICasoDeTesteService {
 
     CasoDeTesteDTO edit(CasoDeTesteDTO casoDeTesteDTO, Long criadorId);
 
+    List<CasoDeTesteDTO> editEmLote(List<CasoDeTesteDTO> casosDeTesteDTO, Long problemaId, Long criadorId);
+
     void delete(Long id, Long criadorId);
 }

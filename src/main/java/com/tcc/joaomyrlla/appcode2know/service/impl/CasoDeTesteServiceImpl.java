@@ -12,6 +12,7 @@ import com.tcc.joaomyrlla.appcode2know.repository.CasoDeTesteRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.ICasoDeTesteService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -81,6 +82,30 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
         casoDeTesteDTO.setId(casoDeTeste.getId());
 
         return casoDeTesteDTO;
+    }
+
+    @Override
+    @Transactional
+    public List<CasoDeTesteDTO> editEmLote(List<CasoDeTesteDTO> casosDeTesteDTO, Long problemaId, Long criadorId) {
+        Usuario usuario = usuarioRepository.findById(criadorId).orElseThrow(UsuarioNotFoundException::new);
+        Problema problema = problemaRepository.findById(problemaId).orElseThrow(ProblemaNotFoundException::new);
+
+        if (!criadorId.equals(problema.getCriador().getId()) || !(usuario.isEhProfessor())) {
+            throw new InsufficientPrivilegeException(String.format("O usuario de id %d não tem permissão para editar caso de teste", criadorId));
+        }
+
+        problema.getCasosDeTeste().forEach(casoDeTeste -> {
+            casoDeTesteRepository.deleteById(casoDeTeste.getId());
+        });
+
+        return casosDeTesteDTO.stream().map(casoDeTesteDTO -> {
+            CasoDeTeste casoDeTeste = CasoDeTeste.toCasoDeTeste(casoDeTesteDTO);
+
+            problema.getCasosDeTeste().add(casoDeTeste);
+            casoDeTesteRepository.save(casoDeTeste);
+
+            return CasoDeTesteDTO.toCasoDeTesteDTO(casoDeTeste);
+        }).toList();
     }
 
     @Override
