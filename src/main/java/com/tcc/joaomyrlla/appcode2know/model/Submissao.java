@@ -18,7 +18,7 @@ public class Submissao {
     @Column(nullable = false)
     private String codigoResposta;
     
-    private String status = "ok";
+    private String status = "OK";
 
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)

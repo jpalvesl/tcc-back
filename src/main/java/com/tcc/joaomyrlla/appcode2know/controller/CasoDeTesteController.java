@@ -19,7 +19,7 @@ public class CasoDeTesteController {
     ICasoDeTesteService casoDeTesteService;
 
     @GetMapping("/submissao/{submissao_id}")
-    public ResponseEntity<List<CasoDeTesteDTO>> findBySubmissao(@PathVariable("submissao_id") Long submissaoId) {
+    public ResponseEntity findBySubmissao(@PathVariable("submissao_id") Long submissaoId) {
         return ResponseEntity.ok().body(casoDeTesteService.findBySubmissao(submissaoId));
     }
 

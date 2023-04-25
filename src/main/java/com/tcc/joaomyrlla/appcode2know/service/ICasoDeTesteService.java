@@ -4,9 +4,10 @@ import com.tcc.joaomyrlla.appcode2know.dto.CasoDeTesteDTO;
 import com.tcc.joaomyrlla.appcode2know.model.CasoDeTeste;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ICasoDeTesteService {
-    List<CasoDeTesteDTO> findBySubmissao(Long submissaoId);
+    Map<String, Object> findBySubmissao(Long submissaoId);
 
     List<CasoDeTesteDTO> findByProblema(Long problemaId);
 

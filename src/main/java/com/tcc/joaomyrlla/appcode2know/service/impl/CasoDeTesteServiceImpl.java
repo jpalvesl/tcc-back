@@ -1,22 +1,22 @@
+
 package com.tcc.joaomyrlla.appcode2know.service.impl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.CasoDeTesteDTO;
-import com.tcc.joaomyrlla.appcode2know.exceptions.CasoDeTesteNotFoundException;
-import com.tcc.joaomyrlla.appcode2know.exceptions.InsufficientPrivilegeException;
-import com.tcc.joaomyrlla.appcode2know.exceptions.ProblemaNotFoundException;
-import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
-import com.tcc.joaomyrlla.appcode2know.model.CasoDeTeste;
-import com.tcc.joaomyrlla.appcode2know.model.Problema;
-import com.tcc.joaomyrlla.appcode2know.model.Usuario;
+import com.tcc.joaomyrlla.appcode2know.dto.RespostaDeCasoTesteDTO;
+import com.tcc.joaomyrlla.appcode2know.exceptions.*;
+import com.tcc.joaomyrlla.appcode2know.model.*;
 import com.tcc.joaomyrlla.appcode2know.repository.CasoDeTesteRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
+import com.tcc.joaomyrlla.appcode2know.repository.SubmissaoRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.ICasoDeTesteService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
@@ -29,9 +29,18 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
     @Autowired
     ProblemaRepository problemaRepository;
 
+    @Autowired
+    SubmissaoRepository submissaoRepository;
+
     @Override
-    public List<CasoDeTesteDTO> findBySubmissao(Long submissaoId) {
-        return null;
+    public Map<String, Object> findBySubmissao(Long submissaoId) {
+        Submissao submissao = submissaoRepository.findById(submissaoId).orElseThrow(SubmissaoNotFoundException::new);
+
+        Map<String, Object> mapaRespostasECasos = new HashMap<>();
+        mapaRespostasECasos.put("respostas", submissao.getRespostasCasoTeste().stream().map(RespostaDeCasoTesteDTO::toRespostaCasoDeTesteDTO).toList());
+        mapaRespostasECasos.put("casos", submissao.getProblema().getCasosDeTeste().stream().map(CasoDeTesteDTO::toCasoDeTesteDTO).toList());
+
+        return mapaRespostasECasos;
     }
 
     @Override

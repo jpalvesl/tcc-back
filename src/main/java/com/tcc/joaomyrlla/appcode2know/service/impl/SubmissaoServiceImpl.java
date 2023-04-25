@@ -111,6 +111,7 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
                     HashMap<String, Object> request = new HashMap<>();
                     request.put("codigoResposta", submissaoDTO.getCodigoResposta());
                     request.put("entradas", casoTeste.getEntrada());
+                    request.put("saida", casoTeste.getSaida());
 
                     HashMap<String, Object> responseOnlineJudge;
                     RespostaDeCasoTesteDTO respostaDeCasoTesteDto = new RespostaDeCasoTesteDTO();
@@ -135,13 +136,16 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
             RespostaCasoTeste respostaCasoTeste = new RespostaCasoTeste();
             BeanUtils.copyProperties(resposta, respostaCasoTeste);
             respostaCasoTeste.setSubmissao(submissao);
+            resposta.setLinguagem("Python");
 
             respostaCasoDeTesteRepository.save(respostaCasoTeste);
+            resposta.setId(respostaCasoTeste.getId());
         });
 
         submissao.setTempoMedio(this.getTempoExecucaoMedio(submissao.getId()));
-        submissao.setStatus(this.getStatusMedio(submissao.getId()));
         submissaoRepository.save(submissao);
+
+        submissao.setStatus(this.getStatusMedio(submissao.getId()));
 
         return retorno;
     }
@@ -153,7 +157,7 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
                 .filter(caso -> caso.getSubmissao().getId().equals(submissaoId)).toList();
 
         for (RespostaCasoTeste caso : respostasCasosDeTeste) {
-            if (!caso.getStatus().equals("ok")) return 0;
+            if (!caso.getStatus().equals("OK")) return 0;
         }
 
         if (respostasCasosDeTeste.size() == 0) return 0;
@@ -167,6 +171,15 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
     }
 
     private String getStatusMedio(Long submissaoId) {
-        return "ok";
+        Submissao submissao = submissaoRepository.findById(submissaoId).orElseThrow(SubmissaoNotFoundException::new);
+
+        List<RespostaCasoTeste> respostasCasosDeTeste = respostaCasoDeTesteRepository.findAll().stream()
+                .filter(caso -> caso.getSubmissao().getId().equals(submissaoId)).toList();
+
+        for (RespostaCasoTeste respostaCasoTeste: respostasCasosDeTeste) {
+            if (!respostaCasoTeste.getStatus().equals("OK")) return "ERRO";
+        }
+
+        return "OK";
     }
 }

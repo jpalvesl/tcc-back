@@ -25,7 +25,7 @@ public class SubmissaoDTO {
 
     private double tempoMedio;
 
-    private String linguagem = "Python";
+    private String linguagem;
 
     public static SubmissaoDTO toSubmissaoDTO(Submissao submissao) {
         SubmissaoDTO submissaoDTO = new SubmissaoDTO();
