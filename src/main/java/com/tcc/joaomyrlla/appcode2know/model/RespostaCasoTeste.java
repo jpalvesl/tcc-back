@@ -1,7 +1,9 @@
 package com.tcc.joaomyrlla.appcode2know.model;
 
+import com.tcc.joaomyrlla.appcode2know.dto.RespostaDeCasoTesteDTO;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 
 @Table(name = "RESPOSTA_CASO_TESTE")
 @Data
@@ -26,5 +28,13 @@ public class RespostaCasoTeste {
 
     @ManyToOne
     @JoinColumn(name = "SUBMISSAO_ID")
-    private Submissao submissao;
+    private Submissao submissao = new Submissao();
+
+    public static RespostaCasoTeste toRespostaCasoDeTeste(RespostaDeCasoTesteDTO respostaDeCasoTesteDTO) {
+        RespostaCasoTeste respostaCasoTeste = new RespostaCasoTeste();
+        BeanUtils.copyProperties(respostaDeCasoTesteDTO, respostaCasoTeste);
+        respostaCasoTeste.getSubmissao().setId(respostaDeCasoTesteDTO.getSubmissaoId());
+
+        return respostaCasoTeste;
+    }
 }

@@ -1,21 +1,22 @@
+
 package com.tcc.joaomyrlla.appcode2know.service.impl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.CasoDeTesteDTO;
-import com.tcc.joaomyrlla.appcode2know.exceptions.CasoDeTesteNotFoundException;
-import com.tcc.joaomyrlla.appcode2know.exceptions.InsufficientPrivilegeException;
-import com.tcc.joaomyrlla.appcode2know.exceptions.ProblemaNotFoundException;
-import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
-import com.tcc.joaomyrlla.appcode2know.model.CasoDeTeste;
-import com.tcc.joaomyrlla.appcode2know.model.Problema;
-import com.tcc.joaomyrlla.appcode2know.model.Usuario;
+import com.tcc.joaomyrlla.appcode2know.dto.RespostaDeCasoTesteDTO;
+import com.tcc.joaomyrlla.appcode2know.exceptions.*;
+import com.tcc.joaomyrlla.appcode2know.model.*;
 import com.tcc.joaomyrlla.appcode2know.repository.CasoDeTesteRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
+import com.tcc.joaomyrlla.appcode2know.repository.SubmissaoRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.ICasoDeTesteService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
@@ -28,9 +29,18 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
     @Autowired
     ProblemaRepository problemaRepository;
 
+    @Autowired
+    SubmissaoRepository submissaoRepository;
+
     @Override
-    public List<CasoDeTesteDTO> findBySubmissao(Long submissaoId) {
-        return null;
+    public Map<String, Object> findBySubmissao(Long submissaoId) {
+        Submissao submissao = submissaoRepository.findById(submissaoId).orElseThrow(SubmissaoNotFoundException::new);
+
+        Map<String, Object> mapaRespostasECasos = new HashMap<>();
+        mapaRespostasECasos.put("respostas", submissao.getRespostasCasoTeste().stream().map(RespostaDeCasoTesteDTO::toRespostaCasoDeTesteDTO).toList());
+        mapaRespostasECasos.put("casos", submissao.getProblema().getCasosDeTeste().stream().map(CasoDeTesteDTO::toCasoDeTesteDTO).toList());
+
+        return mapaRespostasECasos;
     }
 
     @Override
@@ -81,6 +91,30 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
         casoDeTesteDTO.setId(casoDeTeste.getId());
 
         return casoDeTesteDTO;
+    }
+
+    @Override
+    @Transactional
+    public List<CasoDeTesteDTO> editEmLote(List<CasoDeTesteDTO> casosDeTesteDTO, Long problemaId, Long criadorId) {
+        Usuario usuario = usuarioRepository.findById(criadorId).orElseThrow(UsuarioNotFoundException::new);
+        Problema problema = problemaRepository.findById(problemaId).orElseThrow(ProblemaNotFoundException::new);
+
+        if (!criadorId.equals(problema.getCriador().getId()) || !(usuario.isEhProfessor())) {
+            throw new InsufficientPrivilegeException(String.format("O usuario de id %d não tem permissão para editar caso de teste", criadorId));
+        }
+
+        problema.getCasosDeTeste().forEach(casoDeTeste -> {
+            casoDeTesteRepository.deleteById(casoDeTeste.getId());
+        });
+
+        return casosDeTesteDTO.stream().map(casoDeTesteDTO -> {
+            CasoDeTeste casoDeTeste = CasoDeTeste.toCasoDeTeste(casoDeTesteDTO);
+
+            problema.getCasosDeTeste().add(casoDeTeste);
+            casoDeTesteRepository.save(casoDeTeste);
+
+            return CasoDeTesteDTO.toCasoDeTesteDTO(casoDeTeste);
+        }).toList();
     }
 
     @Override
