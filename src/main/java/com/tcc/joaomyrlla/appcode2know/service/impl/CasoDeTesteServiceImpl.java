@@ -109,6 +109,7 @@ public class CasoDeTesteServiceImpl implements ICasoDeTesteService {
 
         return casosDeTesteDTO.stream().map(casoDeTesteDTO -> {
             CasoDeTeste casoDeTeste = CasoDeTeste.toCasoDeTeste(casoDeTesteDTO);
+            casoDeTeste.getProblema().setId(problemaId);
 
             problema.getCasosDeTeste().add(casoDeTeste);
             casoDeTesteRepository.save(casoDeTeste);

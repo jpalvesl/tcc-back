@@ -63,4 +63,9 @@ public class ProblemaController {
                                         @PathVariable("topico_id") Long topicoId) {
         problemaService.removerTopicoEmProblema(topicoId, problemaId);
     }
+
+    @GetMapping("/usuarioBuscado/{usuario_id}")
+    public ResponseEntity findProblemasTentadosEResolvidos(@PathVariable("usuario_id") Long usuarioId) {
+        return  ResponseEntity.ok().body(problemaService.findProblemasTentadosEResolvidos(usuarioId));
+    }
 }

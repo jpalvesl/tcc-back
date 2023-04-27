@@ -3,6 +3,7 @@ package com.tcc.joaomyrlla.appcode2know.service;
 import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IProblemaService {
     List<ProblemaDTO> findAll();
@@ -20,4 +21,6 @@ public interface IProblemaService {
     void addTopicoEmProblema(Long topicoId, Long problemaId);
 
     void removerTopicoEmProblema(Long topicoId, Long problemaId);
+
+    Map<String, Object> findProblemasTentadosEResolvidos(Long usuarioId);
 }

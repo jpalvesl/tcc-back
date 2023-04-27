@@ -1,21 +1,24 @@
 package com.tcc.joaomyrlla.appcode2know.service.impl;
 
 import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
+import com.tcc.joaomyrlla.appcode2know.dto.SubmissaoDTO;
 import com.tcc.joaomyrlla.appcode2know.exceptions.*;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
 import com.tcc.joaomyrlla.appcode2know.model.Tarefa;
 import com.tcc.joaomyrlla.appcode2know.model.Usuario;
 import com.tcc.joaomyrlla.appcode2know.model.Topico;
-import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
-import com.tcc.joaomyrlla.appcode2know.repository.TarefaRepository;
-import com.tcc.joaomyrlla.appcode2know.repository.TopicoRepository;
-import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
+import com.tcc.joaomyrlla.appcode2know.repository.*;
 import com.tcc.joaomyrlla.appcode2know.service.IProblemaService;
+import com.tcc.joaomyrlla.appcode2know.service.ISubmissaoService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProblemaServiceImpl implements IProblemaService {
@@ -30,6 +33,9 @@ public class ProblemaServiceImpl implements IProblemaService {
 
     @Autowired
     TopicoRepository topicoRepository;
+
+    @Autowired
+    ISubmissaoService submissaoService;
 
     public ProblemaServiceImpl(ProblemaRepository problemaRepository) {
         this.problemaRepository = problemaRepository;
@@ -132,5 +138,19 @@ public class ProblemaServiceImpl implements IProblemaService {
 
         topico.getProblemas().remove(problema);
         topicoRepository.save(topico);
+    }
+
+    @Override
+    public Map<String, Object> findProblemasTentadosEResolvidos(Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
+
+        Set<Long> problemasTentados = submissaoService.findByAluno(usuarioId).stream().map(SubmissaoDTO::getProblemaId).collect(Collectors.toSet());
+        Set<Long> problemasResolvidos = submissaoService.findByAluno(usuarioId).stream().filter(submissaoDTO -> submissaoDTO.getStatus().equals("OK")).map(SubmissaoDTO::getProblemaId).collect(Collectors.toSet());
+
+        Map<String, Object> mapProblemas = new HashMap<>();
+        mapProblemas.put("tentados", problemasTentados.size());
+        mapProblemas.put("resolvidos", problemasResolvidos.size());
+
+        return mapProblemas;
     }
 }
