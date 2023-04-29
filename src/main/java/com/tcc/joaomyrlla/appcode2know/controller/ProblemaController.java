@@ -4,6 +4,7 @@ import com.tcc.joaomyrlla.appcode2know.service.IProblemaService;
 import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
 
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,6 +67,11 @@ public class ProblemaController {
 
     @GetMapping("/usuarioBuscado/{usuario_id}")
     public ResponseEntity findProblemasTentadosEResolvidos(@PathVariable("usuario_id") Long usuarioId) {
-        return  ResponseEntity.ok().body(problemaService.findProblemasTentadosEResolvidos(usuarioId));
+        return ResponseEntity.ok().body(problemaService.findProblemasTentadosEResolvidos(usuarioId));
+    }
+
+    @GetMapping("/tentados/usuario/{usuario_id}")
+    public ResponseEntity<List<ProblemaDTO>> findProblemasTentados(@PathVariable("usuario_id") Long usuarioId) {
+        return ResponseEntity.ok().body(problemaService.findProblemasTentados(usuarioId));
     }
 }
