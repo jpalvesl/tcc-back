@@ -106,16 +106,18 @@ public class TarefaServiceImpl implements ITarefaService {
     public TarefaDTO edit(TarefaDTO tarefaDTO, Long professorId) {
         Usuario usuario = usuarioRepository.findById(professorId).orElseThrow(UsuarioNotFoundException::new);
         Turma turma = turmaRepository.findById(tarefaDTO.getTurmaId()).orElseThrow(TurmaNotFoundException::new);
+        Tarefa tarefa = tarefaRepository.findById(tarefaDTO.getId()).orElseThrow(TarefaNotFoundException::new);
 
         if (!(usuario.isEhProfessor()) || !(tarefaDTO.getCriadorId().equals(professorId))) {
             throw new RuntimeException("O usuário não tem permissão para editar a tarefa");
         }
 
-        Tarefa tarefa = Tarefa.toTarefa(tarefaDTO);
-        tarefa.setTurma(turma);
-        tarefa.setCriador(usuario);
+        Tarefa tarefaEditada = Tarefa.toTarefa(tarefaDTO);
+        tarefaEditada.setTurma(turma);
+        tarefaEditada.setCriador(usuario);
+        tarefaEditada.setProblemas(tarefa.getProblemas());
 
-        tarefaRepository.save(tarefa);
+        tarefaRepository.save(tarefaEditada);
 
         return tarefaDTO;
     }

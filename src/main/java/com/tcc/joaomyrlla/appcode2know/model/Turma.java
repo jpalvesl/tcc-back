@@ -67,7 +67,7 @@ public class Turma {
         BeanUtils.copyProperties(turmaDTO, turma);
 
         turma.setDtAbertura(DateUtils.toDate("yyyy-MM-dd", turmaDTO.getDtAbertura()));
-        turma.setDtEncerramento(DateUtils.toDate("yyyy-MM-dd", turmaDTO.getDtAbertura()));
+        turma.setDtEncerramento(DateUtils.toDate("yyyy-MM-dd", turmaDTO.getDtEncerramento()));
 
         turmaDTO.getMonitores().forEach(mapMonitor -> {
             Usuario monitor = new Usuario();
