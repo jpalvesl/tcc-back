@@ -93,6 +93,8 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
     public List<RespostaDeCasoTesteDTO> realizaSubmissao(SubmissaoDTO submissaoDTO) {
         List<CasoDeTesteDTO> casosDeTeste = casoDeTesteService.findByProblema(submissaoDTO.getProblemaId());
 
+        verificaPossivelImportacao(submissaoDTO.getCodigoResposta());
+
         Submissao submissao = new Submissao();
         Problema problema = new Problema();
         problema.setId(submissaoDTO.getProblemaId());
@@ -181,5 +183,17 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
         }
 
         return "OK";
+    }
+
+    private void verificaPossivelImportacao(String codigo) {
+        String[] linhas = codigo.split("\n");
+
+        for (String linha: linhas) {
+            String linhaSemEspacosNasBordas = linha.trim();
+            if (linhaSemEspacosNasBordas.startsWith("import") ||
+                    (linhaSemEspacosNasBordas.startsWith("from") && linhaSemEspacosNasBordas.contains("import"))) {
+                throw new RuntimeException("Possível importação de bibliotecas detecada");
+            }
+        }
     }
 }

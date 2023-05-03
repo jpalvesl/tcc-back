@@ -49,6 +49,9 @@ public class CustumizedResponseEntityExceptionHandler {
                         new Date(),
                         ex.getMessage(),
                         request.getDescription(false));
+
+        ex.printStackTrace();
+
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

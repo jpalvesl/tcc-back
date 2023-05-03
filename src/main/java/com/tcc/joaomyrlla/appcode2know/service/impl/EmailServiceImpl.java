@@ -8,6 +8,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.util.Properties;
+
 @Service
 public class EmailServiceImpl implements IEmailService {
     @Autowired
@@ -22,14 +24,14 @@ public class EmailServiceImpl implements IEmailService {
             MimeMessage mail = mailSender.createMimeMessage();
 
             MimeMessageHelper message = new MimeMessageHelper(mail);
-            message.setSubject(subject);
-            message.setText(content);
             message.setFrom(supportMail);
             message.setTo(supportMail);
+            message.setSubject(subject);
+            message.setText(content);
 
             mailSender.send(mail);
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 }
