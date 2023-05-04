@@ -40,6 +40,8 @@ public class TurmaDTO {
 
   private String instituicaoTitulo;
 
+  private String chave;
+
   private List<HashMap<String, Object>> professores = new ArrayList<>();
 
   private List<HashMap<String, Object>> monitores = new ArrayList<>();;

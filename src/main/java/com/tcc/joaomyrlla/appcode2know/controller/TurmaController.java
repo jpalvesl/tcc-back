@@ -46,7 +46,7 @@ public class TurmaController {
 
     }
 
-    @ResponseStatus
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}/usuario/{usuario_id}")
     public void delete(@PathVariable("id") Long id,
                        @PathVariable("usuario_id") Long professorId) {
@@ -79,5 +79,13 @@ public class TurmaController {
                                         @PathVariable("professor_id") Long professorId,
                                         @PathVariable("professor_adicionado_id") Long professorAdicionadoId) {
         turmaService.removerProfessorDaTurma(turmaId, professorId, professorAdicionadoId);
+    }
+
+    @PostMapping("/entrar_em_turma/usuario/{usuario_id}")
+    public void entrarEmTurma(@PathVariable("usuario_id") Long usuarioId,
+                              @RequestBody Map<String, String> body) {
+        String chave = (String) body.get("chave");
+
+        turmaService.entrarEmTurma(usuarioId, chave);
     }
 }

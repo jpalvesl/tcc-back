@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class TurmaServiceImpl implements ITurmaService {
@@ -89,6 +90,11 @@ public class TurmaServiceImpl implements ITurmaService {
 
         turmaDTO.setTitulo(String.join(" - ", turma.getNomeTurma(), turma.getSemestre()));
 
+        UUID chave = UUID.randomUUID();
+
+        turma.setChave(chave.toString());
+        turmaDTO.setChave(chave.toString());
+
         turmaRepository.save(turma);
 
         turmaDTO.setId(turma.getId());
@@ -116,6 +122,7 @@ public class TurmaServiceImpl implements ITurmaService {
         turmaEditada.setAlunos(turma.getAlunos());
         turmaEditada.setTarefas(turma.getTarefas());
         turmaEditada.setInstituicao(turma.getInstituicao());
+        turmaEditada.setChave(turma.getChave());
         turmaRepository.save(turmaEditada);
 
         return turmaDTO;
@@ -200,6 +207,20 @@ public class TurmaServiceImpl implements ITurmaService {
         }
 
         turma.getProfessores().remove(professor);
+        turmaRepository.save(turma);
+    }
+
+    @Override
+    public void entrarEmTurma(Long usuarioId, String chave) {
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
+        List<Turma> turmas = turmaRepository.findAll().stream().filter(turma -> turma.getChave().equals(chave)).toList();
+
+        if (turmas.size() == 0) {
+            throw new RuntimeException("Não existe turma com essa chave passada");
+        }
+
+        Turma turma = turmas.get(0);
+        turma.getAlunos().add(usuario);
         turmaRepository.save(turma);
     }
 }

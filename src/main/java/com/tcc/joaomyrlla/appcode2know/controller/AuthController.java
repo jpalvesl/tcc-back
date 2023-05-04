@@ -31,6 +31,7 @@ public class AuthController {
         mapUsuario.put("nome", usuario.getNome());
         mapUsuario.put("ehProfessor", usuario.isEhProfessor());
         mapUsuario.put("ehAdministrador", usuario.isEhAdm());
+        mapUsuario.put("instituicaoAtualId", usuario.getInstituicaoAtualId());
 
         return ResponseEntity.ok().body(mapUsuario);
     }
