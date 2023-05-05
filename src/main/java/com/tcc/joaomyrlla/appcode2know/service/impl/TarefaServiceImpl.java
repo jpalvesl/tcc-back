@@ -145,7 +145,7 @@ public class TarefaServiceImpl implements ITarefaService {
         Problema problema = problemaRepository.findById(problemaId).orElseThrow(ProblemaNotFoundException::new);
 
         if (!(usuario.isEhProfessor()) || !(tarefa.getCriador().getId().equals(usuarioId))) {
-            throw new InsufficientPrivilegeException("O usuário não tem permissão para deletar a tarefa");
+            throw new InsufficientPrivilegeException("O usuário não tem permissão para adicionar a tarefa");
         }
 
         if (!tarefa.getProblemas().contains(problema)){

@@ -6,15 +6,10 @@ import com.tcc.joaomyrlla.appcode2know.dto.RespostaDeCasoTesteDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.SubmissaoDTO;
 import com.tcc.joaomyrlla.appcode2know.exceptions.ProblemaNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.SubmissaoNotFoundException;
+import com.tcc.joaomyrlla.appcode2know.exceptions.TurmaNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
-import com.tcc.joaomyrlla.appcode2know.model.Problema;
-import com.tcc.joaomyrlla.appcode2know.model.RespostaCasoTeste;
-import com.tcc.joaomyrlla.appcode2know.model.Submissao;
-import com.tcc.joaomyrlla.appcode2know.model.Usuario;
-import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
-import com.tcc.joaomyrlla.appcode2know.repository.RespostaCasoDeTesteRepository;
-import com.tcc.joaomyrlla.appcode2know.repository.SubmissaoRepository;
-import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
+import com.tcc.joaomyrlla.appcode2know.model.*;
+import com.tcc.joaomyrlla.appcode2know.repository.*;
 import com.tcc.joaomyrlla.appcode2know.service.ICasoDeTesteService;
 import com.tcc.joaomyrlla.appcode2know.service.ISubmissaoService;
 import jakarta.transaction.Transactional;
@@ -23,8 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -43,6 +41,9 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
     private RespostaCasoDeTesteRepository respostaCasoDeTesteRepository;
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    TurmaRepository turmaRepository;
 
     public SubmissaoServiceImpl(SubmissaoRepository submissaoRepository) {
         this.submissaoRepository = submissaoRepository;
@@ -73,6 +74,33 @@ public class SubmissaoServiceImpl implements ISubmissaoService {
                 .filter(submissao -> submissao.getProblema().getId().equals(problemaId))
                 .map(SubmissaoDTO::toSubmissaoDTO)
                 .toList();
+    }
+
+    @Override
+    public List<Object> findByTurmaId(Long turmaId) {
+        Turma turma = turmaRepository.findById(turmaId).orElseThrow(TurmaNotFoundException::new);
+        List<Tarefa> tarefas = turma.getTarefas();
+
+        List<Long> problemasId = new ArrayList<>();
+
+        for (Tarefa tarefa: tarefas) {
+            tarefa.getProblemas().forEach(problema -> problemasId.add(problema.getId()));
+        }
+
+        return submissaoRepository.findAll()
+                .stream()
+                .filter(submissao -> problemasId.contains(submissao.getProblema().getId()))
+                .map(submissao -> {
+                    Map<String, Object> mapSubmissao = new HashMap<>();
+                    mapSubmissao.put("aluno", submissao.getUsuario().getNome());
+                    mapSubmissao.put("problema", submissao.getProblema().getNome());
+                    mapSubmissao.put("problemaId", submissao.getProblema().getId());
+                    mapSubmissao.put("dificuldade", submissao.getProblema().getDificuldade());
+                    mapSubmissao.put("status", submissao.getStatus());
+
+                    return mapSubmissao;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
