@@ -23,4 +23,6 @@ public interface IProblemaService {
     void removerTopicoEmProblema(Long topicoId, Long problemaId);
 
     Map<String, Object> findProblemasTentadosEResolvidos(Long usuarioId);
+
+    List<ProblemaDTO> findProblemasTentados(Long usuarioId);
 }

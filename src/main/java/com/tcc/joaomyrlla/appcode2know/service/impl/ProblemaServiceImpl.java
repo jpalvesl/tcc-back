@@ -153,4 +153,16 @@ public class ProblemaServiceImpl implements IProblemaService {
 
         return mapProblemas;
     }
+
+    @Override
+    public List<ProblemaDTO> findProblemasTentados(Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
+        List<ProblemaDTO> problemaDTOS = this.findAll();
+
+        Set<Long> problemasTentadosIds = submissaoService.findByAluno(usuarioId).stream().map(SubmissaoDTO::getProblemaId).collect(Collectors.toSet());
+
+        return problemaDTOS.stream().filter(problemaDTO -> {
+            return problemasTentadosIds.contains(problemaDTO.getId());
+        }).toList();
+    }
 }
