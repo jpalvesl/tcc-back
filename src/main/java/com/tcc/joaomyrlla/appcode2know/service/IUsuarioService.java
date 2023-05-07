@@ -1,5 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.service;
 
+import com.tcc.joaomyrlla.appcode2know.dto.EditSenhaDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
 
 import java.util.List;
@@ -19,5 +20,9 @@ public interface IUsuarioService {
 
     UsuarioDTO edit(UsuarioDTO usuarioDTO);
 
-    public void delete(Long id);
+    void delete(Long id);
+
+    void editarSenha(Long usuarioId, EditSenhaDTO editSenhaDTO);
+
+    void cadastrarCargo(String cargo, Long administradorId, List<Long> listaIds);
 }

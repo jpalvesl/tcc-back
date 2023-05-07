@@ -1,7 +1,10 @@
 package com.tcc.joaomyrlla.appcode2know.service.impl;
 
+import com.tcc.joaomyrlla.appcode2know.dto.EditSenhaDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
 import com.tcc.joaomyrlla.appcode2know.exceptions.InstituicaoNotFoundException;
+import com.tcc.joaomyrlla.appcode2know.exceptions.InsufficientPrivilegeException;
+import com.tcc.joaomyrlla.appcode2know.exceptions.PasswordNotMatch;
 import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.model.Instituicao;
 import com.tcc.joaomyrlla.appcode2know.model.Turma;
@@ -11,8 +14,10 @@ import com.tcc.joaomyrlla.appcode2know.repository.TurmaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.IUsuarioService;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -91,6 +96,12 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     public UsuarioDTO add(UsuarioDTO usuarioDTO) {
         Usuario usuario = Usuario.toUsuario(usuarioDTO);
+        String salt = BCrypt.gensalt();
+        String senhaCifrada = BCrypt.hashpw(usuario.getSenha(), salt);
+
+        usuario.setSalt(salt);
+        usuario.setSenha(senhaCifrada);
+
 
         usuarioRepository.save(usuario);
         usuarioDTO.setId(usuario.getId());
@@ -100,7 +111,10 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public UsuarioDTO edit(UsuarioDTO usuarioDTO) {
-        Usuario usuario = Usuario.toUsuario(usuarioDTO);
+        Usuario usuario = usuarioRepository.findById(usuarioDTO.getId()).orElseThrow(UsuarioNotFoundException::new);
+
+        BeanUtils.copyProperties(usuarioDTO, usuario, "senha", "id");
+        usuario.getInstituicaoAtual().setId(usuarioDTO.getInstituicaoAtualId());
 
         usuarioRepository.save(usuario);
         return usuarioDTO;
@@ -109,5 +123,45 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     public void delete(Long id) {
         usuarioRepository.deleteById(id);
+    }
+
+    @Override
+    public void editarSenha(Long usuarioId, EditSenhaDTO editSenhaDTO) {
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
+
+        if (!BCrypt.checkpw(editSenhaDTO.getSenhaAtual(), usuario.getSenha())) {
+            throw new PasswordNotMatch();
+        }
+
+        String novoSalt = BCrypt.gensalt();
+        String senhaCifrada = BCrypt.hashpw(editSenhaDTO.getNovaSenha(), novoSalt);
+
+        usuario.setSalt(novoSalt);
+        usuario.setSenha(senhaCifrada);
+
+        usuarioRepository.save(usuario);
+    }
+
+    @Override
+    @Transactional
+    public void cadastrarCargo(String cargo, Long administradorId, List<Long> listaIds) {
+        Usuario adm = usuarioRepository.findById(administradorId).orElseThrow(UsuarioNotFoundException::new);
+
+        if (!adm.isEhAdm()) {
+            throw new InsufficientPrivilegeException("O usuario não é um administrador");
+        }
+
+        listaIds.forEach(id -> {
+            Usuario usuario = usuarioRepository.findById(id).orElseThrow(UsuarioNotFoundException::new);
+
+            if (cargo.equals("professor")) {
+                usuario.setEhProfessor(true);
+            }
+            else if (cargo.equals("administrador")) {
+                usuario.setEhAdm(true);
+            }
+
+            usuarioRepository.save(usuario);
+        });
     }
 }

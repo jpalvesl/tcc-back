@@ -1,5 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.controller;
 
+import com.tcc.joaomyrlla.appcode2know.dto.EditSenhaDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
 import com.tcc.joaomyrlla.appcode2know.service.IUsuarioService;
 
@@ -57,5 +58,22 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id) {
         usuarioService.delete(id);
+    }
+
+    @PutMapping("/{usuario_id}/editar_senha")
+    public void editarSenha(@PathVariable("usuario_id") Long usuarioId,
+                            @RequestBody EditSenhaDTO editSenhaDTO) {
+        usuarioService.editarSenha(usuarioId, editSenhaDTO);
+    }
+
+    @PutMapping("/adicionar_cargo/{cargo}/administrador/{administrador_id}")
+    public void adicionarCargo(@PathVariable("cargo") String cargo,
+                               @PathVariable("administrador_id") Long administradorId,
+                               @RequestBody List<Long> listaIds) {
+        if (!cargo.equals("professor") && !cargo.equals("administrador")) {
+            throw new RuntimeException("Tipo de cargo não encontrado");
+        }
+
+        usuarioService.cadastrarCargo(cargo, administradorId, listaIds);
     }
 }

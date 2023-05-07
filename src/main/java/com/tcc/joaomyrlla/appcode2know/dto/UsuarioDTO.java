@@ -34,6 +34,8 @@ public class UsuarioDTO {
 
     private String imagemUrl;
 
+    private String senhaAntiga;
+
     public static UsuarioDTO toUsuarioDTO(Usuario usuario) {
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         BeanUtils.copyProperties(usuario, usuarioDTO);

@@ -26,4 +26,6 @@ public interface ITurmaService {
     void addProfessorEmTurma(Long turmaId, Long professorId, Long professorAdicionadoId);
 
     void removerProfessorDaTurma(Long turmaId, Long professorId, Long professorAdicionadoId);
+
+    void entrarEmTurma(Long usuarioId, String chave);
 }

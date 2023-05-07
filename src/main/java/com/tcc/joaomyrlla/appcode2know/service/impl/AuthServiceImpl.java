@@ -7,9 +7,11 @@ import com.tcc.joaomyrlla.appcode2know.model.Usuario;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -28,6 +30,6 @@ public class AuthServiceImpl implements AuthService {
     private boolean usernameOrEmailAndPasswordIsValid(AuthDTO authDTO, Usuario usuario) {
         return (authDTO.getUsernameOrEmail().equals(usuario.getUsuario()) ||
                 authDTO.getUsernameOrEmail().equals(usuario.getEmail())) &&
-                authDTO.getPassword().equals(usuario.getSenha());
+                BCrypt.checkpw(authDTO.getPassword(), usuario.getSenha());
     }
 }

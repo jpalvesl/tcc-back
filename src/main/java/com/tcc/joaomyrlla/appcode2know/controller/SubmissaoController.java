@@ -34,6 +34,11 @@ public class SubmissaoController {
         return ResponseEntity.ok().body(submissaoService.findByProblemaId(problemaId));
     }
 
+    @GetMapping("/turma/{turma_id}")
+    public ResponseEntity findByTurma(@PathVariable("turma_id") Long turmaId) {
+        return ResponseEntity.ok().body(submissaoService.findByTurmaId(turmaId));
+    }
+
     @GetMapping("/usuario/{usuario_id}/problema/{problema_id}")
     public ResponseEntity findByUsuarioAndProblema(@PathVariable("usuario_id") Long usuarioId,
                                                    @PathVariable("problema_id") Long problemaId) {

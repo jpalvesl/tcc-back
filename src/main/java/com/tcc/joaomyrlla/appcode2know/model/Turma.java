@@ -33,6 +33,9 @@ public class Turma {
     @Column(nullable = false)
     private String semestre;
 
+    @Column(nullable = false)
+    private String chave;
+
     @ManyToOne
     @JoinColumn(name = "INSTITUICAO_ID")
     private Instituicao instituicao;

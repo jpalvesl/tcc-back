@@ -26,7 +26,7 @@ public class Usuario {
     @Column(nullable = false, unique = true, length = 30)
     private String usuario;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String senha;
 
     private String imagemUrl;
@@ -36,6 +36,9 @@ public class Usuario {
 
     @Column(nullable = false)
     private boolean ehProfessor;
+
+    @Column(nullable = false)
+    private String salt;
 
     @ManyToOne
     @JoinColumn(name = "INSTITUICAO_ATUAL_ID")
