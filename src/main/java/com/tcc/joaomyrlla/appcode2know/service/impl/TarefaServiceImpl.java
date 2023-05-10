@@ -115,7 +115,10 @@ public class TarefaServiceImpl implements ITarefaService {
         Tarefa tarefaEditada = Tarefa.toTarefa(tarefaDTO);
         tarefaEditada.setTurma(turma);
         tarefaEditada.setCriador(usuario);
-        tarefaEditada.setProblemas(tarefa.getProblemas());
+
+        List<Problema> problemas = tarefaDTO.getProblemas().stream().map(problemaId -> problemaRepository.findById(problemaId).orElseThrow(ProblemaNotFoundException::new)).toList();
+
+        tarefaEditada.setProblemas(problemas);
 
         tarefaRepository.save(tarefaEditada);
 
