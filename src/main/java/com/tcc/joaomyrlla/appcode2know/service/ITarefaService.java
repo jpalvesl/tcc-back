@@ -21,4 +21,6 @@ public interface ITarefaService {
     void removerProblemaEmTarefa(Long problemaId, Long tarefaId, Long usuarioId);
 
     TarefaDTO findById(Long id);
+
+    String statusTarefa(Long tarefaId, Long usuarioId);
 }
