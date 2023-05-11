@@ -12,6 +12,7 @@ import com.tcc.joaomyrlla.appcode2know.repository.InstituicaoRespository;
 import com.tcc.joaomyrlla.appcode2know.repository.TurmaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.ITurmaService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -223,6 +224,7 @@ public class TurmaServiceImpl implements ITurmaService {
     }
 
     @Override
+    @Transactional
     public void entrarEmTurma(Long usuarioId, String chave) {
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
         List<Turma> turmas = turmaRepository.findAll().stream().filter(turma -> turma.getChave().equals(chave)).toList();
@@ -232,7 +234,13 @@ public class TurmaServiceImpl implements ITurmaService {
         }
 
         Turma turma = turmas.get(0);
+
+        if (usuario.getInstituicaoAtual() == null) {
+            usuario.setInstituicaoAtual(turma.getInstituicao());
+        }
+
         turma.getAlunos().add(usuario);
+        usuarioRepository.save(usuario);
         turmaRepository.save(turma);
     }
 }
