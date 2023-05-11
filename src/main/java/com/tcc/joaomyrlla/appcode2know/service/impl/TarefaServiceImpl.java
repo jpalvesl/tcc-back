@@ -1,5 +1,6 @@
 package com.tcc.joaomyrlla.appcode2know.service.impl;
 
+import com.tcc.joaomyrlla.appcode2know.dto.SubmissaoDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.TarefaDTO;
 import com.tcc.joaomyrlla.appcode2know.exceptions.*;
 import com.tcc.joaomyrlla.appcode2know.model.Problema;
@@ -10,15 +11,14 @@ import com.tcc.joaomyrlla.appcode2know.repository.ProblemaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.TarefaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.TurmaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
+import com.tcc.joaomyrlla.appcode2know.service.ISubmissaoService;
 import com.tcc.joaomyrlla.appcode2know.service.ITarefaService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TarefaServiceImpl implements ITarefaService {
@@ -34,6 +34,9 @@ public class TarefaServiceImpl implements ITarefaService {
 
     @Autowired
     ProblemaRepository problemaRepository;
+
+    @Autowired
+    ISubmissaoService submissaoService;
 
     @Override
     public Map<String, List<TarefaDTO>> findByAluno(Long alunoId) {
@@ -115,7 +118,10 @@ public class TarefaServiceImpl implements ITarefaService {
         Tarefa tarefaEditada = Tarefa.toTarefa(tarefaDTO);
         tarefaEditada.setTurma(turma);
         tarefaEditada.setCriador(usuario);
-        tarefaEditada.setProblemas(tarefa.getProblemas());
+
+        List<Problema> problemas = tarefaDTO.getProblemas().stream().map(problemaId -> problemaRepository.findById(problemaId).orElseThrow(ProblemaNotFoundException::new)).toList();
+
+        tarefaEditada.setProblemas(problemas);
 
         tarefaRepository.save(tarefaEditada);
 
@@ -174,5 +180,20 @@ public class TarefaServiceImpl implements ITarefaService {
         Tarefa tarefa = tarefaRepository.findById(id).orElseThrow(InstituicaoNotFoundException::new);
 
         return TarefaDTO.toTarefaDTO(tarefa);
+    }
+
+    public String statusTarefa(Long tarefaId, Long usuarioId) {
+        Tarefa tarefa = tarefaRepository.findById(tarefaId).orElseThrow(TarefaNotFoundException::new);
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
+
+
+        Set<Long> problemasNaLista = tarefa.getProblemas().stream().map(Problema::getId).collect(Collectors.toSet());
+
+        Set<Long> problemasResolvidos = submissaoService.findByAluno(usuarioId).stream()
+                .filter(submissaoDTO -> (submissaoDTO.getStatus().equals("OK") && problemasNaLista.contains(submissaoDTO.getProblemaId())))
+                .map(SubmissaoDTO::getProblemaId)
+                .collect(Collectors.toSet());
+
+        return String.format("%d/%d", problemasResolvidos.size(), problemasNaLista.size());
     }
 }

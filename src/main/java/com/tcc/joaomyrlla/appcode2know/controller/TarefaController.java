@@ -65,4 +65,10 @@ public class TarefaController {
     public ResponseEntity<TarefaDTO> findById(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(tarefaService.findById(id));
     }
+
+    @GetMapping("{id}/usuario/{usuario_id}/status")
+    public ResponseEntity<String> statusTarefa(@PathVariable("id") Long id,
+                                                  @PathVariable("usuario_id") Long usuarioId) {
+        return ResponseEntity.ok().body(tarefaService.statusTarefa(id, usuarioId));
+    }
 }

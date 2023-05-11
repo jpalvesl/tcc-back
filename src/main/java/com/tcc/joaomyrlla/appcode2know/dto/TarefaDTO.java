@@ -1,6 +1,7 @@
 package com.tcc.joaomyrlla.appcode2know.dto;
 
 import java.sql.Date;
+import java.util.List;
 
 import com.tcc.joaomyrlla.appcode2know.model.Tarefa;
 import com.tcc.joaomyrlla.appcode2know.utils.DateUtils;
@@ -39,6 +40,9 @@ public class TarefaDTO {
 
     @NotNull
     private Long turmaId;
+
+    @NotNull
+    private List<Long> problemas;
 
     private int qtdProblemas;
 

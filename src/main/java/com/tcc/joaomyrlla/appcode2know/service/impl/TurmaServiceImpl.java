@@ -5,7 +5,9 @@ import com.tcc.joaomyrlla.appcode2know.exceptions.InstituicaoNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.InsufficientPrivilegeException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.TurmaNotFoundException;
 import com.tcc.joaomyrlla.appcode2know.exceptions.UsuarioNotFoundException;
-import com.tcc.joaomyrlla.appcode2know.model.*;
+import com.tcc.joaomyrlla.appcode2know.model.Instituicao;
+import com.tcc.joaomyrlla.appcode2know.model.Turma;
+import com.tcc.joaomyrlla.appcode2know.model.Usuario;
 import com.tcc.joaomyrlla.appcode2know.repository.InstituicaoRespository;
 import com.tcc.joaomyrlla.appcode2know.repository.TurmaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
@@ -51,6 +53,7 @@ public class TurmaServiceImpl implements ITurmaService {
         Map<String, List<TurmaDTO>> turmas = new HashMap<>();
         turmas.put("aluno", findByAluno(usuario));
         turmas.put("professor", findByProfessor(usuario));
+        turmas.put("monitor", findByMonitor(usuario));
 
         return turmas;
     }
@@ -67,6 +70,15 @@ public class TurmaServiceImpl implements ITurmaService {
                 .stream()
                 .map(TurmaDTO::toTurma)
                 .toList();
+    }
+
+    private List<TurmaDTO> findByMonitor(Usuario usuario) {
+        return turmaRepository.findAll().stream()
+                .filter(turma -> {
+                    List<Long> monitoresId = turma.getMonitores().stream().map(Usuario::getId).toList();
+
+                    return monitoresId.contains(usuario.getId());
+                }).map(TurmaDTO::toTurma).toList();
     }
 
     @Override
@@ -199,7 +211,7 @@ public class TurmaServiceImpl implements ITurmaService {
         Usuario professorAdicionado = usuarioRepository.findById(professorAdicionadoId).orElseThrow(UsuarioNotFoundException::new);
 
         if (!professor.isEhProfessor()) {
-            throw new InsufficientPrivilegeException(String.format("O usuario de id %d não ter permissão para remover professores da turma"), professorId);
+            throw new InsufficientPrivilegeException("O usuario de id %d não ter permissão para remover professores da turma", professorId);
         }
 
         if (!professorAdicionado.isEhProfessor()) {
