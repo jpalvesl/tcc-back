@@ -42,7 +42,7 @@ public class Usuario {
 
     @ManyToOne
     @JoinColumn(name = "INSTITUICAO_ATUAL_ID")
-    private Instituicao instituicaoAtual = new Instituicao();
+    private Instituicao instituicaoAtual;
 
     @ManyToMany(mappedBy = "professores")
     @Lazy
@@ -56,7 +56,11 @@ public class Usuario {
         Usuario usuario = new Usuario();
         BeanUtils.copyProperties(usuarioDTO, usuario);
 
-        usuario.getInstituicaoAtual().setId(usuarioDTO.getInstituicaoAtualId());
+        if (usuarioDTO.getInstituicaoAtualId() != null) {
+            Instituicao instituicao = new Instituicao();
+            usuario.setInstituicaoAtual(instituicao);
+            usuario.getInstituicaoAtual().setId(usuarioDTO.getInstituicaoAtualId());
+        }
 
         return usuario;
     }

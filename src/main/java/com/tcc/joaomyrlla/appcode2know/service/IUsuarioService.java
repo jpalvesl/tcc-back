@@ -4,6 +4,7 @@ import com.tcc.joaomyrlla.appcode2know.dto.EditSenhaDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.UsuarioDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IUsuarioService {
     List<UsuarioDTO> findByInstituicao(Long instituicaoId);
@@ -25,4 +26,6 @@ public interface IUsuarioService {
     void editarSenha(Long usuarioId, EditSenhaDTO editSenhaDTO);
 
     void cadastrarCargo(String cargo, Long administradorId, List<Long> listaIds);
+
+    void gerenciarPermissoes(Long usuarioId, Map<String, List<Long>> permissoesAlteradas);
 }

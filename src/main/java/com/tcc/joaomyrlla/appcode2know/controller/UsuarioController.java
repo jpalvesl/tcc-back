@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("usuario")
@@ -75,5 +76,11 @@ public class UsuarioController {
         }
 
         usuarioService.cadastrarCargo(cargo, administradorId, listaIds);
+    }
+
+    @PostMapping("/{usuario_id}/gerenciar_permissoes")
+    public void gerenciarPermissoes(@PathVariable("usuario_id") Long usuarioId,
+                                    @RequestBody Map<String, List<Long>> permissoesAlteradas) {
+        usuarioService.gerenciarPermissoes(usuarioId, permissoesAlteradas);
     }
 }
