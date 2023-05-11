@@ -13,7 +13,6 @@ import com.tcc.joaomyrlla.appcode2know.repository.InstituicaoRespository;
 import com.tcc.joaomyrlla.appcode2know.repository.TurmaRepository;
 import com.tcc.joaomyrlla.appcode2know.repository.UsuarioRepository;
 import com.tcc.joaomyrlla.appcode2know.service.IUsuarioService;
-
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UsuarioServiceImpl implements IUsuarioService {
@@ -156,12 +156,43 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
             if (cargo.equals("professor")) {
                 usuario.setEhProfessor(true);
-            }
-            else if (cargo.equals("administrador")) {
+            } else if (cargo.equals("administrador")) {
                 usuario.setEhAdm(true);
             }
 
             usuarioRepository.save(usuario);
         });
+    }
+
+    @Override
+    @Transactional
+    public void gerenciarPermissoes(Long usuarioId, Map<String, List<Long>> permissoesAlteradas) {
+        permissoesAlteradas.get("novosAdms")
+                .forEach(permissaoId -> {
+                    Usuario usuario = usuarioRepository.findById(permissaoId).orElseThrow(UsuarioNotFoundException::new);
+                    usuario.setEhAdm(true);
+                    usuarioRepository.save(usuario);
+                });
+
+        permissoesAlteradas.get("antigosAdms")
+                .forEach(permissaoId -> {
+                    Usuario usuario = usuarioRepository.findById(permissaoId).orElseThrow(UsuarioNotFoundException::new);
+                    usuario.setEhAdm(false);
+                    usuarioRepository.save(usuario);
+                });
+
+        permissoesAlteradas.get("novosProfessores")
+                .forEach(permissaoId -> {
+                    Usuario usuario = usuarioRepository.findById(permissaoId).orElseThrow(UsuarioNotFoundException::new);
+                    usuario.setEhProfessor(true);
+                    usuarioRepository.save(usuario);
+                });
+
+        permissoesAlteradas.get("antigosProfessores")
+                .forEach(permissaoId -> {
+                    Usuario usuario = usuarioRepository.findById(permissaoId).orElseThrow(UsuarioNotFoundException::new);
+                    usuario.setEhProfessor(false);
+                    usuarioRepository.save(usuario);
+                });
     }
 }
