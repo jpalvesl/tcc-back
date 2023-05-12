@@ -46,6 +46,8 @@ public class TarefaDTO {
 
     private int qtdProblemas;
 
+    private String status;
+
     public static TarefaDTO toTarefaDTO(Tarefa tarefa) {
         TarefaDTO tarefaDTO = new TarefaDTO();
         BeanUtils.copyProperties(tarefa, tarefaDTO);

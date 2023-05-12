@@ -54,6 +54,9 @@ public class Problema {
     @OneToMany(mappedBy = "problema")
     private List<CasoDeTeste> casosDeTeste = new ArrayList<>();
 
+    @OneToMany(mappedBy = "problema")
+    private List<Submissao> submissoes = new ArrayList<>();
+
     @ManyToMany
     @JoinTable(
             name = "TOPICO_PROBLEMA",
