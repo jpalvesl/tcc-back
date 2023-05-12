@@ -50,6 +50,8 @@ public class ProblemaDTO {
   @NotNull
   private Integer limiteDeMemoria;
 
+  private String status;
+
   @NotNull
   private List<HashMap<String, Object>> topicos = new ArrayList<>();
 

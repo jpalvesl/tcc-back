@@ -12,6 +12,8 @@ public interface IProblemaService {
 
     List<ProblemaDTO> findByTarefa(Long tarefaId);
 
+    List<ProblemaDTO> findByTarefaAndUsusario(Long tarefaId, Long usuarioId);
+
     ProblemaDTO add(ProblemaDTO problemaDTO);
 
     void delete(Long id, Long usuarioId);

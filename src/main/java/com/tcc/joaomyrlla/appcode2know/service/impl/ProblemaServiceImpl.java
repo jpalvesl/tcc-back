@@ -3,10 +3,7 @@ package com.tcc.joaomyrlla.appcode2know.service.impl;
 import com.tcc.joaomyrlla.appcode2know.dto.ProblemaDTO;
 import com.tcc.joaomyrlla.appcode2know.dto.SubmissaoDTO;
 import com.tcc.joaomyrlla.appcode2know.exceptions.*;
-import com.tcc.joaomyrlla.appcode2know.model.Problema;
-import com.tcc.joaomyrlla.appcode2know.model.Tarefa;
-import com.tcc.joaomyrlla.appcode2know.model.Usuario;
-import com.tcc.joaomyrlla.appcode2know.model.Topico;
+import com.tcc.joaomyrlla.appcode2know.model.*;
 import com.tcc.joaomyrlla.appcode2know.repository.*;
 import com.tcc.joaomyrlla.appcode2know.service.IProblemaService;
 import com.tcc.joaomyrlla.appcode2know.service.ISubmissaoService;
@@ -59,6 +56,26 @@ public class ProblemaServiceImpl implements IProblemaService {
 
         return tarefa.getProblemas().stream()
                 .map(ProblemaDTO::toProblemaDTO)
+                .toList();
+    }
+
+    @Override
+    public List<ProblemaDTO> findByTarefaAndUsusario(Long tarefaId, Long usuarioId) {
+        Tarefa tarefa = tarefaRepository.findById(tarefaId).orElseThrow(TarefaNotFoundException::new);
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
+
+        return tarefa.getProblemas().stream()
+                .map(problema -> {
+                    ProblemaDTO problemaDTO = ProblemaDTO.toProblemaDTO(problema);
+
+                    List<Submissao> submissoesCorretas = problema.getSubmissoes().stream().filter(submissao -> submissao.getStatus().equals("OK")).toList();
+
+                    if (submissoesCorretas.size() != 0) {
+                        problemaDTO.setStatus("OK");
+                    }
+
+                    return problemaDTO;
+                })
                 .toList();
     }
 

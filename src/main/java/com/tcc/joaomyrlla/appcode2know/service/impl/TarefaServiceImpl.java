@@ -42,15 +42,24 @@ public class TarefaServiceImpl implements ITarefaService {
     public Map<String, List<TarefaDTO>> findByAluno(Long alunoId) {
         Usuario usuario = usuarioRepository.findById(alunoId).orElseThrow(UsuarioNotFoundException::new);
 
-        List<Tarefa> listaTarefas = new ArrayList<>();
-
         List<TarefaDTO> provas = new ArrayList<>();
 
         List<TarefaDTO> roteiros = new ArrayList<>();
 
-        usuario.getTurmasAluno().forEach(turma -> roteiros.addAll(turma.getTarefas().stream().filter(tarefa -> !tarefa.isEhProva()).map(TarefaDTO::toTarefaDTO).toList()));
+        usuario.getTurmasAluno().forEach(turma -> roteiros.addAll(turma.getTarefas().stream().filter(tarefa -> !tarefa.isEhProva()).map(tarefa -> {
+            TarefaDTO tarefaDTO = TarefaDTO.toTarefaDTO(tarefa);
+            tarefaDTO.setStatus(this.statusTarefa(tarefa.getId(), usuario.getId()));
 
-        usuario.getTurmasAluno().forEach(turma -> provas.addAll(turma.getTarefas().stream().filter(Tarefa::isEhProva).map(TarefaDTO::toTarefaDTO).toList()));
+            return tarefaDTO;
+        }).toList()));
+
+        usuario.getTurmasAluno().forEach(turma -> provas.addAll(turma.getTarefas().stream().filter(Tarefa::isEhProva)
+                .map(tarefa -> {
+                    TarefaDTO tarefaDTO = TarefaDTO.toTarefaDTO(tarefa);
+                    tarefaDTO.setStatus(this.statusTarefa(tarefa.getId(), usuario.getId()));
+
+                    return tarefaDTO;
+                }).toList()));
 
 
 
@@ -93,6 +102,9 @@ public class TarefaServiceImpl implements ITarefaService {
         }
 
         Tarefa tarefa = Tarefa.toTarefa(tarefaDTO);
+        List<Problema> problemas = tarefaDTO.getProblemas().stream().map(problemaId -> problemaRepository.findById(problemaId).orElseThrow(ProblemaNotFoundException::new)).toList();
+
+        tarefa.setProblemas(problemas);
         turma.getTarefas().add(tarefa);
         tarefa.setTurma(turma);
         tarefa.setCriador(usuario);
