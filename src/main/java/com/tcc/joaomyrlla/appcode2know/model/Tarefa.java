@@ -55,7 +55,7 @@ public class Tarefa {
         Tarefa tarefa = new Tarefa();
         BeanUtils.copyProperties(tarefaDTO, tarefa);
         tarefa.setDtAbertura(DateUtils.toDate("yyyy-MM-dd", tarefaDTO.getDtAbertura()));
-        tarefa.setDtEncerramento(DateUtils.toDate("yyyy-MM-dd", tarefaDTO.getDtAbertura()));
+        tarefa.setDtEncerramento(DateUtils.toDate("yyyy-MM-dd", tarefaDTO.getDtEncerramento()));
 
         return tarefa;
     }

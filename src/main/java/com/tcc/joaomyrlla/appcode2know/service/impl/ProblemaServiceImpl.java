@@ -68,7 +68,7 @@ public class ProblemaServiceImpl implements IProblemaService {
                 .map(problema -> {
                     ProblemaDTO problemaDTO = ProblemaDTO.toProblemaDTO(problema);
 
-                    List<Submissao> submissoesCorretas = problema.getSubmissoes().stream().filter(submissao -> submissao.getStatus().equals("OK")).toList();
+                    List<Submissao> submissoesCorretas = problema.getSubmissoes().stream().filter(submissao -> submissao.getStatus().equals("OK") && submissao.getUsuario().equals(usuario)).toList();
 
                     if (submissoesCorretas.size() != 0) {
                         problemaDTO.setStatus("OK");
@@ -174,11 +174,26 @@ public class ProblemaServiceImpl implements IProblemaService {
     @Override
     public List<ProblemaDTO> findProblemasTentados(Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(UsuarioNotFoundException::new);
-        List<ProblemaDTO> problemaDTOS = this.findAll();
+        List<Problema> problemas = problemaRepository.findAll();
 
         Set<Long> problemasTentadosIds = submissaoService.findByAluno(usuarioId).stream().map(SubmissaoDTO::getProblemaId).collect(Collectors.toSet());
 
-        return problemaDTOS.stream().filter(problemaDTO -> {
+        List<ProblemaDTO> problemasComStatus = problemas.stream()
+                .map(problema -> {
+                    ProblemaDTO problemaDTO = ProblemaDTO.toProblemaDTO(problema);
+
+                    List<Submissao> submissoesCorretas = problema.getSubmissoes().stream().filter(submissao -> submissao.getStatus().equals("OK") && submissao.getUsuario().equals(usuario)).toList();
+
+                    if (submissoesCorretas.size() != 0) {
+                        problemaDTO.setStatus("OK");
+                    }
+
+                    return problemaDTO;
+                })
+                .toList();
+
+
+        return problemasComStatus.stream().filter(problemaDTO -> {
             return problemasTentadosIds.contains(problemaDTO.getId());
         }).toList();
     }
